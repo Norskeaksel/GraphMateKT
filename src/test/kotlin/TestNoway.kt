@@ -1,5 +1,5 @@
 import graphMateKT.solutions.noway
-        
+
 import graphMateKT.INPUT
 import graphMateKT._reader
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +14,7 @@ class NowayTest {
         fun resetInput() {
             _reader = INPUT.bufferedReader()
         }
-    }   
+    }
 
     @Test
     fun nowaya() {
@@ -37,5 +37,11 @@ class NowayTest {
         val expectedOutput = """361294640"""
         _reader = File("src/test/SampleInput/Noway/input3").inputStream().bufferedReader()
         assertThat(noway()).isEqualTo(expectedOutput)
+    }
+
+    @Test
+    fun nowayd() {
+        _reader = File("src/test/SampleInput/Noway/input4").inputStream().bufferedReader()
+        noway()
     }
 }

@@ -10,7 +10,7 @@ private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList,
         return memo[currentId]
     var totalPaths = 0L
      graph[currentId].forEach { neighbour ->
-        totalPaths = totalPaths % mod + memoDfs(neighbour, target, graph, memo, mod) % mod
+        totalPaths = (totalPaths + memoDfs(neighbour, target, graph, memo, mod)) % mod
     }
     memo[currentId] = totalPaths % mod
     return totalPaths

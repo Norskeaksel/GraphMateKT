@@ -213,16 +213,13 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
             adjacencyList.forEach { it.clear() }
             unweightedAdjacencyList.forEach { it.clear() }
         }
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                val currentTile = xy2Node(x, y) ?: continue
-                val neighbours = getNeighbours(currentTile)
-                neighbours.forEach {
-                    if (bidirectional) {
-                        connect(currentTile, it)
-                    } else {
-                        addEdge(currentTile, it)
-                    }
+        nodes().forEach { t ->
+            val neighbours = getNeighbours(t)
+            neighbours.forEach {
+                if (bidirectional) {
+                    connect(t, it)
+                } else {
+                    addEdge(t, it)
                 }
             }
         }
