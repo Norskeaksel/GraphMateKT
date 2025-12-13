@@ -2,6 +2,7 @@ package graphMateKT.solutions
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphGraphics.visualizeGraph
+import java.math.BigInteger
 
 internal fun main() {
     val input = generateSequence { readlnOrNull() }.toList()
@@ -11,7 +12,7 @@ internal fun main() {
 }
 
 /** Solves https://adventofcode.com/2025/day/11 */
-internal fun Day11Reactor2025Part1(input: List<String>): Long {
+internal fun Day11Reactor2025Part1(input: List<String>): BigInteger {
     val g = Graph(false)
     input.forEach { line ->
         val (from, to) = line.split(": ")
@@ -23,7 +24,7 @@ internal fun Day11Reactor2025Part1(input: List<String>): Long {
 }
 
 /** https://adventofcode.com/2025/day/11#part2 */
-internal fun Day11Reactor2025Part2(input: List<String>): Long {
+internal fun Day11Reactor2025Part2(input: List<String>): BigInteger {
     val g = Graph(false)
     val start = "svr"
     val dac = "dac"

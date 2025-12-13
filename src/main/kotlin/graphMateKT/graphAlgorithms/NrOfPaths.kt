@@ -1,20 +1,21 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.UnweightedAdjacencyList
+import java.math.BigInteger
 
-private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList, memo: LongArray): Long {
+private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList, memo: Array<BigInteger>): BigInteger {
     if (currentId == target)
-        return 1L
-    if (memo[currentId] != -1L)
+        return BigInteger.ONE
+    if (memo[currentId] != BigInteger.valueOf(-1L))
         return memo[currentId]
-    var totalPaths = 0L
+    var totalPaths = BigInteger.ZERO
      graph[currentId].forEach { neighbour ->
         totalPaths += memoDfs(neighbour, target, graph, memo)
     }
     memo[currentId] = totalPaths
     return totalPaths
 }
-internal fun nrOfPaths(graph: UnweightedAdjacencyList, start: Int, target: Int): Long {
-    val memo = LongArray(graph.size) { -1L }
+internal fun nrOfPaths(graph: UnweightedAdjacencyList, start: Int, target: Int): BigInteger {
+    val memo = Array(graph.size) { BigInteger.valueOf(-1L) }
     return memoDfs(start, target, graph, memo)
 }

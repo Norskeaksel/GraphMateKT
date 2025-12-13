@@ -24,6 +24,7 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/maxDistance/#/PointingToDecla
 $dokka.location:graphMateKT.graphClasses/BaseGraph/minimumSpanningTree/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/minimum-spanning-tree.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/neighbours/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/neighbours.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nodes.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfPaths/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nr-of-paths.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/print/#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/removeEdge/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/remove-edge.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/resetSearchResults/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/reset-search-results.html
@@ -65,14 +66,6 @@ $dokka.location:graphMateKT.graphGraphics//visualizeIntComponents/kotlin.collect
 $dokka.location:graphMateKT.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/index.html
 $dokka.location:graphMateKT.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/visualize-grid.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
-$dokka.location:graphMateKT//deepCopy/kotlin.collections.MutableList[graphMateKT.Edges]#/PointingToDeclaration/graphmatekt/graphMateKT/deep-copy.html
-$dokka.location:graphMateKT//toUnweightedAdjacencyList/kotlin.collections.MutableList[graphMateKT.Edges]#/PointingToDeclaration/graphmatekt/graphMateKT/to-unweighted-adjacency-list.html
-$dokka.location:graphMateKT//toWeightedAdjacencyList/kotlin.collections.MutableList[kotlin.collections.MutableList[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT/to-weighted-adjacency-list.html
-$dokka.location:graphMateKT/AdjacencyList///PointingToDeclaration/graphmatekt/graphMateKT/-adjacency-list/index.html
-$dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
-$dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
-$dokka.location:graphMateKT/Edges///PointingToDeclaration/graphmatekt/graphMateKT/-edges/index.html
-$dokka.location:graphMateKT/IntComponents///PointingToDeclaration/graphmatekt/graphMateKT/-int-components/index.html
 $dokka.location:graphMateKT/Tile///PointingToDeclaration/graphmatekt/graphMateKT/-tile/index.html
 $dokka.location:graphMateKT/Tile/Tile/#kotlin.Int#kotlin.Int#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT/-tile/-tile.html
 $dokka.location:graphMateKT/Tile/data/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/data.html
@@ -80,7 +73,6 @@ $dokka.location:graphMateKT/Tile/dataIsDigit/#/PointingToDeclaration/graphmatek
 $dokka.location:graphMateKT/Tile/x/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/x.html
 $dokka.location:graphMateKT/Tile/xPlusYTimesWidth/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT/-tile/x-plus-y-times-width.html
 $dokka.location:graphMateKT/Tile/y/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/y.html
-$dokka.location:graphMateKT/UnweightedAdjacencyList///PointingToDeclaration/graphmatekt/graphMateKT/-unweighted-adjacency-list/index.html
 graphMateKT
 graphMateKT.graphClasses
 graphMateKT.graphGraphics

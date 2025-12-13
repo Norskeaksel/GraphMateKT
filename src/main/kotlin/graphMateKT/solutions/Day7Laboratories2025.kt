@@ -2,6 +2,7 @@ package graphMateKT.examples
 
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
+import java.math.BigInteger
 
 internal fun main() {
     val input = generateSequence { readlnOrNull() }.toList()
@@ -11,7 +12,7 @@ internal fun main() {
 }
 
 /** Solves https://open.kattis.com/problems/Day7Laboratories2025 */
-internal fun Day7Laboratories2025(input: List<String>): Long {
+internal fun Day7Laboratories2025(input: List<String>): BigInteger {
     val g = Grid(input)
     val sink = Tile(0,0, '^')
     g.addNode(sink)

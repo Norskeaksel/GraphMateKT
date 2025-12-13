@@ -10,6 +10,7 @@ import graphMateKT.graphAlgorithms.FloydWarshall
 import graphMateKT.graphAlgorithms.GraphSearchResults
 import graphMateKT.toUnweightedAdjacencyList
 import graphMateKT.toWeightedAdjacencyList
+import java.math.BigInteger
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
 abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = true) {
@@ -365,7 +366,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param targetNode The target node.
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
-    fun nrOfPaths(startNode: T, targetNode: T): Long {
+    fun nrOfPaths(startNode: T, targetNode: T): BigInteger {
         useWeightedConnectionsIfNeeded("nrOfPaths")
         val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
         val targetId = node2Id(targetNode) ?: error("Node '$targetNode' not found in graph")
