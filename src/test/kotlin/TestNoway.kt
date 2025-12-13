@@ -18,7 +18,7 @@ class NowayTest {
 
     @Test
     fun nowaya() {
-        val expectedOutput = """4"""
+        val expectedOutput = 2L
         _reader = File("src/test/SampleInput/Noway/input1").inputStream().bufferedReader()
         assertThat(noway()).isEqualTo(expectedOutput)
     }
@@ -26,7 +26,7 @@ class NowayTest {
 
     @Test
     fun nowayb() {
-        val expectedOutput = """0"""
+        val expectedOutput = 3L
         _reader = File("src/test/SampleInput/Noway/input2").inputStream().bufferedReader()
         assertThat(noway()).isEqualTo(expectedOutput)
     }
@@ -34,14 +34,15 @@ class NowayTest {
 
     @Test
     fun nowayc() {
-        val expectedOutput = """361294640"""
+        val expectedOutput = 4L
         _reader = File("src/test/SampleInput/Noway/input3").inputStream().bufferedReader()
         assertThat(noway()).isEqualTo(expectedOutput)
     }
 
     @Test
     fun nowayd() {
+        val expectedOutput = 361294640L
         _reader = File("src/test/SampleInput/Noway/input4").inputStream().bufferedReader()
-        noway()
+        assertThat(noway()).isEqualTo(expectedOutput)
     }
 }

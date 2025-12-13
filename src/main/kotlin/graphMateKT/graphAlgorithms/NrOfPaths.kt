@@ -1,7 +1,6 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.UnweightedAdjacencyList
-import java.math.BigInteger
 
 private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList, memo: LongArray, mod: Long): Long {
     if (currentId == target)
