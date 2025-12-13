@@ -2,8 +2,8 @@
 
 ![My Workflow Status](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml/badge.svg)
 
-This repository contains classes and algorithms for making graphs, traversing and visualizing them.
-This can for example be used to solve competitive programming problems.
+GraphMateKT contains classes and algorithms for making, traversing and visualizing graphs and grids.
+This can for example be used to create and debug competitive programming solutions.
 The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using this graphLibraryPackage to solve
 various problems.
 The library contains the general `Graph` class, which can be used to create graphs of any datatype,
