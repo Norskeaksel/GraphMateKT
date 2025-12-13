@@ -5,7 +5,7 @@ import java.io.File
 import java.nio.file.Files.createDirectories
 import kotlin.io.path.Path
 
-private fun createExample(name: String) = """package graphMateKT.examples
+private fun createSolution(name: String) = """package graphMateKT.solutions
 
 import graphMateKT.INPUT
 import graphMateKT._reader
@@ -28,8 +28,8 @@ internal fun $name(): String {
 }
 """
 
-private fun createExampleTest(name: String, nrOfSampleInputs: Int): String {
-    var test = """import graphMateKT.examples.$name
+private fun createSolutionTest(name: String, nrOfSampleInputs: Int): String {
+    var test = """import graphMateKT.solutions.$name
         
 import graphMateKT.INPUT
 import graphMateKT._reader
@@ -68,8 +68,8 @@ private fun main() {
     val name = readString()
     print("How many sample inputs? ")
     val nrOfSampleInputs = readInt()
-    val example = createExample(name)
-    val exampleTest = createExampleTest(name, nrOfSampleInputs)
+    val example = createSolution(name)
+    val exampleTest = createSolutionTest(name, nrOfSampleInputs)
 
     val exampleFile = File("src/main/kotlin/graphMateKT/solutions/${name.capitalize()}.kt")
     val exampleTestFile = File("src/test/kotlin/Test${name.capitalize()}.kt")

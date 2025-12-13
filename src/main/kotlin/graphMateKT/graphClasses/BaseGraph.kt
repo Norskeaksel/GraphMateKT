@@ -81,8 +81,8 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param node2 The second node of the edge to remove.
      * @throws IllegalStateException If either node is not found in the graph. */
     fun removeEdge(node1: T, node2: T) {
-        val u = node2Id(node1) ?: error("Node $node1 not found in graph")
-        val v = node2Id(node2) ?: error("Node $node2 not found in graph")
+        val u = node2Id(node1) ?: error("Node '$node1' not found in graph")
+        val v = node2Id(node2) ?: error("Node '$node2' not found in graph")
         removeEdge(u, v)
     }
 
@@ -139,11 +139,11 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
         else distanceUnweightedTo(node).toDouble()
 
     private fun distanceWeightedTo(node: T): Double {
-        val id = node2Id(node) ?: error("Node $node not found in graph")
+        val id = node2Id(node) ?: error("Node '$node' not found in graph")
         searchResults?.let {
             return it.distances[id]
         }
-        error("Haven't computed distance to $node because neither BFS nor Dijkstra  has been run yet.")
+        error("Haven't computed distance to '$node' because neither BFS nor Dijkstra  has been run yet.")
     }
 
     private fun distanceUnweightedTo(node: T): Int {
@@ -194,7 +194,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
         if (isWeighted) weightedEdges(t).map { it.second }
         else node2Id(t)?.let { unweightedAdjacencyList[it] }
             ?.map { id2Node(it)!! }
-            ?: error("Node $t not found in graph")
+            ?: error("Node '$t' not found in graph")
 
     // SEARCH ALGORITHMS
 
@@ -218,7 +218,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
         useWeightedConnectionsIfNeeded("bfs")
-        val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node $node not found in graph") }
+        val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
         val targetId = target?.let { node2Id(it) } ?: -1
         if (reset) searchResults = null
         searchResults = BFS(unweightedAdjacencyList).bfs(startNodeIds, targetId, searchResults)
@@ -242,7 +242,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
-        val startId = node2Id(startNode) ?: error("Node $startNode not found in graph")
+        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
         if (reset) searchResults = null
         useWeightedConnectionsIfNeeded("dfs")
         searchResults = DFS(unweightedAdjacencyList).dfs(startId, searchResults)
@@ -275,7 +275,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
                 return
             }
         }
-        val startId = node2Id(startNode) ?: error("Node $startNode not found in graph")
+        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
         searchResults = Dijkstra(adjacencyList).dijkstra(startId, searchResults)
         target?.let {
             finalPath = getPath(it)
@@ -354,6 +354,22 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
         useWeightedConnectionsIfNeeded("stronglyConnectedComponents")
         val scc = DFS(unweightedAdjacencyList).stronglyConnectedComponents()
         return scc.map { component -> component.map { id2Node(it)!! } }
+    }
+
+    /** Calculates the number of distinct paths from the starting node to the target node in the graph.
+     *
+     * This function assumes that the graph is a Directed Acyclic Graph (DAG) and uses dynamic programming
+     * to count the number of paths efficiently.
+     *
+     * @param startNode The starting node.
+     * @param targetNode The target node.
+     * @return The number of distinct paths from the starting node to the target node.
+     * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
+    fun nrOfPaths(startNode: T, targetNode: T): Long {
+        useWeightedConnectionsIfNeeded("nrOfPaths")
+        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
+        val targetId = node2Id(targetNode) ?: error("Node '$targetNode' not found in graph")
+        return nrOfPaths(unweightedAdjacencyList, startId, targetId)
     }
 
     // PATH UTILITIES

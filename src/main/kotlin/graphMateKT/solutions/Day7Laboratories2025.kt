@@ -2,22 +2,17 @@ package graphMateKT.examples
 
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
-import graphMateKT.gridGraphics.visualizeGrid
-import kotlin.math.sin
-import kotlin.system.measureNanoTime
-
-val currentVistedNodes: MutableList<Tile> = mutableListOf()
 
 internal fun main() {
-    val ans = Day7Laboratories2025()
+    val input = generateSequence { readlnOrNull() }.toList()
+    val ans = Day7Laboratories2025(input)
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/Day7Laboratories2025 */
-internal fun Day7Laboratories2025(): Long {
-    val input = generateSequence { readlnOrNull() }
-    val g = Grid(input.toList())
+internal fun Day7Laboratories2025(input: List<String>): Long {
+    val g = Grid(input)
     val sink = Tile(0,0, '^')
     g.addNode(sink)
     g.connectGrid { t ->
@@ -43,23 +38,7 @@ internal fun Day7Laboratories2025(): Long {
         g.addEdge(endNode, sink)
     }
     g.resetSearchResults()
-    val nrOfPaths = g.countPaths(startNode, sink)
+    val nrOfPaths = g.nrOfPaths(startNode, sink)
     // g.visualizeGrid(currentVisitedNodes = currentVistedNodes)
     return nrOfPaths
-}
-
-private fun Grid.countPaths(startNode: Tile, sinkNode:Tile, memo: MutableMap<Tile, Long> = mutableMapOf()): Long {
-    if (startNode == sinkNode)
-        return 1
-    if (memo.containsKey(startNode))
-        return memo[startNode]!!
-    if(currentVistedNodes.contains(startNode))
-        return 0 // Avoid cycles
-    currentVistedNodes.add(startNode)
-    var pathNr = 0L
-    neighbours(startNode).forEach { neighbor ->
-        pathNr +=  countPaths(neighbor, sinkNode, memo)
-    }
-    memo[startNode] = pathNr
-    return pathNr
 }
