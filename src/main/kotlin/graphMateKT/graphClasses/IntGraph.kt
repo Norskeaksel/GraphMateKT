@@ -1,6 +1,6 @@
 package graphMateKT.graphClasses
 
-/** A graph data structure specialized for integer nodes ranging from 0 to size-1.
+/** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
  * However, * it's more performant, because it does not need to maintain an internal mapping between the nodes and their

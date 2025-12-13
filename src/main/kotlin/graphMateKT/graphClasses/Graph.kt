@@ -1,6 +1,6 @@
 package graphMateKT.graphClasses
 
-/** A graph data structure that supports nodes of any datatype.
+/** A general graph class that represents nodes of any datatype.
  *
  * Any new node is given an ID upon creation, which is used to build an adjacency list. The class maintains internal
  * maps between ID's and nodes and vice versa.

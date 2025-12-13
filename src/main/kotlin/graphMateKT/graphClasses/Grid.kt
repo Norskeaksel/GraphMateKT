@@ -4,7 +4,7 @@ import graphMateKT.Edge
 import graphMateKT.Tile
 import graphMateKT.graphAlgorithms.DFS
 
-/** The Grid class is a specialized graph class.
+/** A general graph class that represents a 2D grid structure of nodes.
  *
  * It uses the data class:
  * `Tile(val x: Int, val y: Int, var data: Any? = null)`
