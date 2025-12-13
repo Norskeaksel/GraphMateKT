@@ -12,7 +12,7 @@ internal fun main() {
 }
 
 /** Solves https://adventofcode.com/2025/day/11 */
-internal fun Day11Reactor2025Part1(input: List<String>): BigInteger {
+internal fun Day11Reactor2025Part1(input: List<String>): Long {
     val g = Graph(false)
     input.forEach { line ->
         val (from, to) = line.split(": ")
@@ -24,7 +24,7 @@ internal fun Day11Reactor2025Part1(input: List<String>): BigInteger {
 }
 
 /** https://adventofcode.com/2025/day/11#part2 */
-internal fun Day11Reactor2025Part2(input: List<String>): BigInteger {
+internal fun Day11Reactor2025Part2(input: List<String>): Long {
     val g = Graph(false)
     val start = "svr"
     val dac = "dac"

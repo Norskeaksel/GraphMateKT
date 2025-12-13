@@ -3,19 +3,19 @@ package graphMateKT.graphAlgorithms
 import graphMateKT.UnweightedAdjacencyList
 import java.math.BigInteger
 
-private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList, memo: Array<BigInteger>): BigInteger {
+private fun memoDfs(currentId: Int, target: Int, graph: UnweightedAdjacencyList, memo: LongArray, mod: Long): Long {
     if (currentId == target)
-        return BigInteger.ONE
-    if (memo[currentId] != BigInteger.valueOf(-1L))
+        return 1L
+    if (memo[currentId] != -1L)
         return memo[currentId]
-    var totalPaths = BigInteger.ZERO
+    var totalPaths = 0L
      graph[currentId].forEach { neighbour ->
-        totalPaths += memoDfs(neighbour, target, graph, memo)
+        totalPaths = totalPaths % mod + memoDfs(neighbour, target, graph, memo, mod) % mod
     }
-    memo[currentId] = totalPaths
+    memo[currentId] = totalPaths % mod
     return totalPaths
 }
-internal fun nrOfPaths(graph: UnweightedAdjacencyList, start: Int, target: Int): BigInteger {
-    val memo = Array(graph.size) { BigInteger.valueOf(-1L) }
-    return memoDfs(start, target, graph, memo)
+internal fun nrOfPaths(graph: UnweightedAdjacencyList, start: Int, target: Int, mod: Long): Long {
+    val memo = LongArray(graph.size) { -1L }
+    return memoDfs(start, target, graph, memo, mod)
 }

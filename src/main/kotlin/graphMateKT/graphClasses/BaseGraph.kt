@@ -294,7 +294,16 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun floydWarshall() {
-        allDistances = FloydWarshall(adjacencyList).floydWarshall()
+        if (nrOfConnections(adjacencyList) == 0) {
+            System.err.println("Warning: The graph  has no weighted connections, making pathfinding infeasible.")
+            if (nrOfConnections(unweightedAdjacencyList) != 0) {
+                System.err.println("The graph does have unweighted connections. Using them for Floyd-Warshall.")
+                allDistances = FloydWarshall(unweightedAdjacencyList.toWeightedAdjacencyList()).floydWarshall()
+            }
+        }
+        else {
+            allDistances = FloydWarshall(adjacencyList).floydWarshall()
+        }
     }
 
     /** Retrieves the shortest distance between two nodes in the graph.
@@ -366,11 +375,11 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param targetNode The target node.
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
-    fun nrOfPaths(startNode: T, targetNode: T): BigInteger {
+    fun nrOfPaths(startNode: T, targetNode: T, mod:Long = Long.MAX_VALUE): Long{
         useWeightedConnectionsIfNeeded("nrOfPaths")
         val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
         val targetId = node2Id(targetNode) ?: error("Node '$targetNode' not found in graph")
-        return nrOfPaths(unweightedAdjacencyList, startId, targetId)
+        return nrOfPaths(unweightedAdjacencyList, startId, targetId, mod)
     }
 
     // PATH UTILITIES
