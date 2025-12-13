@@ -24,7 +24,7 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/maxDistance/#/PointingToDecla
 $dokka.location:graphMateKT.graphClasses/BaseGraph/minimumSpanningTree/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/minimum-spanning-tree.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/neighbours/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/neighbours.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nodes.html
-$dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfPaths/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nr-of-paths.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfPaths/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Long/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nr-of-paths.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/print/#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/removeEdge/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/remove-edge.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/resetSearchResults/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/reset-search-results.html
