@@ -231,14 +231,14 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
         connectGrid { getStraightNeighbours(it) }
     }
 
-    /** Print the content of the grid, tile by tile */
+    /** Print the content of the grid, tile by tile, to the standard error stream*/
     fun print() {
         val padding = nodes().maxOf { it.data.toString().length }
         nodes.forEachIndexed { id, t ->
             if (id > 0 && id % width == 0)
-                println()
-            print(String.format("%-${padding}s", t?.data ?: " "))
+                System.err.println()
+            System.err.print(String.format("%-${padding}s", t?.data ?: " "))
         }
-        println()
+        System.err.println()
     }
 }
