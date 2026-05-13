@@ -36,6 +36,10 @@ See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest 
 in [Bruno Silva](https://github.com/brunomnsilva)'s
 [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
+### Using the library in competitive programming platforms
+[GraphMateKTSingleFile.kt](LibraryUser/src/main/kotlin/GraphMateKTSingleFile.kt) to use the library code in your 
+solutions.
+
 ## The Graph class
 
 A Graph data structure supports nodes of any datatype.
