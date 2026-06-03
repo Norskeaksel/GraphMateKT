@@ -48,7 +48,7 @@ internal fun main() {
     val intGraph = IntGraph(n)
     // Add the same edges as the above Graph
     graph.nodes().forEach { fromNode ->
-        graph.edges(fromNode).forEach { edge ->
+        graph.forEachEdge(fromNode) { edge ->
             val weight = edge.first
             val toNode = edge.second as Int // Cast type Any to Int
             intGraph.addEdge(fromNode as Int, toNode, weight)

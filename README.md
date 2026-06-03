@@ -36,6 +36,12 @@ See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest 
 in [Bruno Silva](https://github.com/brunomnsilva)'s
 [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
+### Using the library in a single file.
+In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
+external dependencies. If that's your use case, or you don't want to download the dependency, you can copy get some of
+the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note, this file does not
+have the graph visualization functions, because they themselves require external dependencies.
+
 ## The Graph class
 
 A Graph data structure supports nodes of any datatype.
@@ -66,6 +72,8 @@ Once the graph is built, you may use the following graph algorithms:
 
 - **Prims (MST)**:
     - `minimumSpanningTree()`
+- **NrOfPaths**:
+  - `nrOfPaths(graph: UnweightedAdjacencyList, start: Int, target: Int, mod: Long)`
 
 [Example usage:](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
@@ -112,7 +120,7 @@ fun main() {
 
 
   /* --- Example IntGraph Definition ---
-       * An IntGraph can needs to be initialized with a fixed size, because it will consist of integer nodes from
+       An IntGraph can needs to be initialized with a fixed size, because it will consist of integer nodes from
        0 to size-1.
   */
 

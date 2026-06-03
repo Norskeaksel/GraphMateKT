@@ -421,6 +421,7 @@ abstract class BaseGraph<T : Any>(
      *
      * @param startNode The starting node.
      * @param targetNode The target node.
+     * @param mod Makes the function return the nrOfPaths modulo mod. Defaults to Long.MAX_VALUE
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
     fun nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE): Long {
