@@ -7,7 +7,7 @@ import graphMateKT.UnweightedAdjacencyList
 internal class DFS(private val graph: UnweightedAdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
-    fun dfs(
+    fun dfsDeep(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
@@ -29,7 +29,38 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
         return r
     }
 
-    fun stronglyConnectedComponents(deleted:BooleanArray = BooleanArray(graph.size)): IntComponents {
+    fun dfs(
+        start: Int,
+        initialSearchResults: GraphSearchResults? = null,
+    ): GraphSearchResults {
+        try {
+            r = initialSearchResults ?: GraphSearchResults(graph.size)
+            r.currentVisited = mutableListOf()
+            var currentDepth = 0
+
+            fun visit(id: Int) {
+                if (r.visited[id]) return
+                r.visited[id] = true
+                r.currentVisited.add(id)
+                r.depth = (++currentDepth).coerceAtLeast(r.depth)
+                graph[id].forEach { v ->
+                    r.parents[v] = id
+                    visit(v)
+                }
+                r.processedOrder.add(id)
+                currentDepth-- // Done with this node. Backtracking to previous one.
+            }
+
+            visit(start)
+            return r
+        }
+        catch (e: StackOverflowError) {
+            System.err.println("Normal dfc got a ${e.cause} trying again with deepRecursve Function")
+            return dfsDeep(start, initialSearchResults)
+        }
+    }
+
+    fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
         val reversedGraph: UnweightedAdjacencyList =
             MutableList<MutableList<Int>>(graph.size) { mutableListOf() }.apply {
                 graph.forEachIndexed { u, neighbors ->
@@ -49,9 +80,9 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
         return stronglyConnectedComponents
     }
 
-    fun topologicalSort(deleted:BooleanArray = BooleanArray(graph.size)): List<Int> {
+    fun topologicalSort(deleted: BooleanArray = BooleanArray(graph.size)): List<Int> {
         for (i in 0 until graph.size) {
-            if(deleted[i]) continue
+            if (deleted[i]) continue
             dfs(i, r)
         }
         return r.processedOrder//.reversed() //Reversed depending on the order

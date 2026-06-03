@@ -2,7 +2,6 @@ package graphMateKT.examples
 
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
-import java.math.BigInteger
 
 internal fun main() {
     val input = generateSequence { readlnOrNull() }.toList()

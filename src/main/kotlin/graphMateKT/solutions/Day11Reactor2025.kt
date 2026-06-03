@@ -2,7 +2,6 @@ package graphMateKT.solutions
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphGraphics.visualizeGraph
-import java.math.BigInteger
 
 internal fun main() {
     val input = generateSequence { readlnOrNull() }.toList()

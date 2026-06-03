@@ -1,7 +1,9 @@
 package graphMateKT.graphClasses
 
 import graphMateKT.AdjacencyList
+import graphMateKT.IntComponents
 import graphMateKT.UnweightedAdjacencyList
+import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
 import graphMateKT.graphAlgorithms.DFS
@@ -10,10 +12,14 @@ import graphMateKT.graphAlgorithms.FloydWarshall
 import graphMateKT.graphAlgorithms.GraphSearchResults
 import graphMateKT.toUnweightedAdjacencyList
 import graphMateKT.toWeightedAdjacencyList
-import java.math.BigInteger
+import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = true) {
+abstract class BaseGraph<T : Any>(
+    size: Int,
+    protected val isWeighted: Boolean = true,
+    private val debugTimeUse: Boolean = false
+) {
     // PROPERTIES AND INITIALIZATION
     protected val adjacencyList: AdjacencyList = MutableList(size) { mutableListOf() }
     protected var unweightedAdjacencyList: UnweightedAdjacencyList = MutableList(size) { mutableListOf() }
@@ -179,7 +185,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param t The node whose edges are to be retrieved.
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun edges(t: T): List<Pair<Double, T>> = if (isWeighted) weightedEdges(t)
+    open fun edges(t: T): List<Pair<Double, T>> = if (isWeighted) weightedEdges(t)
     else neighbours(t).map { 1.0 to it }
 
     private fun weightedEdges(t: T): List<Pair<Double, T>> =
@@ -191,7 +197,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun neighbours(t: T): List<T> =
+    open fun neighbours(t: T): List<T> =
         if (isWeighted) weightedEdges(t).map { it.second }
         else node2Id(t)?.let { unweightedAdjacencyList[it] }
             ?.map { id2Node(it)!! }
@@ -218,17 +224,22 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
-        useWeightedConnectionsIfNeeded("bfs")
-        val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
-        val targetId = target?.let { node2Id(it) } ?: -1
-        if (reset) searchResults = null
-        searchResults = BFS(unweightedAdjacencyList).bfs(startNodeIds, targetId, searchResults)
-        target?.let {
-            finalPath = getPath(it)
+        val time = measureTimeMillis {
+            useWeightedConnectionsIfNeeded("bfs")
+            val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
+            val targetId = target?.let { node2Id(it) } ?: -1
+            if (reset) searchResults = null
+            searchResults = BFS(unweightedAdjacencyList).bfs(startNodeIds, targetId, searchResults)
+            target?.let {
+                finalPath = getPath(it)
+            }
+        }
+        if (debugTimeUse) {
+            debug("bfs took $time ms.")
         }
     }
 
-    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node istead of a list
+    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node instead of a list
      * @returnRuns bfs(listOf(startNode), target, reset) */
     fun bfs(startNode: T, target: T? = null, reset: Boolean = true) = bfs(listOf(startNode), target, reset)
 
@@ -243,10 +254,15 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
-        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
-        if (reset) searchResults = null
-        useWeightedConnectionsIfNeeded("dfs")
-        searchResults = DFS(unweightedAdjacencyList).dfs(startId, searchResults)
+        val time = measureTimeMillis {
+            val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
+            if (reset) searchResults = null
+            useWeightedConnectionsIfNeeded("dfs")
+            searchResults = DFS(unweightedAdjacencyList).dfs(startId, searchResults)
+        }
+        if (debugTimeUse) {
+            debug("dfs took $time ms.")
+        }
     }
 
     /** Performs Dijkstra's algorithm, which finds the shortest path from the starting node to all other nodes. It
@@ -268,18 +284,23 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
      * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
     fun dijkstra(startNode: T, target: T? = null) {
-        if (nrOfConnections(adjacencyList) == 0) {
-            System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
-            if (nrOfConnections(unweightedAdjacencyList) != 0) {
-                System.err.println("The graph does have unweighted connections. Executing BFS instead.")
-                bfs(startNode, target)
-                return
+        val time = measureTimeMillis {
+            if (nrOfConnections(adjacencyList) == 0) {
+                System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
+                if (nrOfConnections(unweightedAdjacencyList) != 0) {
+                    System.err.println("The graph does have unweighted connections. Executing BFS instead.")
+                    bfs(startNode, target)
+                    return
+                }
+            }
+            val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
+            searchResults = Dijkstra(adjacencyList).dijkstra(startId, searchResults)
+            target?.let {
+                finalPath = getPath(it)
             }
         }
-        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
-        searchResults = Dijkstra(adjacencyList).dijkstra(startId, searchResults)
-        target?.let {
-            finalPath = getPath(it)
+        if (debugTimeUse) {
+            debug("dijkstra took $time ms.")
         }
     }
 
@@ -294,15 +315,19 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun floydWarshall() {
-        if (nrOfConnections(adjacencyList) == 0) {
-            System.err.println("Warning: The graph  has no weighted connections, making pathfinding infeasible.")
-            if (nrOfConnections(unweightedAdjacencyList) != 0) {
-                System.err.println("The graph does have unweighted connections. Using them for Floyd-Warshall.")
-                allDistances = FloydWarshall(unweightedAdjacencyList.toWeightedAdjacencyList()).floydWarshall()
+        val time = measureTimeMillis {
+            if (nrOfConnections(adjacencyList) == 0) {
+                System.err.println("Warning: The graph  has no weighted connections, making pathfinding infeasible.")
+                if (nrOfConnections(unweightedAdjacencyList) != 0) {
+                    System.err.println("The graph does have unweighted connections. Using them for Floyd-Warshall.")
+                    allDistances = FloydWarshall(unweightedAdjacencyList.toWeightedAdjacencyList()).floydWarshall()
+                }
+            } else {
+                allDistances = FloydWarshall(adjacencyList).floydWarshall()
             }
         }
-        else {
-            allDistances = FloydWarshall(adjacencyList).floydWarshall()
+        if (debugTimeUse) {
+            debug("floydWarshall took $time ms.")
         }
     }
 
@@ -326,9 +351,10 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      *
      * @return A pair containing the total weight of the MST and the graph representing the MST.
      * @throws IllegalStateException If the graph is empty or not fully connected. */
-    fun minimumSpanningTree(): Pair<Double, Graph> =
-        (if (isWeighted) adjacencyList else unweightedAdjacencyList.toWeightedAdjacencyList()).let { graph ->
-            return prims(graph).run {
+    fun minimumSpanningTree(): Pair<Double, Graph> {
+        val timeStart = System.currentTimeMillis()
+        val mst = (if (isWeighted) adjacencyList else unweightedAdjacencyList.toWeightedAdjacencyList()).let { graph ->
+            prims(graph).run {
                 first to second.let { adjacencyList ->
                     val mstGraph = Graph()
                     adjacencyList.forEachIndexed { id, edges ->
@@ -340,6 +366,12 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
                 }
             }
         }
+        val timeStop = System.currentTimeMillis()
+        if (debugTimeUse) {
+            debug("minimumSpanningTree took ${timeStop - timeStart} ms.")
+        }
+        return mst
+    }
 
     /** Builds an order of nodes so that the first nodes has no outgoing edges, then nodes with edges pointing to these
      * and so on, assuming the graph is a Directed Acyclic Graph (DAG). This is done by running a DFS from each node
@@ -348,8 +380,16 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @return A list of nodes in topological order if the graph was a DAG.
      * Otherwise, returns a list of nodes in undefined order */
     open fun topologicalSort(): List<T> {
-        val dfsGraph = if (isWeighted) adjacencyList.toUnweightedAdjacencyList() else unweightedAdjacencyList
-        return DFS(dfsGraph).topologicalSort().map { id2Node(it)!! }
+        val dfsGraph: MutableList<MutableList<Int>>
+        val topologicalSorting: List<T>
+        val time = measureTimeMillis {
+            dfsGraph = if (isWeighted) adjacencyList.toUnweightedAdjacencyList() else unweightedAdjacencyList
+            topologicalSorting = DFS(dfsGraph).topologicalSort().map { id2Node(it)!! }
+        }
+        if (debugTimeUse) {
+            debug("topologicalSort took $time ms.")
+        }
+        return topologicalSorting
     }
 
     /** Identifies groups where each node is reachable from every other node in the group.
@@ -361,9 +401,17 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      *
      * @return A list of strongly connected components, where each component is a list of nodes. */
     open fun stronglyConnectedComponents(): List<List<T>> {
-        useWeightedConnectionsIfNeeded("stronglyConnectedComponents")
-        val scc = DFS(unweightedAdjacencyList).stronglyConnectedComponents()
-        return scc.map { component -> component.map { id2Node(it)!! } }
+        val sccIds: IntComponents
+        val scc: List<List<T>>
+        val time = measureTimeMillis {
+            useWeightedConnectionsIfNeeded("stronglyConnectedComponents")
+            sccIds = DFS(unweightedAdjacencyList).stronglyConnectedComponents()
+            scc = sccIds.map { component -> component.map { id2Node(it)!! } }
+        }
+        if(debugTimeUse){
+            debug("stronglyConnectedComponents took $time ms.")
+        }
+        return scc
     }
 
     /** Calculates the number of distinct paths from the starting node to the target node in the graph.
@@ -375,14 +423,21 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
      * @param targetNode The target node.
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
-    fun nrOfPaths(startNode: T, targetNode: T, mod:Long = Long.MAX_VALUE): Long{
-        useWeightedConnectionsIfNeeded("nrOfPaths")
-        val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
-        val targetId = node2Id(targetNode) ?: error("Node '$targetNode' not found in graph")
-        return nrOfPaths(unweightedAdjacencyList, startId, targetId, mod)
+    fun nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE): Long {
+        val nrOfPaths:Long
+        val time = measureTimeMillis {
+            useWeightedConnectionsIfNeeded("nrOfPaths")
+            val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
+            val targetId = node2Id(targetNode) ?: error("Node '$targetNode' not found in graph")
+            nrOfPaths = nrOfPaths(unweightedAdjacencyList, startId, targetId, mod)
+        }
+        if(debugTimeUse){
+            debug("nrOfPaths took $time ms.")
+        }
+        return nrOfPaths
     }
 
-    // PATH UTILITIES
+// PATH UTILITIES
     /** Retrieves the path from the starting node to the specified target node based on the most recent search results.
      *
      * @param target The target node for which the path is to be retrieved.
@@ -409,7 +464,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
         return path.reversed()
     }
 
-    // HELPER FUNCTIONS
+// HELPER FUNCTIONS
     /** Clears the search results stored in the graph.
      *
      * The following functions rely on the `searchResults` property, which is populated by running a search algorithm
@@ -427,7 +482,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
         searchResults = GraphSearchResults(nodes.size)
     }
 
-    private fun useWeightedConnectionsIfNeeded(algorithmName: String) {
+    protected fun useWeightedConnectionsIfNeeded(algorithmName: String) {
         if (nrOfConnections(unweightedAdjacencyList) == 0) {
             unweightedAdjacencyList = adjacencyList.toUnweightedAdjacencyList()
             if (nrOfConnections(unweightedAdjacencyList) == 0) {
@@ -442,7 +497,7 @@ abstract class BaseGraph<T : Any>(size: Int, private val isWeighted: Boolean = t
 
     protected fun <T> nrOfConnections(twoDList: List<List<T>>) = twoDList.sumOf { it.size }
 
-    // PRINTER FUNCTIONS
+// PRINTER FUNCTIONS
     /** Prints the graph's adjacency list to the standard error stream.
      *
      * If the graph is weighted, it prints the weighted adjacency list, where each connection is represented

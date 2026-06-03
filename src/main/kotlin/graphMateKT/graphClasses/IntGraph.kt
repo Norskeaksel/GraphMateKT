@@ -1,5 +1,10 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.IntComponents
+import graphMateKT.debug
+import graphMateKT.graphAlgorithms.DFS
+import kotlin.system.measureTimeMillis
+
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
@@ -20,12 +25,13 @@ package graphMateKT.graphClasses
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later
  * @param isWeighted Indicates whether the graph uses weighted or unweighted edges. */
-class IntGraph(size: Int, isWeighted: Boolean = true) : BaseGraph<Int>(size, isWeighted) {
+class IntGraph(size: Int, isWeighted: Boolean = true, private val debugTimeUse: Boolean = false) : BaseGraph<Int>(size, isWeighted, debugTimeUse) {
     init {
         repeat(size) {
             nodes[it] = it
         }
     }
+    private val intNodes = (0 until size).toList()
 
     override fun addNode(node: Int) =
         error("IntGraph doesn't support addNode(), because nodes are defined by the IntGraph size")
@@ -40,6 +46,18 @@ class IntGraph(size: Int, isWeighted: Boolean = true) : BaseGraph<Int>(size, isW
 
     override fun id2Node(id: Int) = id
     override fun node2Id(node: Int) = node
-    override fun nodes(): List<Int> = adjacencyList.indices.toList()
-
+    override fun nodes() = intNodes
+    override fun neighbours(t:Int) = if(isWeighted) adjacencyList[t].map { it.second } else unweightedAdjacencyList[t]
+    override fun edges(t:Int) = if (isWeighted) adjacencyList[t] else neighbours(t).map { 1.0 to it }
+    override fun stronglyConnectedComponents(): IntComponents {
+        val scc: IntComponents
+        val time = measureTimeMillis {
+            useWeightedConnectionsIfNeeded("stronglyConnectedComponents")
+            scc = DFS(unweightedAdjacencyList).stronglyConnectedComponents()
+        }
+        if(debugTimeUse){
+            debug("stronglyConnectedComponents took $time ms.")
+        }
+        return scc
+    }
 }
