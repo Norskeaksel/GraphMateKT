@@ -1,19 +1,20 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.AdjacencyList
 import graphMateKT.Edge
+import graphMateKT.Edges
+import graphMateKT.graphClasses.AdjacencyList
 import java.util.*
 
-internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
+internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
     if (graph.size == 0) error("The graph is empty. Cannot do minimumSpanningTree")
 
     val visited = BooleanArray(graph.size)
-    val connections: AdjacencyList = MutableList(graph.size) { mutableListOf() }
+    val connections = MutableList<Edges>(graph.size) { mutableListOf() }
     val pq = PriorityQueue<Triple<Double, Int, Int>> { a, b -> a.first.compareTo(b.first) }
     var totalWeight = 0.0
 
     visited[0] = true
-    graph[0].forEach { (weight, to) ->
+    graph.getEdges(0).forEach { (weight, to) ->
         pq.add(Triple(weight, 0, to))
     }
     var c = 0
@@ -28,7 +29,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
         connections[u].add(Edge(w, v))
         connections[v].add(Edge(w, u))
 
-        graph[v].forEach { (weight, next) ->
+        graph.getEdges(v).forEach { (weight, next) ->
             if (!visited[next]) {
                 pq.add(Triple(weight, v, next))
             }

@@ -5,22 +5,13 @@ internal typealias Edge = Pair<Double, Int>
 /** List of edges */
 internal typealias Edges = MutableList<Edge>
 /** Used to represent a weighted graph */
-internal typealias AdjacencyList = MutableList<Edges>
-/** Used to represent an unweighted graph */
-internal typealias UnweightedAdjacencyList = MutableList<MutableList<Int>>
 
 /** List of list of nodes */
 internal typealias Components = List<List<Any>>
 /** List of list of integer nodes */
 internal typealias IntComponents = List<List<Int>>
 
-/** Replaces the edges with just the destination nodes */
-internal fun AdjacencyList.toUnweightedAdjacencyList() = map { edges -> edges.map { it.second }.toMutableList() }.toMutableList()
-/** Replaces the destination nodes with edges of weight 1.0 */
-internal fun UnweightedAdjacencyList.toWeightedAdjacencyList() =
-    map { edges -> edges.map { 1.0 to it }.toMutableList() }.toMutableList()
-/** Returns a new, independent, identical AdjacencyList */
-internal fun AdjacencyList.deepCopy() = map { it.toMutableList() }.toMutableList()
+// internal fun AdjacencyList.deepCopy() = map { it.toMutableList() }.toMutableList()
 
 /** Represents a node in the Grid graph with x and y coordinates and optional data, which can be considered the node value
  *

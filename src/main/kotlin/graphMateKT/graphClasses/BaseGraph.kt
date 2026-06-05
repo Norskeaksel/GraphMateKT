@@ -1,8 +1,6 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.AdjacencyList
 import graphMateKT.IntComponents
-import graphMateKT.UnweightedAdjacencyList
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
@@ -10,8 +8,6 @@ import graphMateKT.graphAlgorithms.DFS
 import graphMateKT.graphAlgorithms.Dijkstra
 import graphMateKT.graphAlgorithms.FloydWarshall
 import graphMateKT.graphAlgorithms.GraphSearchResults
-import graphMateKT.toUnweightedAdjacencyList
-import graphMateKT.toWeightedAdjacencyList
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
@@ -21,9 +17,7 @@ abstract class BaseGraph<T : Any>(
     private val debugTimeUse: Boolean = false
 ) {
     // PROPERTIES AND INITIALIZATION
-    protected val adjacencyList: AdjacencyList = MutableList(size) { mutableListOf() }
-    protected var unweightedAdjacencyList: UnweightedAdjacencyList = MutableList(size) { mutableListOf() }
-
+    protected lateinit var adjacencyList: AdjacencyList
     protected var nodes: MutableList<T?> = MutableList(size) { null }
     private var searchResults: GraphSearchResults? = null
     private var finalPath: List<T>? = null
@@ -35,6 +29,7 @@ abstract class BaseGraph<T : Any>(
     abstract fun addNode(node: T)
     protected abstract fun addWeightedEdge(node1: T, node2: T, weight: Double)
     protected abstract fun addUnweightedEdge(node1: T, node2: T)
+    protected abstract fun removeEdge(id1: Int, id2: Int)
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
 
@@ -91,11 +86,6 @@ abstract class BaseGraph<T : Any>(
         val u = node2Id(node1) ?: error("Node '$node1' not found in graph")
         val v = node2Id(node2) ?: error("Node '$node2' not found in graph")
         removeEdge(u, v)
-    }
-
-    private fun removeEdge(id1: Int, id2: Int) {
-        if (isWeighted) adjacencyList[id1].removeAll { it.second == id2 }
-        else unweightedAdjacencyList[id1].remove(id2)
     }
 
     // GRAPH INFORMATION

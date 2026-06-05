@@ -1,11 +1,11 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.UnweightedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyList
 
-internal fun dfsSimple(graph: UnweightedAdjacencyList, start: Int, currentVisited: MutableSet<Int> = mutableSetOf()): Set<Int> {
+internal fun dfsSimple(graph: AdjacencyList, start: Int, currentVisited: MutableSet<Int> = mutableSetOf()): Set<Int> {
     if (start !in currentVisited) {
         currentVisited.add(start)
-        graph[start].forEach { neighbour ->
+        graph.getNeighbours(start).forEach { neighbour ->
             dfsSimple(graph, neighbour, currentVisited)
         }
     }

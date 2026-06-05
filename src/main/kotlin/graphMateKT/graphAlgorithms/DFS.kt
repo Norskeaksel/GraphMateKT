@@ -1,10 +1,11 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.IntComponents
-import graphMateKT.UnweightedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyList
+import graphMateKT.graphClasses.NestedAdjacencyList
 
 
-internal class DFS(private val graph: UnweightedAdjacencyList) {
+internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
     fun dfsDeep(
@@ -19,7 +20,7 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
             r.visited[id] = true
             r.currentVisited.add(id)
             r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph[id].forEach { v ->
+            graph.getNeighbours(id).forEach { v ->
                 r.parents[v] = id
                 this.callRecursive(v)
             }
@@ -43,7 +44,7 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
                 r.visited[id] = true
                 r.currentVisited.add(id)
                 r.depth = (++currentDepth).coerceAtLeast(r.depth)
-                graph[id].forEach { v ->
+                graph.getNeighbours(id).forEach { v ->
                     r.parents[v] = id
                     visit(v)
                 }
@@ -61,15 +62,7 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
     }
 
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
-        val reversedGraph: UnweightedAdjacencyList =
-            MutableList<MutableList<Int>>(graph.size) { mutableListOf() }.apply {
-                graph.forEachIndexed { u, neighbors ->
-                    neighbors.forEach { v ->
-                        this[v].add(u)
-                    }
-                }
-            }
-        val topologicalOrder = DFS(reversedGraph).topologicalSort(deleted).reversed()
+        val topologicalOrder = DFS(graph.reversed()).topologicalSort(deleted).reversed()
         val stronglyConnectedComponents: IntComponents = topologicalOrder.mapNotNull { id ->
             if (r.visited[id]) null
             else {

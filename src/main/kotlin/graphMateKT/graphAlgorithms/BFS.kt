@@ -1,8 +1,9 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.UnweightedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyList
 
-internal class BFS(private val graph: UnweightedAdjacencyList) {
+
+internal class BFS(private val graph: AdjacencyList) {
     fun bfs(
         startIds: List<Int>,
         targetId: Int = -1,
@@ -23,7 +24,7 @@ internal class BFS(private val graph: UnweightedAdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.unweightedDistances[currentId]
-            graph[currentId].forEach { v ->
+            graph.getNeighbours(currentId).forEach { v ->
                 val newDistance = currentDistance + 1
                 if ((!r.visited[v] && newDistance < r.unweightedDistances[v]) || v == targetId) {
                     r.parents[v] = currentId
