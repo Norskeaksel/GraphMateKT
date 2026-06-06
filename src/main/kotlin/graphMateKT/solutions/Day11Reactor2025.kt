@@ -1,7 +1,6 @@
 package graphMateKT.solutions
 
 import graphMateKT.graphClasses.Graph
-import graphMateKT.graphGraphics.visualizeGraph
 
 internal fun main() {
     val input = generateSequence { readlnOrNull() }.toList()
@@ -12,7 +11,7 @@ internal fun main() {
 
 /** Solves https://adventofcode.com/2025/day/11 */
 internal fun Day11Reactor2025Part1(input: List<String>): Long {
-    val g = Graph(false)
+    val g = Graph()
     input.forEach { line ->
         val (from, to) = line.split(": ")
         to.split(" ").forEach { neighbor ->
@@ -24,7 +23,7 @@ internal fun Day11Reactor2025Part1(input: List<String>): Long {
 
 /** https://adventofcode.com/2025/day/11#part2 */
 internal fun Day11Reactor2025Part2(input: List<String>): Long {
-    val g = Graph(false)
+    val g = Graph()
     val start = "svr"
     val dac = "dac"
     val fft = "fft"

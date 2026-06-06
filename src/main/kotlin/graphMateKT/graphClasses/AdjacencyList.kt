@@ -13,9 +13,10 @@ interface AdjacencyList {
     fun reversed(): AdjacencyList
 }
 
-class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>) : AdjacencyList {
+class NestedAdjacencyList(val adjacencyList: MutableList<Edges>) : AdjacencyList {
 
     override fun nodes() = IntArray(adjacencyList.size) { it }
+
     override fun getNeighbours(node: Int): IntArray = adjacencyList[node].let { neighbours ->
         IntArray(neighbours.size) { i -> neighbours[i].second }
     }

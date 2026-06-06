@@ -19,7 +19,7 @@ import graphMateKT.graphClasses.Graph
  * val scc = graph.stronglyConnectedComponents()
  * scc.visualizeComponents() */
 fun Components.visualizeComponents() {
-    val sccGraph = Graph(false)
+    val sccGraph = Graph()
     forEach { component ->
         component.indices.forEach { i ->
             component.let { c ->

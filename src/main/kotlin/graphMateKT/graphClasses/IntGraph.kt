@@ -25,7 +25,10 @@ import kotlin.system.measureTimeMillis
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later
  * @param isWeighted Indicates whether the graph uses weighted or unweighted edges. */
-class IntGraph(size: Int, isWeighted: Boolean = true, private val debugTimeUse: Boolean = false) : BaseGraph<Int>(size, isWeighted, debugTimeUse) {
+class IntGraph(size: Int, isWeighted: Boolean = true, private val debugTimeUse: Boolean = false) : BaseGraph<Int>(
+    size,
+    debugTimeUse
+) {
     init {
         repeat(size) {
             nodes[it] = it
@@ -36,7 +39,7 @@ class IntGraph(size: Int, isWeighted: Boolean = true, private val debugTimeUse: 
     override fun addNode(node: Int) =
         error("IntGraph doesn't support addNode(), because nodes are defined by the IntGraph size")
 
-    override fun addWeightedEdge(node1: Int, node2: Int, weight: Double) {
+    override fun addEdge(node1: Int, node2: Int, weight: Double) {
         adjacencyList[node1].add(weight to node2)
     }
 

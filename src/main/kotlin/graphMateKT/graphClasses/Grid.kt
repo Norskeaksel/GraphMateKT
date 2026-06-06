@@ -50,7 +50,7 @@ import graphMateKT.graphAlgorithms.DFS
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
  * @param isWeighted Indicates whether the grid uses weighted or unweighted edges. */
 class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
-    BaseGraph<Tile>(width * height, isWeighted, debugTimeUse) {
+    BaseGraph<Tile>(width * height, debugTimeUse) {
     /** Construct the grid from a list of strings, where each string represents a row in the grid.
      *
      * Sets the grid height to the list size and the width to the length of the first string.
@@ -90,7 +90,7 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
 
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
 
-    override fun addWeightedEdge(node1: Tile, node2: Tile, weight: Double) {
+    override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
         adjacencyList[u].add(Edge(weight, v))
