@@ -15,7 +15,7 @@ class, which defines the basic functionality of the graphs.
 
 ## Documentation
 
-[![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT  )
+[![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT  ) <-- Link to the documentation.
 
 ## Using the library
 
