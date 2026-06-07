@@ -47,9 +47,8 @@ import graphMateKT.graphAlgorithms.DFS
  *
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
- * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
- * @param isWeighted Indicates whether the grid uses weighted or unweighted edges. */
-class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
+ * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
+class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(width * height, debugTimeUse) {
     /** Construct the grid from a list of strings, where each string represents a row in the grid.
      *

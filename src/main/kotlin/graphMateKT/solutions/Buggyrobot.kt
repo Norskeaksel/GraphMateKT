@@ -34,7 +34,7 @@ internal fun  buggyrobot(): String {
     //// debug("nedWidth = $newWidth")
     var grid: Grid
     val gridMakeingTime = measureTimeMillis {
-        grid = Grid(height = height, width = newWidth)
+        grid = Grid(width = newWidth, height = height)
         repeat(height) { y ->
             repeat(newWidth) { x ->
                 val node = Tile(x, y, rows[y][x % width])

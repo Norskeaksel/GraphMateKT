@@ -13,7 +13,7 @@ interface AdjacencyList {
     fun reversed(): AdjacencyList
 }
 
-class NestedAdjacencyList(val adjacencyList: MutableList<Edges>) : AdjacencyList {
+class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>) : AdjacencyList {
 
     override fun nodes() = IntArray(adjacencyList.size) { it }
 
@@ -34,8 +34,8 @@ class NestedAdjacencyList(val adjacencyList: MutableList<Edges>) : AdjacencyList
     )
 }
 
-class FlatAdjacencyList(
-    private val flattendAdjacencyList: IntArray,
+class FlattenedAdjacencyList(
+    private val flattenedAdjacencyList: IntArray,
     private val starts: IntArray,
     private val ends: IntArray,
     private val weights: DoubleArray,
@@ -45,17 +45,17 @@ class FlatAdjacencyList(
     override fun getNeighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
-        return flattendAdjacencyList.sliceArray(start until end)
+        return flattenedAdjacencyList.sliceArray(start until end)
     }
 
     override fun getEdges(node: Int): Edges {
         val start = starts[node]
         val end = ends[node]
-        return MutableList(end - start) { i -> Edge(weights[start + i], flattendAdjacencyList[start + i])}
+        return MutableList(end - start) { i -> Edge(weights[start + i], flattenedAdjacencyList[start + i])}
     }
 
-    override fun deepCopy(): AdjacencyList = FlatAdjacencyList(
-        flattendAdjacencyList.copyOf(),
+    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(
+        flattenedAdjacencyList.copyOf(),
         starts.copyOf(),
         ends.copyOf(),
         weights.copyOf(),

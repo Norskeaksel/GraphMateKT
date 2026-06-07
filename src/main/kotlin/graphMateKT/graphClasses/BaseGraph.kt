@@ -11,14 +11,11 @@ import graphMateKT.graphAlgorithms.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(
-    size: Int,
-    private val debugTimeUse: Boolean = false
-) {
+abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
-    protected var nodes: MutableList<T?> = MutableList(size) { null }
     protected var nrOfEdges = 0
+    protected var adjacencyListNotFinalized = true
     private var searchResults: GraphSearchResults? = null
     private var finalPath: List<T>? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -27,19 +24,28 @@ abstract class BaseGraph<T : Any>(
     /** Adds the given node to the graph
      * @param node The node to add */
     abstract fun addNode(node: T)
-    abstract fun addEdge(node1: T, node2: T, weight: Double)
-    protected abstract fun node2Id(node: T): Int?
-    protected abstract fun id2Node(id: Int): T?
 
-    /** @return the nodes in the graph */
-    abstract fun nodes(): List<T>
+    /** Adds an unweighted edge between two nodes in the graph, and creates the nodes if they don't exist.
+     *
+     * @param node1 The starting node of the edge.
+     * @param node2 The ending node of the edge. */
+    abstract fun addEdge(node1: T, node2: T)
 
-    // CORE GRAPH OPERATIONS
     /** Adds an edge between two nodes in the graph, and creates the nodes if they don't exist.
      *
      * @param node1 The starting node of the edge.
      * @param node2 The ending node of the edge.
-     * @param weight The weight of the edge. Defaults to `1.0`. */
+     * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
+    abstract fun addEdge(node1: T, node2: T, weight: Double)
+
+    /** @return the nodes in the graph */
+    abstract fun nodes(): List<T>
+    protected abstract fun node2Id(node: T): Int?
+    protected abstract fun id2Node(id: Int): T?
+    protected abstract fun finalizeAdjacencyList()
+
+    // CORE GRAPH OPERATIONS
+
 
     /** @return The total number of nodes in the graph. */
     fun size() = nodes().size
@@ -120,6 +126,14 @@ abstract class BaseGraph<T : Any>(
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
 
 
+    private inline fun withAdjacencyList(func: () -> Unit) {
+        if (adjacencyListNotFinalized) {
+            finalizeAdjacencyList()
+            adjacencyListNotFinalized = false
+        }
+        func()
+    }
+
     /** Retrieves a list of edges connected to the specified node.
      *
      * Each edge is represented as a pair, where the first element is the weight of the edge
@@ -128,7 +142,7 @@ abstract class BaseGraph<T : Any>(
      * @param t The node whose edges are to be retrieved.
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    open fun edges(t: T): List<Pair<Double, T>> =
+    fun edges(t: T): List<Pair<Double, T>> =
         node2Id(t)?.let { adjacencyList.getEdges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
             ?: error("Node $t not found in graph")
 
@@ -402,7 +416,7 @@ abstract class BaseGraph<T : Any>(
      * - `maxDistance()`:
      * - `furthestNode()`: */
     fun resetSearchResults() {
-        searchResults = GraphSearchResults(nodes.size)
+        searchResults = GraphSearchResults(nodes().size)
     }
 
 // PRINTER FUNCTIONS
@@ -411,8 +425,17 @@ abstract class BaseGraph<T : Any>(
         System.err.println("$it ---> ${edges(it)}")
     }
 
-    /** Prints which nodes each node is connected to. */
-    fun printConnections() = nodes().forEach {
-        System.err.println("$it ---> ${edges(it)}")
+    /** Returns a string representation of the graph, showing which nodes each node is connected to. */
+    override fun toString(): String {
+        return buildString {
+            nodes().forEach { node ->
+                val edges = edges(node)
+                val edgeString = edges.joinToString { it.second.toString() }
+                append("$node ----> [$edgeString]\n")
+            }
+        }
     }
+
+    /** Prints which nodes each node is connected to. */
+    fun printConnections() = System.err.println(toString())
 }
