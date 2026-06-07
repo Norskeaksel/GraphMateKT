@@ -14,7 +14,7 @@ import kotlin.system.measureTimeMillis
 abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
-    protected var nrOfEdges = 0
+    protected var edgesCount = 0
     protected var adjacencyListNotFinalized = true
     private var searchResults: GraphSearchResults? = null
     private var finalPath: List<T>? = null
@@ -38,6 +38,11 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
     abstract fun addEdge(node1: T, node2: T, weight: Double)
 
+    /** Overloaded function that calls addEdge with weight converted to a double. */
+    fun addEdge(node1: T, node2: T, weight: Int) {
+        addEdge(node1, node2, weight.toDouble())
+    }
+
     /** @return the nodes in the graph */
     abstract fun nodes(): List<T>
     protected abstract fun node2Id(node: T): Int?
@@ -46,16 +51,33 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
 
     // CORE GRAPH OPERATIONS
 
-
     /** @return The total number of nodes in the graph. */
     fun size() = nodes().size
+
+    /** @return The total number of edges in the graph. */
+    fun nrOfEdges() = edgesCount
+
+    /** Connects two nodes in the graph, by calling addEdge(node1,node2) and addEdge(node2, node1)
+     *
+     * @param node1 The first node to connect.
+     * @param node2 The second node to connect. */
+    fun connect(node1: T, node2: T) {
+        addEdge(node1, node2)
+        addEdge(node2, node1)
+    }
 
     /** Connects two nodes in the graph, by calling addEdge(node1,node2, weight) and addEdge(node2, node1, weight)
      *
      * @param node1 The first node to connect.
      * @param node2 The second node to connect.
-     * @param weight The weight of the connection. Defaults to `1.0`. */
-    fun connect(node1: T, node2: T, weight: Double = 1.0) {
+     * @param weight The weight of the connection. */
+    fun connect(node1: T, node2: T, weight: Double) {
+        addEdge(node1, node2, weight)
+        addEdge(node2, node1, weight)
+    }
+
+    /** Overloaded function that calls connect with weight converted to a double. */
+    fun connect(node1: T, node2: T, weight: Int) {
         addEdge(node1, node2, weight)
         addEdge(node2, node1, weight)
     }
@@ -126,12 +148,11 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
 
 
-    private inline fun withAdjacencyList(func: () -> Unit) {
+    private fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListNotFinalized) {
             finalizeAdjacencyList()
-            adjacencyListNotFinalized = false
         }
-        func()
+        adjacencyListNotFinalized = false
     }
 
     /** Retrieves a list of edges connected to the specified node.
@@ -142,18 +163,21 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @param t The node whose edges are to be retrieved.
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun edges(t: T): List<Pair<Double, T>> =
+    fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
         node2Id(t)?.let { adjacencyList.getEdges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
             ?: error("Node $t not found in graph")
+    }
 
     /** Retrieves a list the neighboring nodes of the specified node.
      *
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    open fun neighbours(t: T): List<T> = node2Id(t)?.let { adjacencyList.getNeighbours(it) }
-        ?.map { id2Node(it)!! }
-        ?: error("Node '$t' not found in graph")
+    open fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
+        node2Id(t)?.let { adjacencyList.getNeighbours(it) }
+            ?.map { id2Node(it)!! }
+            ?: error("Node '$t' not found in graph")
+    }
 
     // SEARCH ALGORITHMS
 
@@ -176,6 +200,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
+        finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
             val targetId = target?.let { node2Id(it) } ?: -1
@@ -205,6 +230,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
+        finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
             if (reset) searchResults = null
@@ -234,8 +260,9 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
      * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
     fun dijkstra(startNode: T, target: T? = null) {
+        finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
-            if (nrOfEdges == 0) {
+            if (edgesCount == 0) {
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
@@ -260,8 +287,9 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun floydWarshall() {
+        finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
-            if (nrOfEdges == 0) {
+            if (edgesCount == 0) {
                 System.err.println("Warning: The graph has no edges, making pathfinding infeasible.")
             } else {
                 allDistances = FloydWarshall(adjacencyList).floydWarshall()
@@ -293,6 +321,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return A pair containing the total weight of the MST and the graph representing the MST.
      * @throws IllegalStateException If the graph is empty or not fully connected. */
     fun minimumSpanningTree(): Pair<Double, Graph> {
+        finalizeAdjacencyListIfNeeded()
         val timeStart = System.currentTimeMillis()
         val mst = prims(adjacencyList).run {
             first to second.let { adjacencyList ->
@@ -319,7 +348,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return A list of nodes in topological order if the graph was a DAG.
      * Otherwise, returns a list of nodes in undefined order */
     open fun topologicalSort(): List<T> {
-        val dfsGraph: MutableList<MutableList<Int>>
+        finalizeAdjacencyListIfNeeded()
         val topologicalSorting: List<T>
         val time = measureTimeMillis {
             topologicalSorting = DFS(adjacencyList).topologicalSort().map { id2Node(it)!! }
@@ -339,6 +368,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      *
      * @return A list of strongly connected components, where each component is a list of nodes. */
     open fun stronglyConnectedComponents(): List<List<T>> {
+        finalizeAdjacencyListIfNeeded()
         val sccIds: IntComponents
         val scc: List<List<T>>
         val time = measureTimeMillis {
@@ -362,6 +392,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
     fun nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE): Long {
+        finalizeAdjacencyListIfNeeded()
         val nrOfPaths: Long
         val time = measureTimeMillis {
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
@@ -421,7 +452,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
 
 // PRINTER FUNCTIONS
     /** Prints the graph's adjacency list to the standard error stream. */
-    fun print() = nodes().forEach {
+    open fun print() = nodes().forEach {
         System.err.println("$it ---> ${edges(it)}")
     }
 

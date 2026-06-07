@@ -6,7 +6,7 @@ import graphMateKT.readInts
 /** Solves https://codeforces.com/problemset/problem/893/C */
 internal fun rumor(): Long {
     val (n, m) = readInts(2)
-    val g = IntGraph(n+1, false)
+    val g = IntGraph(n+1, m * 2)
     val c = listOf(0) + readInts(n)
     repeat(m) {
         val (x, y) = readInts(2)

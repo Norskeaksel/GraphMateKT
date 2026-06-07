@@ -6,7 +6,6 @@ import graphMateKT.readInts
 import kotlin.math.min
 
 
-
 internal fun main() {
     val ans = baas()
     println(ans)
@@ -14,11 +13,12 @@ internal fun main() {
 }
 
 /** Solves https://open.kattis.com/problems/baas
-*  Note, this solution is close to the time limit. To make it pass, the submitted solution must cut away all library
-*  functions that's not needed. */
+ *  Note, this solution is close to the time limit. To make it pass, the submitted solution must cut away all library
+ *  functions that's not needed. */
 internal fun baas(): Int {
     val n = readInt()
-    val intGraph = IntGraph(n, false)
+    val nrOfEdges = n * (n - 1)
+    val intGraph = IntGraph(n, nrOfEdges)
     val stepTime = readInts(n)
     repeat(n) { step_i ->
         val c_i = readInt()

@@ -13,7 +13,7 @@ internal fun  main() {
 /** Solves https://codeforces.com/problemset/problem/20/C */
 internal fun  dijkstraCF(): List<Int> {
     val (n, m) = readInts(2)
-    val g = IntGraph(n+1)
+    val g = IntGraph(n+1, m * 2)
     repeat(m) {
         val (u, v, w) = readInts(3)
         g.connect(u, v, w.toDouble())

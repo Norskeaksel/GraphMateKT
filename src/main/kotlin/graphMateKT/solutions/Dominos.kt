@@ -16,7 +16,7 @@ internal fun dominos(): String {
     val ans = StringBuilder()
     repeat(c) {
         val (n, m) = readInts(2)
-        val graph = IntGraph(n, false, true)
+        val graph = IntGraph(n, m, true)
         repeat(m) {
             val (u, v) = readInts(2)
             graph.addEdge(u - 1, v - 1)

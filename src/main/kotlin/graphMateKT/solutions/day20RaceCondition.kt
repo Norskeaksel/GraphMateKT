@@ -1,4 +1,4 @@
-package graphMateKT.solutions
+/*package graphMateKT.solutions
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
@@ -42,4 +42,4 @@ private fun gridWithoutCheatPath(path: List<Tile>, grid: Grid): Grid {
     val cheatPath = findPortals(path, grid) ?: return grid
     grid.removeEdge(cheatPath.first(), cheatPath.last())
     return grid
-}
+}*/

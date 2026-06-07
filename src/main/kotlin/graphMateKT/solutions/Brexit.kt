@@ -12,7 +12,7 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/brexit */
 internal fun brexit(): String {
     val (c, p, x, l) = readInts(4)
-    val g = IntGraph(c + 1, false)
+    val g = IntGraph(c + 1, p * 2)
     repeat(p) {
         val (u, v) = readInts(2)
         g.connect(u, v)

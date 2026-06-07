@@ -18,9 +18,9 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/bigtruck */
 internal fun bigtruck(): String {
     val n = readInt()
-    val ig = IntGraph(n + 1)
     val items = listOf(0) + readString().split(" ").map { it.toInt() }
     val m = readInt()
+    val ig = IntGraph(n + 1, m * 2)
     repeat(m) {
         val (a, b, d) = readInts(3)
         ig.addEdge(a, b, d - ITEM_BOOST * items[b])

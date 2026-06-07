@@ -40,12 +40,11 @@ internal fun main() {
 
 
     /* --- Example IntGraph Definition ---
-         * An IntGraph can needs to be initialized with a fixed size, because it will consist of integer nodes from
-         0 to size-1.
+         * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consiste of nodes from 0 to size-1.
     */
 
     val n = graph.size()
-    val intGraph = IntGraph(n)
+    val intGraph = IntGraph(n, graph.nrOfEdges())
     // Add the same edges as the above Graph
     graph.nodes().forEach { fromNode ->
         graph.forEachEdge(fromNode) { edge ->
