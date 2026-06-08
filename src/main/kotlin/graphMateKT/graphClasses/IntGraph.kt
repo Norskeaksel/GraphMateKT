@@ -1,5 +1,10 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.IntComponents
+import graphMateKT.debug
+import graphMateKT.graphAlgorithms.DFS
+import kotlin.system.measureTimeMillis
+
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
@@ -21,7 +26,7 @@ package graphMateKT.graphClasses
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.
  * @param nrOfEdges The number of edges in the graph. This cannot be altered later. */
-class IntGraph(private val size: Int, nrOfEdges: Int = size * (size - 1), debugTimeUse: Boolean = false) :
+class IntGraph(private val size: Int, private val nrOfEdges: Int = size * size, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(debugTimeUse) {
 
     private val nodes = IntArray(size) { it }
@@ -56,6 +61,7 @@ class IntGraph(private val size: Int, nrOfEdges: Int = size * (size - 1), debugT
         error("IntGraph doesn't support addNode(), because nodes are set on initialization.")
 
     override fun addEdge(node1: Int, node2: Int, weight: Double) {
+        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
         from[edgesCount] = node1
         to[edgesCount] = node2
         weights[edgesCount] = weight
@@ -64,6 +70,7 @@ class IntGraph(private val size: Int, nrOfEdges: Int = size * (size - 1), debugT
     }
 
     override fun addEdge(node1: Int, node2: Int) {
+        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
         from[edgesCount] = node1
         to[edgesCount] = node2
         nrOfEdgesFrom[node1]++
@@ -73,4 +80,15 @@ class IntGraph(private val size: Int, nrOfEdges: Int = size * (size - 1), debugT
     override fun id2Node(id: Int) = id
     override fun node2Id(node: Int) = node
     override fun nodes() = nodes.toList()
+    override fun stronglyConnectedComponents(): IntComponents {
+        finalizeAdjacencyListIfNeeded()
+        val scc: IntComponents
+        val time = measureTimeMillis {
+            scc = DFS(adjacencyList).stronglyConnectedComponents()
+        }
+        if (debugTimeUse) {
+            debug("stronglyConnectedComponents took $time ms.")
+        }
+        return scc
+    }
 }

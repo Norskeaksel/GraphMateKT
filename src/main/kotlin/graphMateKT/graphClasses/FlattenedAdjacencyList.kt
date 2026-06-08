@@ -31,10 +31,24 @@ internal class FlattenedAdjacencyList(
     )
 
     override val size get() = starts.size
-    override fun reversed(): AdjacencyList = FlattenedAdjacencyList(
-        flattenedAdjacencyList.reversedArray(),
-        starts.reversedArray(),
-        ends.reversedArray(),
-        flattenedWeights.reversedArray()
-    )
+    override fun reversed(): AdjacencyList {
+        val revStarts = IntArray(size)
+        val revEnds = IntArray(size)
+        flattenedAdjacencyList.forEach { revEnds[it]++ }
+        for (i in 1 until size) revStarts[i] = revStarts[i - 1] + revEnds[i - 1]
+        for (i in 0 until size) revEnds[i] += revStarts[i]
+
+        val revAdj = IntArray(flattenedAdjacencyList.size)
+        val revW = DoubleArray(flattenedWeights.size)
+        val next = revStarts.copyOf()
+        repeat(size) { u ->
+            for (idx in starts[u] until ends[u]) {
+                val v = flattenedAdjacencyList[idx]
+                val at = next[v]++
+                revAdj[at] = u
+                revW[at] = flattenedWeights[idx]
+            }
+        }
+        return FlattenedAdjacencyList(revAdj, revStarts, revEnds, revW)
+    }
 }

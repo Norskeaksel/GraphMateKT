@@ -46,6 +46,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         val id1 = getOrAddNodeId(node1)
         val id2 = getOrAddNodeId(node2)
         localAdjacencyList[id1].add(weight to id2)
+        edgesCount++
         adjacencyListNotFinalized = true
     }
 

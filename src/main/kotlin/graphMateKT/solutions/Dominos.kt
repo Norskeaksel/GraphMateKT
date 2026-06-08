@@ -1,24 +1,27 @@
 package graphMateKT.solutions
 
+import InputReader
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.readInt
-import graphMateKT.readInts
+import java.io.InputStream
 
 internal fun main() {
-    val ans = dominos()
+    val ans = dominos(System.`in`)
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/dominos */
-internal fun dominos(): String {
-    val c = readInt()
+internal fun dominos(inputStream: InputStream): String {
+    val scanner = InputReader(inputStream)
+    val c = scanner.nextInt()
     val ans = StringBuilder()
     repeat(c) {
-        val (n, m) = readInts(2)
+        val n = scanner.nextInt()
+        val m = scanner.nextInt()
         val graph = IntGraph(n, m, true)
         repeat(m) {
-            val (u, v) = readInts(2)
+            val u = scanner.nextInt()
+            val v = scanner.nextInt()
             graph.addEdge(u - 1, v - 1)
         }
         val components = graph.stronglyConnectedComponents()

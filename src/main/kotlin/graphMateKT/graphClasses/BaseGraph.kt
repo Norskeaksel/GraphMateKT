@@ -11,7 +11,7 @@ import graphMateKT.graphAlgorithms.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
+abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
@@ -148,7 +148,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
 
 
-    private fun finalizeAdjacencyListIfNeeded() {
+    protected fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListNotFinalized) {
             finalizeAdjacencyList()
         }
@@ -311,7 +311,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @throws IllegalStateException If the Floyd-Warshall algorithm has not been executed before calling this function. */
     fun distanceFromUtoV(u: T, v: T) = allDistances?.let {
         it[node2Id(u)!!][node2Id(v)!!]
-    } ?: error("FloydWarshall must be run before calling distanceFromUtoV")
+    } ?: error("FloydWarshall must be run sucsessfully before calling distanceFromUtoV")
 
     // ADDITIONAL ALGORITHMS
     /** Computes the Minimum Spanning Tree (MST) of the graph using Prim's algorithm.

@@ -19,7 +19,7 @@ internal fun walkforest(): String {
         if (n == 0)
             break
         val m = readInt()
-        val g = IntGraph(n + 1, m)
+        val g = IntGraph(n + 1, m * 2)
         repeat(m) {
             val (a, b, l) = readInts(3)
             g.connect(a, b, l)
