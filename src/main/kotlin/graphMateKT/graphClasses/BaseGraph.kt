@@ -171,6 +171,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 
     /** Retrieves a list the neighboring nodes of the specified node.
      *
+     * WARNING: should be replaced by the forEachNeighbour function if performance is critical, to avoid copying overhead.
+     *
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
@@ -178,6 +180,21 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         node2Id(t)?.let { adjacencyList.neighbours(it) }
             ?.map { id2Node(it)!! }
             ?: error("Node '$t' not found in graph")
+    }
+
+    /** Executes a given function on all the neighbours of a given node.
+     *
+     * More performant then retrieving a copied list of nodes and calling forEach on them
+     *
+     * @param t The node whose neighbours we want to process
+     * @param action The function to be called on each neighbour
+     * @throws IllegalStateException If the specified node is not found in the graph. */
+    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded().run {
+        node2Id(t)?.let { u ->
+            adjacencyList.forEachNeighbour(u) { v ->
+                id2Node(v)?.let(action)
+            }
+        } ?: error("Node '$t' not found in graph")
     }
 
     // SEARCH ALGORITHMS

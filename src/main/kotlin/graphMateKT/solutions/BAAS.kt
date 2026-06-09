@@ -1,29 +1,28 @@
 package graphMateKT.solutions
 
+import InputReader
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.readInt
-import graphMateKT.readInts
+import java.io.InputStream
 import kotlin.math.min
 
 
 internal fun main() {
-    val ans = baas()
+    val ans = baas(System.`in`)
     println(ans)
     System.out.flush()
 }
 
-/** Solves https://open.kattis.com/problems/baas
- *  Note, this solution is close to the time limit. To make it pass, the submitted solution must cut away all library
- *  functions that's not needed. */
-internal fun baas(): Int {
-    val n = readInt()
+// Solves https://open.kattis.com/problems/baas
+internal fun baas(inputStream: InputStream): Int {
+    val scanner = InputReader(inputStream)
+    val n = scanner.nextInt()
     val nrOfEdges = n * (n - 1)
     val intGraph = IntGraph(n, nrOfEdges)
-    val stepTime = readInts(n)
+    val stepTime = scanner.nextLine()!!.split(" ").map { it.toInt() }
     repeat(n) { step_i ->
-        val c_i = readInt()
+        val c_i = scanner.nextInt()
         repeat(c_i) {
-            val a_j = readInt() - 1
+            val a_j = scanner.nextInt() - 1
             intGraph.addEdge(step_i, a_j)
         }
     }
@@ -32,7 +31,11 @@ internal fun baas(): Int {
     val totalStepTime = IntArray(n)
     topologicalOrder.indices.forEach {
         topologicalOrder.forEachIndexed { i, node ->
-            totalStepTime[node] = stepTime[node] + (intGraph.neighbours(node).maxOfOrNull { totalStepTime[it] } ?: 0)
+            var maxTime = 0
+            intGraph.forEachNeighbour(node) { neighbor ->
+                maxTime = maxOf(maxTime, totalStepTime[neighbor])
+            }
+            totalStepTime[node] = stepTime[node] + maxTime
             if (i == it)
                 totalStepTime[node] -= stepTime[node]
         }
