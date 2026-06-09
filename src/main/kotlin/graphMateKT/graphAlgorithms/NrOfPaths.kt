@@ -8,7 +8,7 @@ private fun memoDfs(currentId: Int, target: Int, graph: AdjacencyList, memo: Lon
     if (memo[currentId] != -1L)
         return memo[currentId]
     var totalPaths = 0L
-     graph.getNeighbours(currentId).forEach { neighbour ->
+     graph.forEachNeighbour(currentId){ neighbour ->
         totalPaths = (totalPaths + memoDfs(neighbour, target, graph, memo, mod)) % mod
     }
     memo[currentId] = totalPaths % mod

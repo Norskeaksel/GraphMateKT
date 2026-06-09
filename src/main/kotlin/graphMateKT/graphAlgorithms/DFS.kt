@@ -2,13 +2,12 @@ package graphMateKT.graphAlgorithms
 
 import graphMateKT.IntComponents
 import graphMateKT.graphClasses.AdjacencyList
-import graphMateKT.graphClasses.NestedAdjacencyList
 
 
 internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
-    fun dfsDeep(
+    /*fun dfsDeep( // Does not work with forEachNeighbour
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
@@ -20,7 +19,7 @@ internal class DFS(private val graph: AdjacencyList) {
             r.visited[id] = true
             r.currentVisited.add(id)
             r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph.getNeighbours(id).forEach { v ->
+            graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
                 this.callRecursive(v)
             }
@@ -28,37 +27,37 @@ internal class DFS(private val graph: AdjacencyList) {
             currentDepth-- //Done with this node. Backtracking to previous one.
         }.invoke(start)
         return r
-    }
+    } */
 
     fun dfs(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
-        try {
-            r = initialSearchResults ?: GraphSearchResults(graph.size)
-            r.currentVisited = mutableListOf()
-            var currentDepth = 0
+        //try {
+        r = initialSearchResults ?: GraphSearchResults(graph.size)
+        r.currentVisited = mutableListOf()
+        var currentDepth = 0
 
-            fun visit(id: Int) {
-                if (r.visited[id]) return
-                r.visited[id] = true
-                r.currentVisited.add(id)
-                r.depth = (++currentDepth).coerceAtLeast(r.depth)
-                graph.getNeighbours(id).forEach { v ->
-                    r.parents[v] = id
-                    visit(v)
-                }
-                r.processedOrder.add(id)
-                currentDepth-- // Done with this node. Backtracking to previous one.
+        fun visit(id: Int) {
+            if (r.visited[id]) return
+            r.visited[id] = true
+            r.currentVisited.add(id)
+            r.depth = (++currentDepth).coerceAtLeast(r.depth)
+            graph.forEachNeighbour(id) { v ->
+                r.parents[v] = id
+                visit(v)
             }
-
-            visit(start)
-            return r
+            r.processedOrder.add(id)
+            currentDepth-- // Done with this node. Backtracking to previous one.
         }
+
+        visit(start)
+        return r
+        /* }
         catch (e: StackOverflowError) {
             System.err.println("Normal dfc got a ${e.cause} trying again with deepRecursve Function")
             return dfsDeep(start, initialSearchResults)
-        }
+        }*/
     }
 
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {

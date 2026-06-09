@@ -5,8 +5,10 @@ import graphMateKT.Edges
 interface AdjacencyList {
 
     fun nodes(): IntArray
-    fun getNeighbours(node: Int): IntArray
-    fun getEdges(node: Int): Edges
+    fun neighbours(node:Int ): IntArray
+    fun edges(node: Int): Edges
+    fun forEachNeighbour(node: Int, action: (Int) -> Unit)
+    fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
     fun deepCopy(): AdjacencyList
     fun reversed(): AdjacencyList
     val size: Int

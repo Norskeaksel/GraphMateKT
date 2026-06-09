@@ -43,8 +43,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         addEdge(node1, node2, weight.toDouble())
     }
 
-    /** @return the nodes in the graph */
+    /** @return a list of the nodes in the graph. */
     abstract fun nodes(): List<T>
+
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
     protected abstract fun finalizeAdjacencyList()
@@ -164,7 +165,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
     fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.getEdges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
+        node2Id(t)?.let { adjacencyList.edges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
             ?: error("Node $t not found in graph")
     }
 
@@ -173,8 +174,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    open fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.getNeighbours(it) }
+    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
+        node2Id(t)?.let { adjacencyList.neighbours(it) }
             ?.map { id2Node(it)!! }
             ?: error("Node '$t' not found in graph")
     }

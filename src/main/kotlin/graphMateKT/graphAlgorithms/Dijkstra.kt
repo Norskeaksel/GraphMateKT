@@ -16,7 +16,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u]) continue
             r.visited[u] = true
             r.currentVisited.add(u)
-            graph.getEdges(u).forEach { (d, v) ->
+            graph.forEachEdge(u){ d, v ->
                 val newDistance = r.weightedDistances[u] + d
                 if (newDistance < r.weightedDistances[v]) {
                     r.weightedDistances[v] = newDistance

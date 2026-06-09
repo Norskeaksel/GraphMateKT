@@ -10,7 +10,7 @@ internal class FloydWarshall(val graph: AdjacencyList) {
     init {
         graph.nodes().forEachIndexed { u, node ->
             distances[u][u] = 0.0
-            graph.getEdges(node).forEach { (d, v) ->
+            graph.forEachEdge(node){ d, v ->
                 distances[u][v] = d
             }
         }

@@ -24,15 +24,16 @@ internal class BFS(private val graph: AdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.unweightedDistances[currentId]
-            graph.getNeighbours(currentId).forEach { v ->
+            graph.forEachNeighbour(currentId) { v ->
+                if (r.foundTarget) return@forEachNeighbour
                 val newDistance = currentDistance + 1
                 if ((!r.visited[v] && newDistance < r.unweightedDistances[v]) || v == targetId) {
                     r.parents[v] = currentId
                     r.depth = newDistance.coerceAtLeast(r.depth)
                     r.unweightedDistances[v] = newDistance
-                    if (v == targetId){
+                    if (v == targetId) {
                         r.foundTarget = true
-                        return r
+                        return@forEachNeighbour
                     }
                     queue.add(v)
                 }

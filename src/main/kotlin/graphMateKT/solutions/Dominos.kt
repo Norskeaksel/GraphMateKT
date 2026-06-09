@@ -10,7 +10,9 @@ internal fun main() {
     System.out.flush()
 }
 
-/** Solves https://open.kattis.com/problems/dominos */
+/** Solves https://open.kattis.com/problems/dominos
+ *  Note, this solution is close to the time limit. To make it pass, the submitted solution must cut away all library
+ *  functions that's not needed. */
 internal fun dominos(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
     val c = scanner.nextInt()

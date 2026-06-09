@@ -14,7 +14,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
     var totalWeight = 0.0
 
     visited[0] = true
-    graph.getEdges(0).forEach { (weight, to) ->
+    graph.forEachEdge(0) { weight, to ->
         pq.add(Triple(weight, 0, to))
     }
     var c = 0
@@ -29,7 +29,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
         connections[u].add(Edge(w, v))
         connections[v].add(Edge(w, u))
 
-        graph.getEdges(v).forEach { (weight, next) ->
+        graph.forEachEdge(v) { weight, next ->
             if (!visited[next]) {
                 pq.add(Triple(weight, v, next))
             }

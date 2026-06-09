@@ -11,16 +11,32 @@ internal class FlattenedAdjacencyList(
 ) : AdjacencyList {
 
     override fun nodes() = IntArray(size) { it }
-    override fun getNeighbours(node: Int): IntArray {
+    override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
-        return flattenedAdjacencyList.sliceArray(start until end)
+        return IntArray(end - start) { flattenedAdjacencyList[start + it] }
     }
 
-    override fun getEdges(node: Int): Edges {
+    override fun edges(node: Int): Edges {
         val start = starts[node]
         val end = ends[node]
-        return MutableList(end - start) { i -> Edge(flattenedWeights[start + i], flattenedAdjacencyList[start + i]) }
+        return MutableList(end - start) { Edge(flattenedWeights[start + it], flattenedAdjacencyList[start + it]) }
+    }
+
+    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
+        val start = starts[node]
+        val end = ends[node]
+        for (i in start until end) {
+            action(flattenedAdjacencyList[i])
+        }
+    }
+
+    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
+        val start = starts[node]
+        val end = ends[node]
+        for (i in start until end) {
+            action(flattenedWeights[i], flattenedAdjacencyList[i])
+        }
     }
 
     override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(
