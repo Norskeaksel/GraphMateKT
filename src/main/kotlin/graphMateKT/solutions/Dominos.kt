@@ -26,7 +26,7 @@ internal fun dominos(inputStream: InputStream): String {
             val v = scanner.nextInt()
             graph.addEdge(u - 1, v - 1)
         }
-        val components = graph.stronglyConnectedComponents() //TODO make for each component
+        val components = graph.stronglyConnectedComponents()
         val nodeToComponentId = IntArray(n)
         components.forEachIndexed { id, component ->
             component.forEach { node ->

@@ -18,7 +18,7 @@ internal fun baas(inputStream: InputStream): Int {
     val n = scanner.nextInt()
     val nrOfEdges = n * (n - 1)
     val intGraph = IntGraph(n, nrOfEdges)
-    val stepTime = scanner.nextLine()!!.split(" ").map { it.toInt() }
+    val stepTime = scanner.nextIntArray(n)
     repeat(n) { step_i ->
         val c_i = scanner.nextInt()
         repeat(c_i) {

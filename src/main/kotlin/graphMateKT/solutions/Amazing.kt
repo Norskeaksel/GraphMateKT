@@ -11,7 +11,7 @@ internal fun main() {
     System.out.flush()
 }
 
-private const val DIM = 201 // TODO set to 201
+private const val DIM = 201
 private val dx = intArrayOf(0, -1, 1, 0)
 private val dy = intArrayOf(-1, 0, 0, 1)
 
