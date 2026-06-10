@@ -4,8 +4,6 @@ package graphMateKT
 internal typealias Edge = Pair<Double, Int>
 /** List of edges */
 internal typealias Edges = MutableList<Edge>
-/** Used to represent a weighted graph */
-
 /** List of list of nodes */
 internal typealias Components = List<List<Any>>
 /** List of list of integer nodes */

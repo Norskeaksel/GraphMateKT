@@ -125,7 +125,7 @@ fun main() {
   */
 
   val n = graph.size()
-  val intGraph = IntGraph(n)
+  val intGraph = IntGraph(n, graph.nrOfEdges())
   // Add the same edges as the above Graph
   graph.nodes().forEach { fromNode ->
     graph.edges(fromNode).forEach { edge ->

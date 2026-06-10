@@ -4,7 +4,7 @@
  * time required to read input. That being said, this input reader assumes you know what
  * data types you are reading in and will not do any validation of input whatsoever!
  *
- * @author William Fiset, william.alexandre.fiset@gmail.com. Autotranslated to Kotlin by Intellij
+ * @author William Fiset, william.alexandre.fiset@gmail.com. Auto translated to Kotlin by Intellij
  */
 
 import java.io.IOException
