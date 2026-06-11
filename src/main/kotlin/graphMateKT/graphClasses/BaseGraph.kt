@@ -21,6 +21,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     private var allDistances: Array<DoubleArray>? = null
 
     // ABSTRACT FUNCTIONS
+    /** @return a list of the nodes in the graph. */
+    abstract fun nodes(): List<T>
+
     /** Adds the given node to the graph
      * @param node The node to add */
     abstract fun addNode(node: T)
@@ -38,26 +41,16 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
     abstract fun addEdge(node1: T, node2: T, weight: Double)
 
+    protected abstract fun node2Id(node: T): Int?
+    protected abstract fun id2Node(id: Int): T?
+    protected abstract fun finalizeAdjacencyList()
+
     /** Overloaded function that calls addEdge with weight converted to a double. */
     fun addEdge(node1: T, node2: T, weight: Int) {
         addEdge(node1, node2, weight.toDouble())
     }
 
-    /** @return a list of the nodes in the graph. */
-    abstract fun nodes(): List<T>
-
-    protected abstract fun node2Id(node: T): Int?
-    protected abstract fun id2Node(id: Int): T?
-    protected abstract fun finalizeAdjacencyList()
-
     // CORE GRAPH OPERATIONS
-
-    /** @return The total number of nodes in the graph. */
-    fun size() = nodes().size
-
-    /** @return The total number of edges in the graph. */
-    fun nrOfEdges() = edgesCount
-
     /** Connects two nodes in the graph, by calling addEdge(node1,node2) and addEdge(node2, node1)
      *
      * @param node1 The first node to connect.
@@ -84,6 +77,12 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     }
 
     // GRAPH INFORMATION
+    /** @return The total number of nodes in the graph. */
+    fun size() = nodes().size
+
+    /** @return The total number of edges in the graph. */
+    fun nrOfEdges() = edgesCount
+
     /** Retrieves the depth of the graph from the most recent search operation
      *
      * Depth is defined as the deepest level of recursion or the maximum distance from the starting node to
@@ -91,17 +90,17 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return The depth of the graph.
      * @throws IllegalStateException If neither DFS nor BFS has been run yet.*/
     fun depth() =
-        searchResults?.depth ?: error("Can't retrieve depth because no search (DFS, BFS, Dijkstra) has been run yet")
+        searchResults?.depth ?: error("Can't retrieve depth because neither DFS nor BFS has been run yet.")
 
     /** Retrieves a list of all visited nodes on the order they were visited during the last search operation (DFS, BFS, Dijkstra).
      *
-     * @return A list of visited nodes. or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
+     * @return A list of visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun currentVisitedNodes(): List<T> =
         searchResults?.currentVisited?.map { id2Node(it)!! }
             ?: emptyList()
 
 
-    /** Retrieves a (unordered) list of all visited nodes during any non-reset search operation (DFS, BFS, Dijkstra).
+    /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun visitedNodes() = searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2Node(it) else null } }

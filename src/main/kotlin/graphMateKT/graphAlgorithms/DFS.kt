@@ -33,7 +33,6 @@ internal class DFS(private val graph: AdjacencyList) {
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
-        //try {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
         r.currentVisited = mutableListOf()
         var currentDepth = 0
@@ -53,11 +52,6 @@ internal class DFS(private val graph: AdjacencyList) {
 
         visit(start)
         return r
-        /* }
-        catch (e: StackOverflowError) {
-            System.err.println("Normal dfc got a ${e.cause} trying again with deepRecursve Function")
-            return dfsDeep(start, initialSearchResults)
-        }*/
     }
 
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
