@@ -340,7 +340,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     fun minimumSpanningTree(): Pair<Double, Graph> {
         finalizeAdjacencyListIfNeeded()
         val timeStart = System.currentTimeMillis()
-        val mst = prims(adjacencyList).run {
+        val (totalWeight, mst) = prims(adjacencyList).run {
             first to second.let { adjacencyList ->
                 val mstGraph = Graph()
                 adjacencyList.forEachIndexed { id, edges ->
@@ -355,7 +355,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         if (debugTimeUse) {
             debug("minimumSpanningTree took ${timeStop - timeStart} ms.")
         }
-        return mst
+        return totalWeight to mst
     }
 
     /** Builds an order of nodes so that the first nodes has no outgoing edges, then nodes with edges pointing to these
@@ -386,10 +386,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A list of strongly connected components, where each component is a list of nodes. */
     open fun stronglyConnectedComponents(): List<List<T>> {
         finalizeAdjacencyListIfNeeded()
-        val sccIds: IntComponents
         val scc: List<List<T>>
         val time = measureTimeMillis {
-            sccIds = DFS(adjacencyList).stronglyConnectedComponents()
+            val sccIds = DFS(adjacencyList).stronglyConnectedComponents()
             scc = sccIds.map { component -> component.map { id2Node(it)!! } }
         }
         if (debugTimeUse) {
@@ -452,8 +451,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 // HELPER FUNCTIONS
     /** Clears the search results stored in the graph.
      *
-     * The following functions rely on the `searchResults` property, which is populated by running a search algorithm
-     * (DFS, BFS, or Dijkstra). These functions will throw an `IllegalStateException` if no search are run after calling this function:
+     * The following functions rely on the private `searchResults` property, which is populated by running a search algorithm
+     * (DFS, BFS, or Dijkstra). These functions will throw an `IllegalStateException` if no search is run after calling this function:
      *
      * - `depth()`:
      * - `currentVisitedNodes()`:

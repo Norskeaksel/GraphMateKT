@@ -54,17 +54,17 @@ internal class FlattenedAdjacencyList(
         for (i in 1 until size) revStarts[i] = revStarts[i - 1] + revEnds[i - 1]
         for (i in 0 until size) revEnds[i] += revStarts[i]
 
-        val revAdj = IntArray(flattenedAdjacencyList.size)
-        val revW = DoubleArray(flattenedWeights.size)
+        val revAdjacencyList = IntArray(flattenedAdjacencyList.size)
+        val revWeights = DoubleArray(flattenedWeights.size)
         val next = revStarts.copyOf()
         repeat(size) { u ->
             for (idx in starts[u] until ends[u]) {
                 val v = flattenedAdjacencyList[idx]
                 val at = next[v]++
-                revAdj[at] = u
-                revW[at] = flattenedWeights[idx]
+                revAdjacencyList[at] = u
+                revWeights[at] = flattenedWeights[idx]
             }
         }
-        return FlattenedAdjacencyList(revAdj, revStarts, revEnds, revW)
+        return FlattenedAdjacencyList(revAdjacencyList, revStarts, revEnds, revWeights)
     }
 }
