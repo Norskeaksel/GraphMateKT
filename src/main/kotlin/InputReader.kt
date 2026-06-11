@@ -1,10 +1,10 @@
 /**
- * A very fast input reader to read data from any InputStream (System.in in particular).
- * I primarily use this input reader for competitive programming to get an edge on the
- * time required to read input. That being said, this input reader assumes you know what
- * data types you are reading in and will not do any validation of input whatsoever!
+ * A fast input reader for any [InputStream] (especially `System.in`).
  *
- * @author William Fiset, william.alexandre.fiset@gmail.com. Auto translated to Kotlin by Intellij
+ * This reader is optimized for competitive-programming style input and assumes
+ * well-formed data (it does not perform validation).
+ *
+ * @author William Fiset, william.alexandre.fiset@gmail.com. Auto translated to Kotlin by IntelliJ.
  */
 
 import java.io.IOException
@@ -31,18 +31,6 @@ class InputReader @JvmOverloads constructor(
      */
     constructor(bufferSize: Int) : this(DEFAULT_STREAM, bufferSize)
 
-    /**
-     * Create an InputReader that reads from standard input.
-     * @param  stream        Takes an [InputStream][InputStream.InputStream] as a parameter to read from.
-     * @param  bufferSize    The size of the buffer to use.
-     */
-    /**
-     * Create an InputReader that reads from standard input.
-     */
-    /**
-     * Create an InputReader that reads from standard input.
-     * @param stream  Takes an InputStream as a parameter to read from.
-     */
     init {
         require(!(stream == null || bufferSize <= 0))
         buf = ByteArray(bufferSize)
@@ -224,9 +212,13 @@ class InputReader @JvmOverloads constructor(
         } while (true)
     }
 
-    // Reads a string of characters from the input stream.
-    // The delimiter separating a string of characters is set to be:
-    // any ASCII value <= 32 meaning any spaces, new lines, EOF, tabs...
+    /**
+     * Reads the next token as a string.
+     *
+     * Token delimiters are ASCII characters `<= 32` (spaces, tabs, newlines, and EOF).
+     *
+     * @return The next token, or `null` if EOF is reached before a token starts.
+     */
     @Throws(IOException::class)
     fun nextString(): String? {
         if (numBytesRead == EOF.toInt()) return null
@@ -251,7 +243,11 @@ class InputReader @JvmOverloads constructor(
         }
     }
 
-    // Returns an exact value a double value from the input stream.
+    /**
+     * Reads the next token and parses it as a [Double].
+     *
+     * @return The parsed double value.
+     */
     @Throws(IOException::class)
     fun nextDouble(): Double {
         val doubleVal = nextString()
@@ -259,10 +255,14 @@ class InputReader @JvmOverloads constructor(
         return doubleVal.toDouble()
     }
 
-    // Very quickly reads a double value from the input stream (~3x faster than nextDouble()). However,
-    // this method may provide a slightly less accurate reading than .nextDouble() if there are a lot
-    // of digits (~16+). In particular, it will only read double values with at most 21 digits after
-    // the decimal point and the reading my be as inaccurate as ~5*10^-16 from the true value.
+    /**
+     * Reads the next token as a [Double] using a faster parsing path.
+     *
+     * This is typically faster than [nextDouble], but it may be slightly less accurate for
+     * very long decimal fractions. It reads up to [MAX_DECIMAL_PRECISION] decimal digits.
+     *
+     * @return The parsed double value.
+     */
     @Throws(IOException::class)
     fun nextDoubleFast(): Double {
         var c = read().toInt()
@@ -292,7 +292,7 @@ class InputReader @JvmOverloads constructor(
         return res * sgn
     }
 
-    // Read an array of n byte values
+    /** Reads an array of `n` byte values. */
     @Throws(IOException::class)
     fun nextByteArray(n: Int): ByteArray {
         val ar = ByteArray(n)
@@ -300,7 +300,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read an integer array of size n
+    /** Reads an array of `n` integer values. */
     @Throws(IOException::class)
     fun nextIntArray(n: Int): IntArray {
         val ar = IntArray(n)
@@ -308,7 +308,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a long array of size n
+    /** Reads an array of `n` long values. */
     @Throws(IOException::class)
     fun nextLongArray(n: Int): LongArray {
         val ar = LongArray(n)
@@ -316,7 +316,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // read an of doubles of size n
+    /** Reads an array of `n` double values. */
     @Throws(IOException::class)
     fun nextDoubleArray(n: Int): DoubleArray {
         val ar = DoubleArray(n)
@@ -324,7 +324,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Quickly read an array of doubles
+    /** Reads an array of `n` doubles using [nextDoubleFast]. */
     @Throws(IOException::class)
     fun nextDoubleArrayFast(n: Int): DoubleArray {
         val ar = DoubleArray(n)
@@ -332,7 +332,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a string array of size n
+    /** Reads an array of `n` string tokens. */
     @Throws(IOException::class)
     fun nextStringArray(n: Int): Array<String?> {
         val ar = arrayOfNulls<String>(n)
@@ -344,7 +344,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a 1-based byte array of size n+1
+    /** Reads a 1-based byte array of size `n + 1` (index `0` unused). */
     @Throws(IOException::class)
     fun nextByteArray1(n: Int): ByteArray {
         val ar = ByteArray(n + 1)
@@ -352,7 +352,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a 1-based integer array of size n+1
+    /** Reads a 1-based integer array of size `n + 1` (index `0` unused). */
     @Throws(IOException::class)
     fun nextIntArray1(n: Int): IntArray {
         val ar = IntArray(n + 1)
@@ -360,7 +360,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a 1-based long array of size n+1
+    /** Reads a 1-based long array of size `n + 1` (index `0` unused). */
     @Throws(IOException::class)
     fun nextLongArray1(n: Int): LongArray {
         val ar = LongArray(n + 1)
@@ -368,7 +368,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a 1-based double array of size n+1
+    /** Reads a 1-based double array of size `n + 1` (index `0` unused). */
     @Throws(IOException::class)
     fun nextDoubleArray1(n: Int): DoubleArray {
         val ar = DoubleArray(n + 1)
@@ -376,7 +376,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Quickly read a 1-based double array of size n+1
+    /** Reads a 1-based double array of size `n + 1` using [nextDoubleFast]. */
     @Throws(IOException::class)
     fun nextDoubleArrayFast1(n: Int): DoubleArray {
         val ar = DoubleArray(n + 1)
@@ -384,7 +384,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a 1-based string array of size n+1
+    /** Reads a 1-based string array of size `n + 1` (index `0` unused). */
     @Throws(IOException::class)
     fun nextStringArray1(n: Int): Array<String?> {
         val ar = arrayOfNulls<String>(n + 1)
@@ -392,7 +392,7 @@ class InputReader @JvmOverloads constructor(
         return ar
     }
 
-    // Read a two dimensional matrix of bytes of size rows x cols
+    /** Reads a `rows x cols` matrix of bytes. */
     @Throws(IOException::class)
     fun nextByteMatrix(rows: Int, cols: Int): Array<ByteArray?> {
         val matrix = Array<ByteArray?>(rows) { ByteArray(cols) }
@@ -400,7 +400,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a two dimensional matrix of ints of size rows x cols
+    /** Reads a `rows x cols` matrix of integers. */
     @Throws(IOException::class)
     fun nextIntMatrix(rows: Int, cols: Int): Array<IntArray?> {
         val matrix = Array<IntArray?>(rows) { IntArray(cols) }
@@ -408,7 +408,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a two dimensional matrix of longs of size rows x cols
+    /** Reads a `rows x cols` matrix of longs. */
     @Throws(IOException::class)
     fun nextLongMatrix(rows: Int, cols: Int): Array<LongArray?> {
         val matrix = Array<LongArray?>(rows) { LongArray(cols) }
@@ -416,7 +416,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a two dimensional matrix of doubles of size rows x cols
+    /** Reads a `rows x cols` matrix of doubles. */
     @Throws(IOException::class)
     fun nextDoubleMatrix(rows: Int, cols: Int): Array<DoubleArray?> {
         val matrix = Array<DoubleArray?>(rows) { DoubleArray(cols) }
@@ -424,7 +424,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Quickly read a two dimensional matrix of doubles of size rows x cols
+    /** Reads a `rows x cols` matrix of doubles using [nextDoubleFast]. */
     @Throws(IOException::class)
     fun nextDoubleMatrixFast(rows: Int, cols: Int): Array<DoubleArray?> {
         val matrix = Array<DoubleArray?>(rows) { DoubleArray(cols) }
@@ -432,7 +432,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a two dimensional matrix of Strings of size rows x cols
+    /** Reads a `rows x cols` matrix of string tokens. */
     @Throws(IOException::class)
     fun nextStringMatrix(rows: Int, cols: Int): Array<Array<String?>?> {
         val matrix = Array<Array<String?>?>(rows) { arrayOfNulls<String>(cols) }
@@ -440,7 +440,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a 1-based two dimensional matrix of bytes of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of bytes. */
     @Throws(IOException::class)
     fun nextByteMatrix1(rows: Int, cols: Int): Array<ByteArray?> {
         val matrix = Array<ByteArray?>(rows + 1) { ByteArray(cols + 1) }
@@ -448,7 +448,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a 1-based two dimensional matrix of ints of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of integers. */
     @Throws(IOException::class)
     fun nextIntMatrix1(rows: Int, cols: Int): Array<IntArray?> {
         val matrix = Array<IntArray?>(rows + 1) { IntArray(cols + 1) }
@@ -456,7 +456,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a 1-based two dimensional matrix of longs of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of longs. */
     @Throws(IOException::class)
     fun nextLongMatrix1(rows: Int, cols: Int): Array<LongArray?> {
         val matrix = Array<LongArray?>(rows + 1) { LongArray(cols + 1) }
@@ -464,7 +464,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a 1-based two dimensional matrix of doubles of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of doubles. */
     @Throws(IOException::class)
     fun nextDoubleMatrix1(rows: Int, cols: Int): Array<DoubleArray?> {
         val matrix = Array<DoubleArray?>(rows + 1) { DoubleArray(cols + 1) }
@@ -472,7 +472,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Quickly read a 1-based two dimensional matrix of doubles of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of doubles using [nextDoubleFast]. */
     @Throws(IOException::class)
     fun nextDoubleMatrixFast1(rows: Int, cols: Int): Array<DoubleArray?> {
         val matrix = Array<DoubleArray?>(rows + 1) { DoubleArray(cols + 1) }
@@ -480,7 +480,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Read a 1-based two dimensional matrix of Strings of size rows x cols
+    /** Reads a 1-based `(rows + 1) x (cols + 1)` matrix of string tokens. */
     @Throws(IOException::class)
     fun nextStringMatrix1(rows: Int, cols: Int): Array<Array<String?>?> {
         val matrix = Array<Array<String?>?>(rows + 1) { arrayOfNulls<String>(cols + 1) }
@@ -488,7 +488,7 @@ class InputReader @JvmOverloads constructor(
         return matrix
     }
 
-    // Closes the input stream
+    /** Closes the underlying input stream. */
     @Throws(IOException::class)
     fun close() {
         stream.close()
@@ -511,22 +511,22 @@ class InputReader @JvmOverloads constructor(
          */
         private const val MAX_DECIMAL_PRECISION = 21
 
-        // End Of File (EOF) character
+        /** End-of-file `EOF` byte marker. */
         private val EOF: Byte = -1
 
-        // New line character: '\n'
+        /** Newline character `\n`. */
         private const val NEW_LINE: Byte = 10
 
-        // Space character: ' '
+        /** Space character ` `. */
         private const val SPACE: Byte = 32
 
-        // Dash character: '-'
+        /** Dash character `-`. */
         private const val DASH: Byte = 45
 
-        // Dot character: '.'
+        /** Dot character `.`. */
         private const val DOT: Byte = 46
 
-        // Digit lookup table used to map an ASCII digit ('0'..'9') to its int value.
+        /** Lookup table mapping ASCII digits `'0'..'9'` to int values. */
         private val ints = IntArray(58)
 
         init {
@@ -534,7 +534,7 @@ class InputReader @JvmOverloads constructor(
         }
 
         // @formatter:off
-        // Primitive double lookup table used for optimizations.
+        /** Primitive lookup table used by [nextDoubleFast] to accumulate fractional values. */
         private val doubles = arrayOf<DoubleArray?>(
             doubleArrayOf( 0.0, 0.00, 0.000, 0.0000, 0.00000, 0.000000, 0.0000000, 0.00000000, 0.000000000, 0.0000000000, 0.00000000000, 0.000000000000, 0.0000000000000, 0.00000000000000, 0.000000000000000, 0.0000000000000000, 0.00000000000000000, 0.000000000000000000, 0.0000000000000000000, 0.00000000000000000000, 0.000000000000000000000 ),
             doubleArrayOf( 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001, 0.000000001, 0.0000000001, 0.00000000001, 0.000000000001, 0.0000000000001, 0.00000000000001, 0.000000000000001, 0.0000000000000001, 0.00000000000000001, 0.000000000000000001, 0.0000000000000000001, 0.00000000000000000001, 0.000000000000000000001 ),

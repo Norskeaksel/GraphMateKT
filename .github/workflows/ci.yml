@@ -17,8 +17,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'temurin'
-          cache: 'maven'
+          distribution: 'temurin' # A popular, free, and open-source distribution of OpenJDK
+          cache: 'maven' # Caches Maven dependencies to speed up future builds.
 
-      - name: Run tests with Maven
+      - name: Run tests with Maven in batch mode
         run: mvn -B test
