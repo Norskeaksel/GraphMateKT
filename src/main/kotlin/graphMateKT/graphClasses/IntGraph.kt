@@ -26,7 +26,7 @@ import kotlin.system.measureTimeMillis
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.
  * @param nrOfEdges The number of edges in the graph. This cannot be altered later. */
-class IntGraph(private val size: Int, private val nrOfEdges: Int = size * size, debugTimeUse: Boolean = false) :
+class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(debugTimeUse) {
 
     private val nodes = IntArray(size) { it }

@@ -22,3 +22,12 @@ jobs:
 
       - name: Run tests with Maven in batch mode
         run: mvn -B test
+
+      - name: Verify GraphMateKTSingleFile.kt is up to date
+        run: |
+          bash scripts/generate-single-file.sh
+          if ! git diff --quiet -- GraphMateKTSingleFile.kt; then
+            echo "::error::GraphMateKTSingleFile.kt is out of date. Run 'bash scripts/generate-single-file.sh' and commit the result."
+            git --no-pager diff -- GraphMateKTSingleFile.kt
+            exit 1
+          fi

@@ -3,54 +3,10 @@ import java.util.*
 import kotlin.math.min
 import java.io.InputStream
 
-
-internal fun main() {
-    val ans = dominos()
-    println(ans)
-    System.out.flush()
-}
-
-/** Solves https://open.kattis.com/problems/dominos */
-internal fun dominos(): String {
-    val c = readInt()
-    val ans = StringBuilder()
-    repeat(c) {
-        val (n, m) = readInts(2)
-        val graph = IntGraph(n, m)
-        repeat(m) {
-            val u = readInt()
-            val v = readInt()
-            graph.addEdge(u - 1, v - 1)
-        }
-        val components = graph.stronglyConnectedComponents()
-        val nodeToComponentId = IntArray(n)
-        components.forEachIndexed { id, component ->
-            component.forEach { node ->
-                nodeToComponentId[node] = id
-            }
-        }
-        val hasIncomingEdge = BooleanArray(components.size)
-        repeat(n) { node ->
-            val uId = nodeToComponentId[node]
-            graph.neighbours(node).forEach { neighbour ->
-                val vId = nodeToComponentId[neighbour]
-                if (vId != uId) {
-                    hasIncomingEdge[vId] = true
-                }
-            }
-        }
-        val flips = hasIncomingEdge.count { !it }
-        ans.appendLine(flips)
-    }
-    return ans.toString()
-}
-
 /** Edge has a weight w to a destination node v */
 internal typealias Edge = Pair<Double, Int>
 /** List of edges */
 internal typealias Edges = MutableList<Edge>
-/** Used to represent a weighted graph */
-
 /** List of list of nodes */
 internal typealias Components = List<List<Any>>
 /** List of list of integer nodes */
@@ -79,7 +35,7 @@ internal data class TrieNode(val children:MutableMap<Char, TrieNode> = mutableMa
 
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
+abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
@@ -89,6 +45,9 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
     private var allDistances: Array<DoubleArray>? = null
 
     // ABSTRACT FUNCTIONS
+    /** @return a list of the nodes in the graph. */
+    abstract fun nodes(): List<T>
+
     /** Adds the given node to the graph
      * @param node The node to add */
     abstract fun addNode(node: T)
@@ -106,25 +65,16 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
     abstract fun addEdge(node1: T, node2: T, weight: Double)
 
+    protected abstract fun node2Id(node: T): Int?
+    protected abstract fun id2Node(id: Int): T?
+    protected abstract fun finalizeAdjacencyList()
+
     /** Overloaded function that calls addEdge with weight converted to a double. */
     fun addEdge(node1: T, node2: T, weight: Int) {
         addEdge(node1, node2, weight.toDouble())
     }
 
-    /** @return the nodes in the graph */
-    abstract fun nodes(): List<T>
-    protected abstract fun node2Id(node: T): Int?
-    protected abstract fun id2Node(id: Int): T?
-    protected abstract fun finalizeAdjacencyList()
-
     // CORE GRAPH OPERATIONS
-
-    /** @return The total number of nodes in the graph. */
-    fun size() = nodes().size
-
-    /** @return The total number of edges in the graph. */
-    fun nrOfEdges() = edgesCount
-
     /** Connects two nodes in the graph, by calling addEdge(node1,node2) and addEdge(node2, node1)
      *
      * @param node1 The first node to connect.
@@ -151,6 +101,12 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
     }
 
     // GRAPH INFORMATION
+    /** @return The total number of nodes in the graph. */
+    fun size() = nodes().size
+
+    /** @return The total number of edges in the graph. */
+    fun nrOfEdges() = edgesCount
+
     /** Retrieves the depth of the graph from the most recent search operation
      *
      * Depth is defined as the deepest level of recursion or the maximum distance from the starting node to
@@ -158,17 +114,17 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return The depth of the graph.
      * @throws IllegalStateException If neither DFS nor BFS has been run yet.*/
     fun depth() =
-        searchResults?.depth ?: error("Can't retrieve depth because no search (DFS, BFS, Dijkstra) has been run yet")
+        searchResults?.depth ?: error("Can't retrieve depth because neither DFS nor BFS has been run yet.")
 
     /** Retrieves a list of all visited nodes on the order they were visited during the last search operation (DFS, BFS, Dijkstra).
      *
-     * @return A list of visited nodes. or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
+     * @return A list of visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun currentVisitedNodes(): List<T> =
         searchResults?.currentVisited?.map { id2Node(it)!! }
             ?: emptyList()
 
 
-    /** Retrieves a (unordered) list of all visited nodes during any non-reset search operation (DFS, BFS, Dijkstra).
+    /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun visitedNodes() = searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2Node(it) else null } }
@@ -216,7 +172,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
 
 
-    private fun finalizeAdjacencyListIfNeeded() {
+    protected fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListNotFinalized) {
             finalizeAdjacencyList()
         }
@@ -232,19 +188,36 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
     fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.getEdges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
+        node2Id(t)?.let { adjacencyList.edges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
             ?: error("Node $t not found in graph")
     }
 
     /** Retrieves a list the neighboring nodes of the specified node.
      *
+     * WARNING: should be replaced by the forEachNeighbour function if performance is critical, to avoid copying overhead.
+     *
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    open fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.getNeighbours(it) }
+    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
+        node2Id(t)?.let { adjacencyList.neighbours(it) }
             ?.map { id2Node(it)!! }
             ?: error("Node '$t' not found in graph")
+    }
+
+    /** Executes a given function on all the neighbours of a given node.
+     *
+     * More performant then retrieving a copied list of nodes and calling forEach on them
+     *
+     * @param t The node whose neighbours we want to process
+     * @param action The function to be called on each neighbour
+     * @throws IllegalStateException If the specified node is not found in the graph. */
+    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded().run {
+        node2Id(t)?.let { u ->
+            adjacencyList.forEachNeighbour(u) { v ->
+                id2Node(v)?.let(action)
+            }
+        } ?: error("Node '$t' not found in graph")
     }
 
     // SEARCH ALGORITHMS
@@ -391,7 +364,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
     fun minimumSpanningTree(): Pair<Double, Graph> {
         finalizeAdjacencyListIfNeeded()
         val timeStart = System.currentTimeMillis()
-        val mst = prims(adjacencyList).run {
+        val (totalWeight, mst) = prims(adjacencyList).run {
             first to second.let { adjacencyList ->
                 val mstGraph = Graph()
                 adjacencyList.forEachIndexed { id, edges ->
@@ -406,7 +379,7 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
         if (debugTimeUse) {
             debug("minimumSpanningTree took ${timeStop - timeStart} ms.")
         }
-        return mst
+        return totalWeight to mst
     }
 
     /** Builds an order of nodes so that the first nodes has no outgoing edges, then nodes with edges pointing to these
@@ -437,10 +410,9 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
      * @return A list of strongly connected components, where each component is a list of nodes. */
     open fun stronglyConnectedComponents(): List<List<T>> {
         finalizeAdjacencyListIfNeeded()
-        val sccIds: IntComponents
         val scc: List<List<T>>
         val time = measureTimeMillis {
-            sccIds = DFS(adjacencyList).stronglyConnectedComponents()
+            val sccIds = DFS(adjacencyList).stronglyConnectedComponents()
             scc = sccIds.map { component -> component.map { id2Node(it)!! } }
         }
         if (debugTimeUse) {
@@ -503,8 +475,8 @@ abstract class BaseGraph<T : Any>(private val debugTimeUse: Boolean = false) {
 // HELPER FUNCTIONS
     /** Clears the search results stored in the graph.
      *
-     * The following functions rely on the `searchResults` property, which is populated by running a search algorithm
-     * (DFS, BFS, or Dijkstra). These functions will throw an `IllegalStateException` if no search are run after calling this function:
+     * The following functions rely on the private `searchResults` property, which is populated by running a search algorithm
+     * (DFS, BFS, or Dijkstra). These functions will throw an `IllegalStateException` if no search is run after calling this function:
      *
      * - `depth()`:
      * - `currentVisitedNodes()`:
@@ -600,6 +572,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     }
 }
 
+
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
@@ -621,7 +594,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.
  * @param nrOfEdges The number of edges in the graph. This cannot be altered later. */
-class IntGraph(private val size: Int, private val nrOfEdges: Int = size * size, debugTimeUse: Boolean = false) :
+class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(debugTimeUse) {
 
     private val nodes = IntArray(size) { it }
@@ -675,6 +648,17 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int = size * size, 
     override fun id2Node(id: Int) = id
     override fun node2Id(node: Int) = node
     override fun nodes() = nodes.toList()
+    override fun stronglyConnectedComponents(): IntComponents {
+        finalizeAdjacencyListIfNeeded()
+        val scc: IntComponents
+        val time = measureTimeMillis {
+            scc = DFS(adjacencyList).stronglyConnectedComponents()
+        }
+        if (debugTimeUse) {
+            debug("stronglyConnectedComponents took $time ms.")
+        }
+        return scc
+    }
 }
 
 
@@ -782,10 +766,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
     override fun topologicalSort() =
-        finalizeAdjacencyList().run { DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! } }
+        finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! } }
 
     override fun stronglyConnectedComponents() =
-        finalizeAdjacencyList().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
+        finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
@@ -920,6 +904,122 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 }
 
 
+interface AdjacencyList {
+
+    fun nodes(): IntArray
+    fun neighbours(node:Int ): IntArray
+    fun edges(node: Int): Edges
+    fun forEachNeighbour(node: Int, action: (Int) -> Unit)
+    fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
+    fun deepCopy(): AdjacencyList
+    fun reversed(): AdjacencyList
+    val size: Int
+}
+
+
+
+internal class FlattenedAdjacencyList(
+    private val flattenedAdjacencyList: IntArray,
+    private val starts: IntArray,
+    private val ends: IntArray,
+    private val flattenedWeights: DoubleArray,
+) : AdjacencyList {
+
+    override fun nodes() = IntArray(size) { it }
+    override fun neighbours(node: Int): IntArray {
+        val start = starts[node]
+        val end = ends[node]
+        return IntArray(end - start) { flattenedAdjacencyList[start + it] }
+    }
+
+    override fun edges(node: Int): Edges {
+        val start = starts[node]
+        val end = ends[node]
+        return MutableList(end - start) { Edge(flattenedWeights[start + it], flattenedAdjacencyList[start + it]) }
+    }
+
+    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
+        val start = starts[node]
+        val end = ends[node]
+        for (i in start until end) {
+            action(flattenedAdjacencyList[i])
+        }
+    }
+
+    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
+        val start = starts[node]
+        val end = ends[node]
+        for (i in start until end) {
+            action(flattenedWeights[i], flattenedAdjacencyList[i])
+        }
+    }
+
+    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(
+        flattenedAdjacencyList.copyOf(),
+        starts.copyOf(),
+        ends.copyOf(),
+        flattenedWeights.copyOf(),
+    )
+
+    override val size get() = starts.size
+    override fun reversed(): AdjacencyList {
+        val revStarts = IntArray(size)
+        val revEnds = IntArray(size)
+        flattenedAdjacencyList.forEach { revEnds[it]++ }
+        for (i in 1 until size) revStarts[i] = revStarts[i - 1] + revEnds[i - 1]
+        for (i in 0 until size) revEnds[i] += revStarts[i]
+
+        val revAdjacencyList = IntArray(flattenedAdjacencyList.size)
+        val revWeights = DoubleArray(flattenedWeights.size)
+        val next = revStarts.copyOf()
+        repeat(size) { u ->
+            for (idx in starts[u] until ends[u]) {
+                val v = flattenedAdjacencyList[idx]
+                val at = next[v]++
+                revAdjacencyList[at] = u
+                revWeights[at] = flattenedWeights[idx]
+            }
+        }
+        return FlattenedAdjacencyList(revAdjacencyList, revStarts, revEnds, revWeights)
+    }
+}
+
+
+internal class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>) : AdjacencyList {
+
+    override fun nodes() = IntArray(adjacencyList.size) { it }
+    override fun neighbours(node: Int): IntArray = adjacencyList[node].let { neighbours ->
+        IntArray(neighbours.size) { i -> neighbours[i].second }
+    }
+
+    override fun edges(node: Int): Edges = adjacencyList[node]
+
+    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
+        adjacencyList[node].forEach { (_, v) ->
+            action(v)
+        }
+    }
+
+    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
+        adjacencyList[node].forEach { (w, v) ->
+            action(w, v)
+        }
+    }
+
+    override fun deepCopy() = NestedAdjacencyList(adjacencyList.map { it.toMutableList() }.toMutableList())
+    override val size get() = adjacencyList.size
+    override fun reversed(): AdjacencyList {
+        val reversedAdjacencyList = MutableList<Edges>(adjacencyList.size) { mutableListOf() }
+        adjacencyList.forEachIndexed { u, edges ->
+            edges.forEach { (w, v) ->
+                reversedAdjacencyList[v].add(Edge(w, u))
+            }
+        }
+        return NestedAdjacencyList(reversedAdjacencyList)
+    }
+}
+
+
 
 internal class BFS(private val graph: AdjacencyList) {
     fun bfs(
@@ -934,7 +1034,7 @@ internal class BFS(private val graph: AdjacencyList) {
             queue.add(it)
             r.unweightedDistances[it] = 0
         }
-        while (queue.isNotEmpty()) {
+        while (queue.isNotEmpty() && !r.foundTarget) {
             val currentId = queue.removeFirst()
             if (r.visited[currentId])
                 continue
@@ -942,15 +1042,14 @@ internal class BFS(private val graph: AdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.unweightedDistances[currentId]
-            graph.getNeighbours(currentId).forEach { v ->
+            graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
                 if ((!r.visited[v] && newDistance < r.unweightedDistances[v]) || v == targetId) {
                     r.parents[v] = currentId
                     r.depth = newDistance.coerceAtLeast(r.depth)
                     r.unweightedDistances[v] = newDistance
-                    if (v == targetId){
+                    if (v == targetId) {
                         r.foundTarget = true
-                        return r
                     }
                     queue.add(v)
                 }
@@ -966,7 +1065,7 @@ internal class BFS(private val graph: AdjacencyList) {
 internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
-    fun dfsDeep(
+    /*fun dfsDeep( // Does not work with forEachNeighbour
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
@@ -978,7 +1077,7 @@ internal class DFS(private val graph: AdjacencyList) {
             r.visited[id] = true
             r.currentVisited.add(id)
             r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph.getNeighbours(id).forEach { v ->
+            graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
                 this.callRecursive(v)
             }
@@ -986,37 +1085,31 @@ internal class DFS(private val graph: AdjacencyList) {
             currentDepth-- //Done with this node. Backtracking to previous one.
         }.invoke(start)
         return r
-    }
+    } */
 
     fun dfs(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
-        try {
-            r = initialSearchResults ?: GraphSearchResults(graph.size)
-            r.currentVisited = mutableListOf()
-            var currentDepth = 0
+        r = initialSearchResults ?: GraphSearchResults(graph.size)
+        r.currentVisited = mutableListOf()
+        var currentDepth = 0
 
-            fun visit(id: Int) {
-                if (r.visited[id]) return
-                r.visited[id] = true
-                r.currentVisited.add(id)
-                r.depth = (++currentDepth).coerceAtLeast(r.depth)
-                graph.getNeighbours(id).forEach { v ->
-                    r.parents[v] = id
-                    visit(v)
-                }
-                r.processedOrder.add(id)
-                currentDepth-- // Done with this node. Backtracking to previous one.
+        fun visit(id: Int) {
+            if (r.visited[id]) return
+            r.visited[id] = true
+            r.currentVisited.add(id)
+            r.depth = (++currentDepth).coerceAtLeast(r.depth)
+            graph.forEachNeighbour(id) { v ->
+                r.parents[v] = id
+                visit(v)
             }
+            r.processedOrder.add(id)
+            currentDepth-- // Done with this node. Backtracking to previous one.
+        }
 
-            visit(start)
-            return r
-        }
-        catch (e: StackOverflowError) {
-            System.err.println("Normal dfc got a ${e.cause} trying again with deepRecursve Function")
-            return dfsDeep(start, initialSearchResults)
-        }
+        visit(start)
+        return r
     }
 
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
@@ -1053,7 +1146,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u]) continue
             r.visited[u] = true
             r.currentVisited.add(u)
-            graph.getEdges(u).forEach { (d, v) ->
+            graph.forEachEdge(u){ d, v ->
                 val newDistance = r.weightedDistances[u] + d
                 if (newDistance < r.weightedDistances[v]) {
                     r.weightedDistances[v] = newDistance
@@ -1077,7 +1170,7 @@ internal class FloydWarshall(val graph: AdjacencyList) {
     init {
         graph.nodes().forEachIndexed { u, node ->
             distances[u][u] = 0.0
-            graph.getEdges(node).forEach { (d, v) ->
+            graph.forEachEdge(node){ d, v ->
                 distances[u][v] = d
             }
         }
@@ -1124,7 +1217,7 @@ private fun memoDfs(currentId: Int, target: Int, graph: AdjacencyList, memo: Lon
     if (memo[currentId] != -1L)
         return memo[currentId]
     var totalPaths = 0L
-     graph.getNeighbours(currentId).forEach { neighbour ->
+     graph.forEachNeighbour(currentId){ neighbour ->
         totalPaths = (totalPaths + memoDfs(neighbour, target, graph, memo, mod)) % mod
     }
     memo[currentId] = totalPaths % mod
@@ -1145,7 +1238,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
     var totalWeight = 0.0
 
     visited[0] = true
-    graph.getEdges(0).forEach { (weight, to) ->
+    graph.forEachEdge(0) { weight, to ->
         pq.add(Triple(weight, 0, to))
     }
     var c = 0
@@ -1160,7 +1253,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
         connections[u].add(Edge(w, v))
         connections[v].add(Edge(w, u))
 
-        graph.getEdges(v).forEach { (weight, next) ->
+        graph.forEachEdge(v) { weight, next ->
             if (!visited[next]) {
                 pq.add(Triple(weight, v, next))
             }
