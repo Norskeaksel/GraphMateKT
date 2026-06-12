@@ -125,6 +125,10 @@ $dokka.location:graphMateKT.graphGraphics//visualizeIntComponents/kotlin.collect
 $dokka.location:graphMateKT.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/index.html
 $dokka.location:graphMateKT.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/visualize-grid.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
+$dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
+$dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
+$dokka.location:graphMateKT/Edges///PointingToDeclaration/graphmatekt/graphMateKT/-edges/index.html
+$dokka.location:graphMateKT/IntComponents///PointingToDeclaration/graphmatekt/graphMateKT/-int-components/index.html
 $dokka.location:graphMateKT/Tile///PointingToDeclaration/graphmatekt/graphMateKT/-tile/index.html
 $dokka.location:graphMateKT/Tile/Tile/#kotlin.Int#kotlin.Int#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT/-tile/-tile.html
 $dokka.location:graphMateKT/Tile/data/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/data.html
