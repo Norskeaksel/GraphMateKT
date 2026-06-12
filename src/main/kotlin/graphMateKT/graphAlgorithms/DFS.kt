@@ -1,13 +1,13 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.IntComponents
-import graphMateKT.UnweightedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyList
 
 
-internal class DFS(private val graph: UnweightedAdjacencyList) {
+internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
-    fun dfs(
+    /*fun dfsDeep( // Does not work with forEachNeighbour
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
@@ -19,7 +19,7 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
             r.visited[id] = true
             r.currentVisited.add(id)
             r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph[id].forEach { v ->
+            graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
                 this.callRecursive(v)
             }
@@ -27,18 +27,35 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
             currentDepth-- //Done with this node. Backtracking to previous one.
         }.invoke(start)
         return r
+    } */
+
+    fun dfs(
+        start: Int,
+        initialSearchResults: GraphSearchResults? = null,
+    ): GraphSearchResults {
+        r = initialSearchResults ?: GraphSearchResults(graph.size)
+        r.currentVisited = mutableListOf()
+        var currentDepth = 0
+
+        fun visit(id: Int) {
+            if (r.visited[id]) return
+            r.visited[id] = true
+            r.currentVisited.add(id)
+            r.depth = (++currentDepth).coerceAtLeast(r.depth)
+            graph.forEachNeighbour(id) { v ->
+                r.parents[v] = id
+                visit(v)
+            }
+            r.processedOrder.add(id)
+            currentDepth-- // Done with this node. Backtracking to previous one.
+        }
+
+        visit(start)
+        return r
     }
 
-    fun stronglyConnectedComponents(deleted:BooleanArray = BooleanArray(graph.size)): IntComponents {
-        val reversedGraph: UnweightedAdjacencyList =
-            MutableList<MutableList<Int>>(graph.size) { mutableListOf() }.apply {
-                graph.forEachIndexed { u, neighbors ->
-                    neighbors.forEach { v ->
-                        this[v].add(u)
-                    }
-                }
-            }
-        val topologicalOrder = DFS(reversedGraph).topologicalSort(deleted).reversed()
+    fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
+        val topologicalOrder = DFS(graph.reversed()).topologicalSort(deleted).reversed()
         val stronglyConnectedComponents: IntComponents = topologicalOrder.mapNotNull { id ->
             if (r.visited[id]) null
             else {
@@ -49,9 +66,9 @@ internal class DFS(private val graph: UnweightedAdjacencyList) {
         return stronglyConnectedComponents
     }
 
-    fun topologicalSort(deleted:BooleanArray = BooleanArray(graph.size)): List<Int> {
+    fun topologicalSort(deleted: BooleanArray = BooleanArray(graph.size)): List<Int> {
         for (i in 0 until graph.size) {
-            if(deleted[i]) continue
+            if (deleted[i]) continue
             dfs(i, r)
         }
         return r.processedOrder//.reversed() //Reversed depending on the order

@@ -12,7 +12,7 @@ internal class ClauseGraph {
     private var id = 1
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    val dependencyGraph = Graph(false)
+    val dependencyGraph = Graph()
 
     fun addClause(clause: ClauseGraph.() -> Unit) {
         this.clause()

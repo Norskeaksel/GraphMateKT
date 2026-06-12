@@ -36,6 +36,12 @@ See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest 
 in [Bruno Silva](https://github.com/brunomnsilva)'s
 [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
+### Using the library in a single file.
+In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
+external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
+the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note, this file does not
+have the graph visualization functions, because they themselves require external dependencies.
+
 ## The Graph class
 
 A Graph data structure supports nodes of any datatype.
@@ -66,6 +72,8 @@ Once the graph is built, you may use the following graph algorithms:
 
 - **Prims (MST)**:
     - `minimumSpanningTree()`
+- **NrOfPaths**:
+  - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
 
 [Example usage:](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
@@ -112,12 +120,11 @@ fun main() {
 
 
   /* --- Example IntGraph Definition ---
-       * An IntGraph can needs to be initialized with a fixed size, because it will consist of integer nodes from
-       0 to size-1.
+       An IntGraph needs to be initialized with a fixed size and number of edges, because it consists of integer
+       nodes from 0 to size-1 and stores its edges in fixed-size arrays.
   */
-
   val n = graph.size()
-  val intGraph = IntGraph(n)
+  val intGraph = IntGraph(n, graph.nrOfEdges())
   // Add the same edges as the above Graph
   graph.nodes().forEach { fromNode ->
     graph.edges(fromNode).forEach { edge ->
@@ -152,7 +159,8 @@ fun main() {
 
 The IntGraph class behaves a lot like the Graph class when used with integers like the example above. However,
 it's more performant, because it does not need to maintain an internal mapping between the nodes and their indexes in
-the adjacency list. The obvious drawback being it only supports integer nodes.
+the adjacency list. The obvious drawback being it only supports integer nodes, and that it must be initialized with a
+fixed number of nodes (`size`) and edges (`nrOfEdges`).
 [Example usage.](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
 ## The Grid class

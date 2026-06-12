@@ -1,8 +1,9 @@
 package graphMateKT.solutions
 
-import graphMateKT.AdjacencyList
 import graphMateKT.Edge
+import graphMateKT.Edges
 import graphMateKT.graphAlgorithms.Dijkstra
+import graphMateKT.graphClasses.NestedAdjacencyList
 import graphMateKT.readInts
 
 internal fun  main() {
@@ -14,7 +15,7 @@ internal fun  main() {
 /** Solves https://open.kattis.com/problems/charlesincharge */
 internal fun  charlesincharge(): String {
     val (n, m, x) = readInts(3)
-    val g: AdjacencyList = MutableList(n + 1) { mutableListOf() }
+    val g: MutableList<Edges> = MutableList(n + 1) { mutableListOf() }
     repeat(m) {
         val (u, v, w) = readInts(3)
         val edgeUV: Edge = w.toDouble() to v
@@ -22,7 +23,7 @@ internal fun  charlesincharge(): String {
         g[u].add(edgeUV)
         g[v].add(edgeVU)
     }
-    val dijkstra = Dijkstra(g)
+    val dijkstra = Dijkstra(NestedAdjacencyList(g))
     val seachResults = dijkstra.dijkstra(1)
     val shortestPath = seachResults.distances[n]
     val maxTime = shortestPath * (1 + x.toDouble() / 100)
@@ -31,7 +32,7 @@ internal fun  charlesincharge(): String {
 
 private const val INF = 1e20
 private const val MAX_W = 1e9
-private fun binarySearchDijkstra(g: AdjacencyList, maxTime: Double): Int {
+private fun binarySearchDijkstra(g: MutableList<Edges>, maxTime: Double): Int {
     var lowerBound = g.minOf { it.minOfOrNull { e -> e.first } ?: MAX_W }.toInt()
     var upperBound = g.maxOf { it.maxOfOrNull { e -> e.first } ?: MAX_W }.toInt()
     while (upperBound - lowerBound >= 1) {
@@ -45,7 +46,7 @@ private fun binarySearchDijkstra(g: AdjacencyList, maxTime: Double): Int {
                 }
             }
         }
-        val shortestPath = Dijkstra(g).dijkstra(1).distances[g.size - 1]
+        val shortestPath = Dijkstra(NestedAdjacencyList(g)).dijkstra(1).distances[g.size - 1]
         if (shortestPath <= maxTime) {
             upperBound = mid
         } else {

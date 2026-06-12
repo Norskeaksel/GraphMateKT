@@ -1,5 +1,7 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.Edges
+
 /** A general graph class that represents nodes of any datatype.
  *
  * Any new node is given an ID upon creation, which is used to build an adjacency list. The class maintains internal
@@ -17,12 +19,13 @@ package graphMateKT.graphClasses
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
  *
- * @param isWeighted Indicates whether it uses weighted or unweighted edges. Traversal algorithms like BFS and DFS
- * operate on unweighted graphs, while minimum cost algorithms like Dijkstra, Floyd Warshall and Prims are based on weighted edges */
-class Graph(isWeighted:Boolean=true): BaseGraph<Any>(0, isWeighted) {
+ * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
+ */
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private var nrOfNodes = 0
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
+    private val localAdjacencyList = mutableListOf<Edges>()
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -33,38 +36,28 @@ class Graph(isWeighted:Boolean=true): BaseGraph<Any>(0, isWeighted) {
             //System.err.println("Warning: The node already exists, it can't be added again")
             return
         }
-        nodes.add(node)
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        adjacencyList.add(mutableListOf())
-        unweightedAdjacencyList.add(mutableListOf())
+        localAdjacencyList.add(mutableListOf())
+        adjacencyListNotFinalized = true
     }
 
-    override fun addWeightedEdge(node1: Any, node2: Any, weight: Double) {
+    override fun addEdge(node1: Any, node2: Any, weight: Double) {
         val id1 = getOrAddNodeId(node1)
         val id2 = getOrAddNodeId(node2)
-        adjacencyList[id1].add(weight to id2)
+        localAdjacencyList[id1].add(weight to id2)
+        edgesCount++
+        adjacencyListNotFinalized = true
     }
 
-    override fun addUnweightedEdge(node1: Any, node2: Any) {
-        val id1 = getOrAddNodeId(node1)
-        val id2 = getOrAddNodeId(node2)
-        unweightedAdjacencyList[id1].add(id2)
+    override fun addEdge(node1: Any, node2: Any) {
+        addEdge(node1, node2, 1.0)
     }
 
     override fun node2Id(node: Any): Int? = node2id[node]
-
-
     override fun id2Node(id: Int): Any? = id2Node[id]
-
-
     override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun toString(): String {
-        return buildString {
-            adjacencyList.forEachIndexed { id, edges ->
-                val edgeString = edges.joinToString { id2Node(it.second).toString() }
-                append("${id2Node(id)} ----> [$edgeString]\n")
-            }
-        }
+    override fun finalizeAdjacencyList() {
+        adjacencyList = NestedAdjacencyList(localAdjacencyList)
     }
 }

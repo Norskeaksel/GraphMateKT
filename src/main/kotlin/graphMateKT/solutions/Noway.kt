@@ -2,7 +2,6 @@ package graphMateKT.solutions
 
 import graphMateKT.*
 import graphMateKT.graphClasses.Grid
-import graphMateKT.gridGraphics.visualizeGrid
 import graphMateKT.readInts
 
 internal fun main() {
@@ -14,7 +13,7 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/noway */
 internal fun noway(): Long {
     val (h, w, n) = readInts(3)
-    val g = Grid(w,h)
+    val g = Grid(w, h)
     repeat(n){
         val (ri, mi) = readInts(2)
         g.nodes().forEach { t ->

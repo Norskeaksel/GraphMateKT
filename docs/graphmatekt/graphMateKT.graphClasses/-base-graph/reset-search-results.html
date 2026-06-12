@@ -109,7 +109,7 @@
   <div class="cover ">
     <h1 class="cover"><span>reset</span><wbr></wbr><span>Search</span><wbr></wbr><span><span>Results</span></span></h1>
   </div>
-  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="graphmatekt/JVM"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset-search-results.html"><span class="token function">resetSearchResults</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Clears the search results stored in the graph.</p><p class="paragraph">The following functions rely on the <code class="lang-kotlin">searchResults</code> property, which is populated by running a search algorithm (DFS, BFS, or Dijkstra). These functions will throw an <code class="lang-kotlin">IllegalStateException</code> if no search are run after calling this function:</p><ul><li><p class="paragraph"><code class="lang-kotlin">depth()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">currentVisitedNodes()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">visitedNodes()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">finalPath()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">foundTarget()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">distanceTo(node: T)</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">maxDistance()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">furthestNode()</code>:</p></li></ul></div></div>
+  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable="graphmatekt/JVM"><div class="symbol monospace"><span class="token keyword">fun </span><a href="reset-search-results.html"><span class="token function">resetSearchResults</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><p class="paragraph">Clears the search results stored in the graph.</p><p class="paragraph">The following functions rely on the private <code class="lang-kotlin">searchResults</code> property, which is populated by running a search algorithm (DFS, BFS, or Dijkstra). These functions will throw an <code class="lang-kotlin">IllegalStateException</code> if no search is run after calling this function:</p><ul><li><p class="paragraph"><code class="lang-kotlin">depth()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">currentVisitedNodes()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">visitedNodes()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">finalPath()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">foundTarget()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">distanceTo(node: T)</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">maxDistance()</code>:</p></li><li><p class="paragraph"><code class="lang-kotlin">furthestNode()</code>:</p></li></ul></div></div>
 </div>
     <div class="footer">
         <div class="footer--container">
@@ -120,7 +120,7 @@
                     <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
                         Dokka
                     </a>
-                    <div>© 2025 Copyright</div>
+                    <div>© 2026 Copyright</div>
                 </div>
             </div>
         </div>

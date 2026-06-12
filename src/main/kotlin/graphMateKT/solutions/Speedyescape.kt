@@ -1,8 +1,6 @@
 package graphMateKT.solutions
 
-import graphMateKT.AdjacencyList
 import graphMateKT.Edge
-import graphMateKT.deepCopy
 import graphMateKT.graphAlgorithms.Dijkstra
 import graphMateKT.graphClasses.Graph
 import graphMateKT.readInt
@@ -10,7 +8,7 @@ import graphMateKT.readInts
 import java.util.*
 
 
-internal fun main() {
+/*internal fun main() {
     val ans = speedyescape()
     if (ans == -1.0)
         println("IMPOSSIBLE")
@@ -94,3 +92,4 @@ private fun AdjacencyList.setInfAsWeightsToNodes(bannedNodes: Set<Int>) {
         }
     }
 }
+*/

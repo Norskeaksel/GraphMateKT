@@ -13,7 +13,7 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/importspaghetti */
 internal fun importspaghetti(): String {
     val n = readInt()
-    val g = Graph(false)
+    val g = Graph()
     val files = readString().split(" ")
     files.forEach { file ->
         g.addNode(file)

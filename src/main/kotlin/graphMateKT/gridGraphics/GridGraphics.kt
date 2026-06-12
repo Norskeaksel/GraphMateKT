@@ -14,7 +14,6 @@ import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.util.Duration
-import java.lang.Thread.sleep
 import kotlin.math.max
 import kotlin.math.min
 

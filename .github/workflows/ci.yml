@@ -1,39 +1,33 @@
-# A friendly name for your workflow, which will be displayed on GitHub
 name: Kotlin CI with Maven
-
-# 1. Controls when the workflow will run
 on:
-  # Trigger the workflow on push events for the "main" branch
   push:
     branches: [ main ]
-  # Also trigger on pull request events targeted at the "main" branch
   pull_request:
     branches: [ main ]
 
-# 2. Defines the jobs to be executed
 jobs:
-  # The name of our job. You can name it anything.
   build-and-test:
-    # 3. The type of virtual machine to run the job on. "ubuntu-latest" is a good default.
     runs-on: ubuntu-latest
 
-    # 4. A sequence of tasks that will be executed as part of the job
     steps:
-      # Step 1: Checks out your repository's code so the workflow can access it
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Sets up the Java Development Kit (JDK)
-      # Kotlin/JVM runs on the JDK.
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin' # A popular, free, and open-source distribution of OpenJDK
-          cache: 'maven' # This is crucial! It caches your Maven dependencies to speed up future builds.
+          cache: 'maven' # Caches Maven dependencies to speed up future builds.
 
-      # Step 3: Run the tests using Maven
-      # This command tells Maven to run the "test" phase.
-      # The "-B" flag runs Maven in "batch mode," which is recommended for CI environments.
-      - name: Run tests with Maven
+      - name: Run tests with Maven in batch mode
         run: mvn -B test
+
+      - name: Verify GraphMateKTSingleFile.kt is up to date
+        run: |
+          bash scripts/generate-single-file.sh
+          if ! git diff --quiet -- GraphMateKTSingleFile.kt; then
+            echo "::error::GraphMateKTSingleFile.kt is out of date. Run 'bash scripts/generate-single-file.sh' and commit the result."
+            git --no-pager diff -- GraphMateKTSingleFile.kt
+            exit 1
+          fi

@@ -10,7 +10,7 @@ internal fun main(){
         val (n,m,q,s) = readInts(4)
         if(n+m+q+s == 0)
             break
-        val g = IntGraph(n)
+        val g = IntGraph(n, m)
         repeat(m){
             val (u,v,w) = readInts(3)
             g.addEdge(u,v,w.toDouble())

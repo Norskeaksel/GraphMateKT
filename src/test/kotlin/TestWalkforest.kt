@@ -38,5 +38,4 @@ class WalkforestTest {
         _reader = File("src/test/SampleInput/Walkforest/input3").inputStream().bufferedReader()
         assertThat(walkforest()).isEqualTo(expectedOutput)
     }
-
 }

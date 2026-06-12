@@ -94,6 +94,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+                <configuration>
+                    <!-- Increase the forked test JVM thread stack size to avoid
+                         StackOverflowError in deep recursive graph traversals. -->
+                    <argLine>-Xss16m</argLine>
+                </configuration>
             </plugin>
             <!-- Maven Central Repository Deployment -->
             <plugin>

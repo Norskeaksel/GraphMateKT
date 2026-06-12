@@ -1,6 +1,7 @@
 package graphMateKT.graphClasses
 
 import graphMateKT.Edge
+import graphMateKT.Edges
 import graphMateKT.Tile
 import graphMateKT.graphAlgorithms.DFS
 
@@ -47,11 +48,13 @@ import graphMateKT.graphAlgorithms.DFS
  *
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
- * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
- * @param isWeighted Indicates whether the grid uses weighted or unweighted edges. */
-class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWithDatalessTiles: Boolean = true) :
-    BaseGraph<Tile>(width * height, isWeighted) {
-    /** Construct the grid from a list of strings, where each string represents a row in the grid.
+ * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
+class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
+    BaseGraph<Tile>(debugTimeUse) {
+    private val nodes = MutableList<Tile?>(width * height) { null }
+    private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+
+    /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
      *
      * Sets the grid height to the list size and the width to the length of the first string.
      * Requires that all strings have the same length. If some cells should be deleted,
@@ -81,6 +84,7 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
         }
     }
 
+
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
@@ -89,23 +93,27 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
     override fun node2Id(node: Tile) = node.x + node.y * width
 
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
-
-    override fun addWeightedEdge(node1: Tile, node2: Tile, weight: Double) {
-        val u = node2Id(node1)
-        val v = node2Id(node2)
-        adjacencyList[u].add(Edge(weight, v))
+    override fun finalizeAdjacencyList() {
+        adjacencyList = NestedAdjacencyList(localAdjacencyList)
     }
 
-    override fun addUnweightedEdge(node1: Tile, node2: Tile) {
+    override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
-        unweightedAdjacencyList[u].add(v)
+        localAdjacencyList[u].add(Edge(weight, v))
+    }
+
+    override fun addEdge(node1: Tile, node2: Tile) {
+        addEdge(node1, node2, 1.0)
     }
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
-    override fun topologicalSort() = DFS(unweightedAdjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }
-    override fun stronglyConnectedComponents() = DFS(unweightedAdjacencyList).stronglyConnectedComponents(deleted())
-        .map { component -> component.mapNotNull { id2Node(it) } }
+    override fun topologicalSort() =
+        finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! } }
+
+    override fun stronglyConnectedComponents() =
+        finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
+            .map { component -> component.mapNotNull { id2Node(it) } }
 
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
@@ -208,11 +216,6 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
     fun connectGrid(bidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
-        if (nrOfConnections(unweightedAdjacencyList) > 0) {
-            System.err.println("Warning: overwriting existing connections in the grid")
-            adjacencyList.forEach { it.clear() }
-            unweightedAdjacencyList.forEach { it.clear() }
-        }
         nodes().forEach { t ->
             val neighbours = getNeighbours(t)
             neighbours.forEach {
@@ -232,7 +235,7 @@ class Grid(val width: Int, val height: Int, isWeighted: Boolean = false, initWit
     }
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/
-    fun print() {
+    override fun print() {
         val padding = nodes().maxOf { it.data.toString().length }
         nodes.forEachIndexed { id, t ->
             if (id > 0 && id % width == 0)

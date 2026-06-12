@@ -13,7 +13,7 @@ internal fun  main() {
 /** Solves https://open.kattis.com/problems/builddeps */
 internal fun  builddeps(): String {
     val n = readInt()
-    val g = Graph(false)
+    val g = Graph()
     repeat(n) {
         val words = readString().split(" ")
         val file = words[0].removeSuffix(":")

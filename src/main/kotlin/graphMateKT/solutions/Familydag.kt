@@ -12,7 +12,7 @@ internal fun  main() {
 
 /** Solves https://open.kattis.com/problems/familydag */
 internal fun  familydag(): String {
-    var graph = Graph(false)
+    var graph = Graph()
     val ans = StringBuilder()
     while (true) {
         val line = readString() ?: break
@@ -26,7 +26,7 @@ internal fun  familydag(): String {
             }
             ans.appendLine()
             //graph.visualize()
-            graph = Graph(false)
+            graph = Graph()
             continue
         }
         val (v, _, u) = line.split(" ")

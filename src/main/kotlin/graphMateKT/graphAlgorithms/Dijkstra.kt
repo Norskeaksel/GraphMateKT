@@ -1,7 +1,7 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.AdjacencyList
 import graphMateKT.Edge
+import graphMateKT.graphClasses.AdjacencyList
 import java.util.*
 
 internal class Dijkstra(private val graph: AdjacencyList) {
@@ -16,7 +16,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u]) continue
             r.visited[u] = true
             r.currentVisited.add(u)
-            graph[u].forEach { (d, v) ->
+            graph.forEachEdge(u){ d, v ->
                 val newDistance = r.weightedDistances[u] + d
                 if (newDistance < r.weightedDistances[v]) {
                     r.weightedDistances[v] = newDistance

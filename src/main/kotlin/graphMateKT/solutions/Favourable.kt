@@ -16,7 +16,7 @@ internal fun favourable(): String {
     val ans = StringBuilder()
     repeat(n){
         val s = readInt()
-        val g = Graph(false)
+        val g = Graph()
         val start = "1"
         repeat(s){
             val words = readString().split(" ")

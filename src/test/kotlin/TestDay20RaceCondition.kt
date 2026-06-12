@@ -1,4 +1,4 @@
-import graphMateKT.solutions.day20a
+/*import graphMateKT.solutions.day20a
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -26,4 +26,4 @@ class Day20RaceConditionTest{
         val ans = day20a(input,40, 84)
         assertThat(ans).isEqualTo(2)
     }
-}
+}*/

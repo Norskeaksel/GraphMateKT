@@ -1,6 +1,6 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.AdjacencyList
+import graphMateKT.graphClasses.AdjacencyList
 import kotlin.math.min
 
 internal class FloydWarshall(val graph: AdjacencyList) {
@@ -8,9 +8,9 @@ internal class FloydWarshall(val graph: AdjacencyList) {
     private val distances = Array(n) { DoubleArray(n) { Double.POSITIVE_INFINITY } }
 
     init {
-        graph.forEachIndexed { u, edges ->
+        graph.nodes().forEachIndexed { u, node ->
             distances[u][u] = 0.0
-            edges.forEach { (d, v) ->
+            graph.forEachEdge(node){ d, v ->
                 distances[u][v] = d
             }
         }

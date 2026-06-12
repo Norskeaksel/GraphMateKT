@@ -34,11 +34,11 @@ internal fun treehouses(): Double {
         }
     }
     repeat(e) {
-        g.connect(t8s[it], t8s[e - 1], 0)
+        g.connect(t8s[it], t8s[e - 1], 0.0)
     }
     repeat(p) {
         val (u, v) = readInts(2)
-        g.connect(t8s[u-1], t8s[v-1], 0)
+        g.connect(t8s[u-1], t8s[v-1], 0.0)
     }
     val ans = g.minimumSpanningTree()
     return ans.first

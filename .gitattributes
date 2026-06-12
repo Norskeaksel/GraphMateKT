@@ -1,0 +1,4 @@
+# Keep the generated single-file distribution and the generator script as LF
+# so the CI drift check is deterministic across Windows and Linux.
+GraphMateKTSingleFile.kt text eol=lf
+scripts/generate-single-file.sh text eol=lf
