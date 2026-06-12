@@ -4,15 +4,13 @@ import kotlin.math.min
 import java.io.InputStream
 
 /** Edge has a weight w to a destination node v */
-internal typealias Edge = Pair<Double, Int>
-/** List of edges */
-internal typealias Edges = MutableList<Edge>
+typealias Edge = Pair<Double, Int>
+/** Mutable list of edges */
+typealias Edges = MutableList<Edge>
 /** List of list of nodes */
-internal typealias Components = List<List<Any>>
+typealias Components = List<List<Any>>
 /** List of list of integer nodes */
-internal typealias IntComponents = List<List<Int>>
-
-// internal fun AdjacencyList.deepCopy() = map { it.toMutableList() }.toMutableList()
+typealias IntComponents = List<List<Int>>
 
 /** Represents a node in the Grid graph with x and y coordinates and optional data, which can be considered the node value
  *
