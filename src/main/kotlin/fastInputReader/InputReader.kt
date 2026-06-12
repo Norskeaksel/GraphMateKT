@@ -1,15 +1,16 @@
+package fastInputReader
+
+import java.io.IOException
+import java.io.InputStream
+
 /**
- * A fast input reader for any [InputStream] (especially `System.in`).
+ * A fast input reader for any [java.io.InputStream] (especially `System.in`).
  *
  * This reader is optimized for competitive-programming style input and assumes
  * well-formed data (it does not perform validation).
  *
  * @author William Fiset, william.alexandre.fiset@gmail.com. Auto translated to Kotlin by IntelliJ.
  */
-
-import java.io.IOException
-import java.io.InputStream
-
 class InputReader @JvmOverloads constructor(
     stream: InputStream = DEFAULT_STREAM,
     bufferSize: Int = DEFAULT_BUFFER_SIZE
@@ -43,7 +44,7 @@ class InputReader @JvmOverloads constructor(
      * Reads a single character from the input stream.
      * @return Returns the byte value of the next character in the buffer and EOF
      * at the end of the stream.
-     * @throws IOException throws exception if there is no more data to read
+     * @throws java.io.IOException throws exception if there is no more data to read
      */
     @Throws(IOException::class)
     private fun read(): Byte {

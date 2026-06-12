@@ -1,6 +1,6 @@
 package graphMateKT.solutions
 
-import InputReader
+import fastInputReader.InputReader
 import graphMateKT.graphClasses.IntGraph
 import java.io.InputStream
 

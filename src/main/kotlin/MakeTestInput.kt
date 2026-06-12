@@ -1,7 +1,7 @@
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
-fun makeTestInput(testCases: Int, nodes: Int, edges: Int): InputStream {
+internal fun makeTestInput(testCases: Int, nodes: Int, edges: Int): InputStream {
     val sb = StringBuilder()
     sb.appendLine(testCases)
     repeat(testCases) {
