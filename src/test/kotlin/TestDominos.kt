@@ -19,12 +19,12 @@ class DominosTest {
 
     @Test
     fun dominosb() {
-        val time = measureTimeMillis {
-            File("src/test/SampleInput/Dominos/input2").inputStream().use {
-                dominos(it)
+        makeTestInput(testCases = 1, nodes = 100000, edges = 100000).use { input ->
+            val time = measureTimeMillis {
+                dominos(input)
             }
+            debug("dominos time use: $time ms")
         }
-        debug("dominos time use: $time ms")
     }
 
     @Test
