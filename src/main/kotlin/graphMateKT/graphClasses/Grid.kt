@@ -53,6 +53,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     BaseGraph<Tile>(debugTimeUse) {
     private val nodes = MutableList<Tile?>(width * height) { null }
     private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+    private var adjacencyListIsFinalized = false
 
     /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
      *
@@ -88,19 +89,23 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
+        adjacencyListIsFinalized = false
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
 
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized) return
         adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyListIsFinalized = true
     }
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
         localAdjacencyList[u].add(Edge(weight, v))
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Tile, node2: Tile) {
@@ -226,6 +231,8 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
                 }
             }
         }
+        finalizeAdjacencyListIfNeeded()
+        adjacencyListIsFinalized = true
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,

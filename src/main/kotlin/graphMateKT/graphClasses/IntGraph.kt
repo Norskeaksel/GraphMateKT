@@ -34,8 +34,11 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
     private val to = IntArray(nrOfEdges)
     private val weights = DoubleArray(nrOfEdges) { 1.0 }
     private val nrOfEdgesFrom = IntArray(size)
+    private var adjacencyListIsFinalized = false
 
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized)
+            return
         val starts = IntArray(size)
         val ends = IntArray(size)
         val flattenedAdjacencyList = IntArray(edgesCount)
@@ -55,6 +58,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
             flattenWeights[idx] = weights[i]
         }
         adjacencyList = FlattenedAdjacencyList(flattenedAdjacencyList, starts, ends, flattenWeights)
+        adjacencyListIsFinalized = true
     }
 
     override fun addNode(node: Int) =
@@ -67,6 +71,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         weights[edgesCount] = weight
         nrOfEdgesFrom[node1]++
         edgesCount++
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Int, node2: Int) {
@@ -75,6 +80,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         to[edgesCount] = node2
         nrOfEdgesFrom[node1]++
         edgesCount++
+        adjacencyListIsFinalized = false
     }
 
     override fun id2Node(id: Int) = id

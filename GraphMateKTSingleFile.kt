@@ -37,7 +37,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
-    protected var adjacencyListNotFinalized = true
     private var searchResults: GraphSearchResults? = null
     private var finalPath: List<T>? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -65,7 +64,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
-    protected abstract fun finalizeAdjacencyList()
+    protected abstract fun finalizeAdjacencyListIfNeeded()
 
     /** Overloaded function that calls addEdge with weight converted to a double. */
     fun addEdge(node1: T, node2: T, weight: Int) {
@@ -168,14 +167,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     fun furthestNode(): T =
         searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() })!! }
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
-
-
-    protected fun finalizeAdjacencyListIfNeeded() {
-        if (adjacencyListNotFinalized) {
-            finalizeAdjacencyList()
-        }
-        adjacencyListNotFinalized = false
-    }
 
     /** Retrieves a list of edges connected to the specified node.
      *
@@ -534,6 +525,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
     private val localAdjacencyList = mutableListOf<Edges>()
+    private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -547,7 +539,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
         localAdjacencyList.add(mutableListOf())
-        adjacencyListNotFinalized = true
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
@@ -555,7 +547,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         val id2 = getOrAddNodeId(node2)
         localAdjacencyList[id1].add(weight to id2)
         edgesCount++
-        adjacencyListNotFinalized = true
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any) {
@@ -565,8 +557,10 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun node2Id(node: Any): Int? = node2id[node]
     override fun id2Node(id: Int): Any? = id2Node[id]
     override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized) return
         adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyListIsFinalized = true
     }
 }
 
@@ -600,8 +594,11 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
     private val to = IntArray(nrOfEdges)
     private val weights = DoubleArray(nrOfEdges) { 1.0 }
     private val nrOfEdgesFrom = IntArray(size)
+    private var adjacencyListIsFinalized = false
 
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized)
+            return
         val starts = IntArray(size)
         val ends = IntArray(size)
         val flattenedAdjacencyList = IntArray(edgesCount)
@@ -621,6 +618,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
             flattenWeights[idx] = weights[i]
         }
         adjacencyList = FlattenedAdjacencyList(flattenedAdjacencyList, starts, ends, flattenWeights)
+        adjacencyListIsFinalized = true
     }
 
     override fun addNode(node: Int) =
@@ -633,6 +631,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         weights[edgesCount] = weight
         nrOfEdgesFrom[node1]++
         edgesCount++
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Int, node2: Int) {
@@ -641,6 +640,7 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         to[edgesCount] = node2
         nrOfEdgesFrom[node1]++
         edgesCount++
+        adjacencyListIsFinalized = false
     }
 
     override fun id2Node(id: Int) = id
@@ -708,6 +708,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     BaseGraph<Tile>(debugTimeUse) {
     private val nodes = MutableList<Tile?>(width * height) { null }
     private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+    private var adjacencyListIsFinalized = false
 
     /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
      *
@@ -743,19 +744,23 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
+        adjacencyListIsFinalized = false
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
 
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized) return
         adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyListIsFinalized = true
     }
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
         localAdjacencyList[u].add(Edge(weight, v))
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Tile, node2: Tile) {
@@ -881,6 +886,8 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
                 }
             }
         }
+        finalizeAdjacencyListIfNeeded()
+        adjacencyListIsFinalized = true
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,

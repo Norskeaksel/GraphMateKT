@@ -26,6 +26,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
     private val localAdjacencyList = mutableListOf<Edges>()
+    private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -39,7 +40,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
         localAdjacencyList.add(mutableListOf())
-        adjacencyListNotFinalized = true
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
@@ -47,7 +48,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         val id2 = getOrAddNodeId(node2)
         localAdjacencyList[id1].add(weight to id2)
         edgesCount++
-        adjacencyListNotFinalized = true
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any) {
@@ -57,7 +58,9 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun node2Id(node: Any): Int? = node2id[node]
     override fun id2Node(id: Int): Any? = id2Node[id]
     override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun finalizeAdjacencyList() {
+    override fun finalizeAdjacencyListIfNeeded() {
+        if (adjacencyListIsFinalized) return
         adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyListIsFinalized = true
     }
 }

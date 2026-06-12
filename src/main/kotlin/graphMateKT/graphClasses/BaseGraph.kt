@@ -15,7 +15,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
-    protected var adjacencyListNotFinalized = true
     private var searchResults: GraphSearchResults? = null
     private var finalPath: List<T>? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -43,7 +42,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
-    protected abstract fun finalizeAdjacencyList()
+    protected abstract fun finalizeAdjacencyListIfNeeded()
 
     /** Overloaded function that calls addEdge with weight converted to a double. */
     fun addEdge(node1: T, node2: T, weight: Int) {
@@ -146,14 +145,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     fun furthestNode(): T =
         searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() })!! }
             ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
-
-
-    protected fun finalizeAdjacencyListIfNeeded() {
-        if (adjacencyListNotFinalized) {
-            finalizeAdjacencyList()
-        }
-        adjacencyListNotFinalized = false
-    }
 
     /** Retrieves a list of edges connected to the specified node.
      *
