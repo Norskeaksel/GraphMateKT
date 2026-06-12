@@ -16,16 +16,16 @@ internal fun main() {
         startPaused = true,
         screenWidthOverride = 300.0
     )
-    /*val stringList = listOf(
+    val stringList = listOf(
         "S#X",
         "1##",
         "23E"
     )
-    val grid = Grid(stringList)
-    grid.deleteNodesWithData('#')
-    grid.connectGridDefault()
+    val stringGrid = Grid(stringList)
+    stringGrid.deleteNodesWithData('#')
+    stringGrid.connectGridDefault()
     val startNode = Tile(0, 0)
     val target = Tile(2, 2)
-    grid.bfs(startNode, target)
-    grid.visualizeGrid()*/
+    stringGrid.bfs(startNode, target)
+    stringGrid.visualizeGrid()
 }

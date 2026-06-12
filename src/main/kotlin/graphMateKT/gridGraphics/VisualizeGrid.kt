@@ -2,7 +2,7 @@ package graphMateKT.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import javafx.application.Application
+import graphMateKT.launchVisualization
 
 /** Visualizes the grid and optionally its traversal process using a graphical interface.
  *
@@ -53,5 +53,5 @@ fun Grid.visualizeGrid(
     GridGraphics.startPaused = startPaused
     GridGraphics.closeOnEnd = closeOnEnd
     GridGraphics.screenWidthOverride = screenWidthOverride
-    Application.launch(GridGraphics()::class.java)
+    launchVisualization { GridGraphics() }
 }
