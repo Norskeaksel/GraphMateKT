@@ -44,17 +44,17 @@ internal class GridGraphics : Application() {
     val yNodes = sceneHeight / grid.height
     val minEdgeLength = xNodes.coerceAtMost(yNodes)
 
-    override fun start(primaryStage: Stage) {
-        primaryStage.title = screenTitle
+    override fun start(stage: Stage) {
+        stage.title = screenTitle
         val root = Group()
         gc.fill = Color.BLACK
         grid.nodes().forEach { node ->
             drawSquare(node.x, node.y, Color.BLACK)
         }
         root.children.add(canvas)
-        primaryStage.scene = Scene(root)
-        primaryStage.show()
-        animateVisitedNodes(primaryStage)
+        stage.scene = Scene(root)
+        stage.show()
+        animateVisitedNodes(stage)
     }
 
     private fun drawSquare(x: Int, y: Int, color: Color) {
