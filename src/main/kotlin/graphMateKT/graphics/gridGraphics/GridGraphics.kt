@@ -1,4 +1,4 @@
-package graphMateKT.gridGraphics
+package graphMateKT.graphics.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile

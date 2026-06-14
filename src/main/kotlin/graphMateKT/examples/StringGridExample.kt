@@ -2,7 +2,7 @@ package graphMateKT.examples
 
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
-import graphMateKT.gridGraphics.visualizeGrid
+import graphMateKT.graphics.gridGraphics.visualizeGrid
 
 internal fun main() {
     val grid = Grid(2, 2)

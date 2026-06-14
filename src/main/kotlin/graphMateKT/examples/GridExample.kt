@@ -2,7 +2,7 @@ package graphMateKT.examples
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.gridGraphics.visualizeGrid
+import graphMateKT.graphics.gridGraphics.visualizeGrid
 
 internal fun main() {
     // Example Grid Definition. We can also initialize it with a list of strings

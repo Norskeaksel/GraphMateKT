@@ -2,7 +2,7 @@ package graphMateKT.examples
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.graphGraphics.visualizeGraph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 
 
 internal fun main() {

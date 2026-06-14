@@ -1,4 +1,4 @@
-package graphMateKT.desktop.gui
+package graphMateKT.graphics.desktopGui
 
 import javafx.application.Application
 

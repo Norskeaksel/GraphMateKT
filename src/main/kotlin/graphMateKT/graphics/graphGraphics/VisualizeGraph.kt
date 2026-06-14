@@ -1,7 +1,7 @@
-package graphMateKT.graphGraphics
+package graphMateKT.graphics.graphGraphics
 
 import graphMateKT.graphClasses.BaseGraph
-import graphMateKT.launchVisualization
+import graphMateKT.graphics.launchVisualization
 
 /** Visualizes the graph with Bruno Silva's JavaFXSmartGraph library.
  *

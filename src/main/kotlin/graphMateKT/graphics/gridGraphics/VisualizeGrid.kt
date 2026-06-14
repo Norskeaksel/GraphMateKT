@@ -1,8 +1,8 @@
-package graphMateKT.gridGraphics
+package graphMateKT.graphics.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.launchVisualization
+import graphMateKT.graphics.launchVisualization
 
 /** Visualizes the grid and optionally its traversal process using a graphical interface.
  *

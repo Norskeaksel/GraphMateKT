@@ -1,4 +1,4 @@
-package graphMateKT.graphGraphics
+package graphMateKT.graphics.graphGraphics
 
 import graphMateKT.Components
 import graphMateKT.IntComponents
