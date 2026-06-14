@@ -12,17 +12,17 @@ import graphMateKT.graphics.launchVisualization
  *
  * <i>Example usage:</i>
  * ```
-    val grid = Grid(2, 2, true)
-        grid.visualizeGrid(
-        currentVisitedNodes = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1), Tile(0, 1)),
-        finalPath = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1)),
-        nodeDistances = listOf(0.0, 1.0, 2.0, 3.0),
-        screenTitle = "GraphMateKT visualizeGrid example usage",
-        animationTicTimeOverride = 1000.0,
-        closeOnEnd = true,
-        startPaused = true,
-        screenWidthOverride = 300.0
-    )
+val grid = Grid(2, 2, true)
+grid.visualizeGrid(
+currentVisitedNodes = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1), Tile(0, 1)),
+finalPath = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1)),
+nodeDistances = listOf(0.0, 1.0, 2.0, 3.0),
+screenTitle = "GraphMateKT visualizeGrid example usage",
+animationTicTimeOverride = 1000.0,
+closeOnEnd = true,
+startPaused = true,
+screenWidthOverride = 300.0
+)
  * ```
  *
  * @param currentVisitedNodes A list of tiles representing the nodes visited in order during the traversal.
@@ -36,8 +36,8 @@ import graphMateKT.graphics.launchVisualization
  * @throws IllegalStateException If the grid is improperly configured for visualization. */
 fun Grid.visualizeGrid(
     currentVisitedNodes: List<Tile> = currentVisitedNodes(),
-    finalPath:List<Tile> = finalPath(),
-    nodeDistances:List<Double> = currentVisitedNodes.map { distanceTo(it) },
+    finalPath: List<Tile> = finalPath(),
+    nodeDistances: List<Double> = currentVisitedNodes.map { distanceTo(it) },
     screenTitle: String = "Grid visualizer (Click or space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
@@ -53,5 +53,5 @@ fun Grid.visualizeGrid(
     GridGraphics.startPaused = startPaused
     GridGraphics.closeOnEnd = closeOnEnd
     GridGraphics.screenWidthOverride = screenWidthOverride
-    launchVisualization { GridGraphics() }
+    launchVisualization(GridGraphics())
 }

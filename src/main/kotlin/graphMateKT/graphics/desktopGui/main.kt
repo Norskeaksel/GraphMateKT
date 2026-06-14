@@ -1,7 +1,7 @@
 package graphMateKT.graphics.desktopGui
 
-import javafx.application.Application
+import graphMateKT.graphics.launchVisualization
 
-fun main(){
-    Application.launch(DesktopGUI::class.java)
+fun main() {
+    launchVisualization(DesktopGUI())
 }

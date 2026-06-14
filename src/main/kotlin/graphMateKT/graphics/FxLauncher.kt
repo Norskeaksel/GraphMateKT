@@ -2,27 +2,24 @@ package graphMateKT.graphics
 
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.scene.Scene
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.atomic.AtomicBoolean
 
-private val fxToolkitStarted = AtomicBoolean(false)
+private var fxToolkitNotStarted = true
 
-internal fun launchVisualization(createApp: () -> Application) {
-    val windowClosed = CountDownLatch(1)
+internal fun launchVisualization(app: Application) {
+    if (fxToolkitNotStarted) {
+        fxToolkitNotStarted = false
+        Application.launch(app::class.java)
+        return
+    }
     val task = Runnable {
-        val app = createApp()
         val stage = Stage()
-        stage.setOnHidden { windowClosed.countDown() }
+        val scene = Scene(VBox(), 1000.0, 1000.0)
+        stage.scene = scene
+        stage.show()
         app.start(stage)
     }
-    if (fxToolkitStarted.compareAndSet(false, true)) {
-        Platform.startup {
-            Platform.setImplicitExit(false)
-            task.run()
-        }
-    } else {
-        Platform.runLater(task)
-    }
-    windowClosed.await()
+    Platform.runLater(task)
 }

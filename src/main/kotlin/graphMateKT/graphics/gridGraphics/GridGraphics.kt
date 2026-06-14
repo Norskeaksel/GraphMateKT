@@ -53,6 +53,8 @@ internal class GridGraphics : Application() {
         }
         root.children.add(canvas)
         stage.scene = Scene(root)
+        stage.width = sceneWith
+        stage.height = sceneHeight + 35 // Account for window title bar
         stage.show()
         animateVisitedNodes(stage)
     }

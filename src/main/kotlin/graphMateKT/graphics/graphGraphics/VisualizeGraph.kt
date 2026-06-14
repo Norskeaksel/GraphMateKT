@@ -53,7 +53,7 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         BidirectionalGraphGraphics.startPaused = startPaused
         BidirectionalGraphGraphics.closeOnEnd = closeOnEnd
         BidirectionalGraphGraphics.screenWidthOverride = screenWidthOverride
-        launchVisualization { BidirectionalGraphGraphics() }
+        launchVisualization(GraphGraphics())
     } else {
         @Suppress("UNCHECKED_CAST")
         GraphGraphics.graph = this as BaseGraph<Any>
@@ -63,6 +63,6 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         GraphGraphics.startPaused = startPaused
         GraphGraphics.closeOnEnd = closeOnEnd
         GraphGraphics.screenWidthOverride = screenWidthOverride
-        launchVisualization { GraphGraphics() }
+        launchVisualization(GraphGraphics())
     }
 }
