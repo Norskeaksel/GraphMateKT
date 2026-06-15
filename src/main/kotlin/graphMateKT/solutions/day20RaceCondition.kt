@@ -31,7 +31,7 @@ internal fun day20a(input: List<String>, cheatGoal: Int, fairTime: Int): Int {
         val path = grid.getPath(endNode)
         grid = gridWithoutCheatPath(path, grid)
     }
-    // grid.visualizeGrid(screenWidthOverride=2000.0)
+    // grid.visualizeGrid(screenWidthMultiplier=2.2)
     return c
 }
 

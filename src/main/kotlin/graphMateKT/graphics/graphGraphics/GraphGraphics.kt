@@ -6,6 +6,7 @@ import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrateg
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
 import graphMateKT.graphClasses.BaseGraph
+import graphMateKT.graphics.LaptopResolution
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -24,7 +25,6 @@ internal class GraphGraphics : Application() {
         var animationTicTimeOverride: Double? = null
         var startPaused = false
         var closeOnEnd = false
-        var screenWidthOverride: Double? = null
     }
 
 
@@ -41,10 +41,11 @@ internal class GraphGraphics : Application() {
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)
-        val scene = Scene(container, 1024.0, 768.0)
+        val scene = Scene(container, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
 
         stage.title = screenTitle
         stage.scene = scene
+        stage.centerOnScreen()
         stage.show()
         graphView.init()
 

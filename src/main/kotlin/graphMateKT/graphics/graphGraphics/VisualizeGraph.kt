@@ -21,7 +21,6 @@ import graphMateKT.graphics.launchVisualization
         animationTicTimeOverride = 2000.0,
         closeOnEnd = true,
         startPaused = true,
-        screenWidthOverride = 300.0
 )
  * ```
  * **NOTE:** to use this visualizeGraph() function, the files smartgraph.css and smartgraph.properties must be **added manually** to the root of your project,
@@ -33,7 +32,6 @@ import graphMateKT.graphics.launchVisualization
  * @param animationTicTimeOverride Overrides the default animation speed in milliseconds.
  * @param closeOnEnd If `true`, closes the visualization window when the animation ends.
  * @param startPaused If `true`, starts the visualization in a paused state.
- * @param screenWidthOverride Overrides the default screen width for the visualization.
  * @throws IllegalStateException If the graph is improperly configured for visualization. */
 fun <T : Any> BaseGraph<T>.visualizeGraph(
     bidirectional: Boolean = false,
@@ -42,7 +40,6 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,
-    screenWidthOverride: Double? = null,
 ) {
     if (bidirectional) {
         @Suppress("UNCHECKED_CAST")
@@ -52,7 +49,6 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         BidirectionalGraphGraphics.animationTicTimeOverride = animationTicTimeOverride
         BidirectionalGraphGraphics.startPaused = startPaused
         BidirectionalGraphGraphics.closeOnEnd = closeOnEnd
-        BidirectionalGraphGraphics.screenWidthOverride = screenWidthOverride
         launchVisualization(GraphGraphics())
     } else {
         @Suppress("UNCHECKED_CAST")
@@ -62,7 +58,6 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         GraphGraphics.animationTicTimeOverride = animationTicTimeOverride
         GraphGraphics.startPaused = startPaused
         GraphGraphics.closeOnEnd = closeOnEnd
-        GraphGraphics.screenWidthOverride = screenWidthOverride
         launchVisualization(GraphGraphics())
     }
 }

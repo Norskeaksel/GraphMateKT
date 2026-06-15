@@ -2,6 +2,7 @@ package graphMateKT.graphics.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
+import graphMateKT.graphics.LaptopResolution
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -28,12 +29,12 @@ internal class GridGraphics : Application() {
         var animationKeyFrameOverride: Double? = null
         var startPaused = false
         var closeOnEnd = false
-        var screenWidthOverride: Double? = null
+        var screenWidthMultiplier: Double = 1.0
     }
 
     val tilesToAnimate = if (currentVisitedNodes.isEmpty()) grid.currentVisitedNodes() else currentVisitedNodes
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
-    val sceneWith = screenWidthOverride ?: 1000.0
+    val sceneWith = LaptopResolution.HEIGHT * screenWidthMultiplier
     val sceneHeight = sceneWith * ratio
 
     var animationKeyFrameTime =
@@ -53,8 +54,9 @@ internal class GridGraphics : Application() {
         }
         root.children.add(canvas)
         stage.scene = Scene(root)
-        stage.width = sceneWith
+        stage.width = sceneWith + 13
         stage.height = sceneHeight + 35 // Account for window title bar
+        stage.centerOnScreen()
         stage.show()
         animateVisitedNodes(stage)
     }
@@ -79,7 +81,7 @@ internal class GridGraphics : Application() {
             timeline.keyFrames.add(keyFrame)
         }
         // Add extra tile to avoid closing on end too soon
-        (finalPath + listOf(Tile(-1,-1))).forEachIndexed { i, node ->
+        (finalPath + listOf(Tile(-1, -1))).forEachIndexed { i, node ->
             val keyFrame = KeyFrame(
                 animationKeyFrameTime.multiply(1.05 * (i.toDouble() + tilesToAnimate.size + 1)),
                 squareDrawer(

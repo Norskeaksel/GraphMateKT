@@ -21,7 +21,7 @@ screenTitle = "GraphMateKT visualizeGrid example usage",
 animationTicTimeOverride = 1000.0,
 closeOnEnd = true,
 startPaused = true,
-screenWidthOverride = 300.0
+screenWidthMultiplier = 0.5
 )
  * ```
  *
@@ -32,7 +32,7 @@ screenWidthOverride = 300.0
  * @param animationTicTimeOverride Overrides the default animation speed in milliseconds.
  * @param closeOnEnd If `true`, closes the visualization window when the animation ends.
  * @param startPaused If `true`, starts the visualization in a paused state.
- * @param screenWidthOverride Overrides the default screen width for the visualization.
+ * @param screenWidthMultiplier Changes the width and height of the GUI window by a factor.
  * @throws IllegalStateException If the grid is improperly configured for visualization. */
 fun Grid.visualizeGrid(
     currentVisitedNodes: List<Tile> = currentVisitedNodes(),
@@ -42,7 +42,7 @@ fun Grid.visualizeGrid(
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,
-    screenWidthOverride: Double? = null,
+    screenWidthMultiplier: Double = 1.0,
 ) {
     GridGraphics.grid = this
     GridGraphics.currentVisitedNodes = currentVisitedNodes
@@ -52,6 +52,6 @@ fun Grid.visualizeGrid(
     GridGraphics.animationKeyFrameOverride = animationTicTimeOverride
     GridGraphics.startPaused = startPaused
     GridGraphics.closeOnEnd = closeOnEnd
-    GridGraphics.screenWidthOverride = screenWidthOverride
+    GridGraphics.screenWidthMultiplier = screenWidthMultiplier
     launchVisualization(GridGraphics())
 }

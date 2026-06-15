@@ -36,7 +36,7 @@ internal fun main() {
     // Visualizing the grid, the BFS and the final fastest path to the target
     grid.visualizeGrid(
         screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
-        screenWidthOverride = 880.0,
+        screenWidthMultiplier = 0.88,
         startPaused = true,
     )
 }

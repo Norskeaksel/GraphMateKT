@@ -14,7 +14,7 @@ internal fun main() {
         animationTicTimeOverride = 1000.0,
         closeOnEnd = true,
         startPaused = true,
-        screenWidthOverride = 300.0
+        screenWidthMultiplier = 0.3
     )
     val stringList = listOf(
         "S#X",

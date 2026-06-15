@@ -31,10 +31,9 @@ Add the following dependency to your `pom.xml` file:
 
 See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest version number.
 
-:warning: Please note that to use the ```Graph().visualizeGraph() function```, the files `smartgraph.css` and
-`smartgraph.properties` **must be added manually** to the root of your project, as described
-in [Bruno Silva](https://github.com/brunomnsilva)'s
-[JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
+:warning: Please note that for the ```Graph().visualizeGraph() function``` to work as intended
+, the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
+as described in [Bruno Silva](https://github.com/brunomnsilva)'s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
 ### Using the library in a single file.
 In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
@@ -213,7 +212,7 @@ fun main() {
   // Visualizing the grid, the BFS and the final fastest path to the target
   grid.visualizeGrid(
     screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
-    screenWidthOverride = 880.0,
+    screenWidthMultiplier = 0.88,
     startPaused = true,
   )
 }
