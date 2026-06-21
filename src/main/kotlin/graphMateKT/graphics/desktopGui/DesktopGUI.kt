@@ -24,6 +24,11 @@ class DesktopGUI : Application() {
         algorithmSelector.items.addAll(Algorithms.entries)
         algorithmSelector.promptText = "Select algorithm"
 
+        val startNodesLabel = Label("Start node(s):")
+        val startNodes = TextField()
+        startNodes.text = "0,5"
+        val startNodesBox = HBox(10.0, startNodesLabel, startNodes)
+
         val vizualizeGraphBtn = Button("Vizualize Graph")
         val vizualizeGridBtn = Button("Vizualize Grid")
 
@@ -88,8 +93,7 @@ class DesktopGUI : Application() {
         HBox.setHgrow(graphVBox, Priority.ALWAYS)
         HBox.setHgrow(gridVBox, Priority.ALWAYS)
 
-
-        val layout = VBox(10.0, algorithmSelector, graphAndGridComponents)
+        val layout = VBox(10.0, algorithmSelector, startNodesBox, graphAndGridComponents)
         VBox.setVgrow(graphAndGridComponents, Priority.ALWAYS)
 
         val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
@@ -99,11 +103,11 @@ class DesktopGUI : Application() {
         stage.show()
 
         vizualizeGraphBtn.setOnAction {
-            handleVizualizeGraph(graphInput)
+            handleVizualizeGraph(graphInput, algorithmSelector)
         }
 
         vizualizeGridBtn.setOnAction {
-            handleVizualizeGrid(gridInput)
+            handleVizualizeGrid(gridInput, algorithmSelector)
         }
     }
 }

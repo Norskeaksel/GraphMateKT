@@ -1,10 +1,12 @@
 package graphMateKT.graphics.desktopGui.buttonHandlers
 
 import graphMateKT.graphClasses.Grid
+import graphMateKT.graphics.desktopGui.Algorithms
 import graphMateKT.graphics.gridGraphics.visualizeGrid
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 
-fun handleVizualizeGrid(gridInput: TextArea) {
+fun handleVizualizeGrid(gridInput: TextArea, algorithmSelector: ComboBox<Algorithms>) {
     val grid: Grid
     val lines = gridInput.text.lines()
     if (lines.all { it == "" })

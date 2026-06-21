@@ -1,10 +1,12 @@
 package graphMateKT.graphics.desktopGui.buttonHandlers
 
 import graphMateKT.graphClasses.Graph
+import graphMateKT.graphics.desktopGui.Algorithms
 import graphMateKT.graphics.graphGraphics.visualizeGraph
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 
-fun handleVizualizeGraph(graphInput: TextArea) {
+fun handleVizualizeGraph(graphInput: TextArea, algorithmSelector: ComboBox<Algorithms>) {
     println("Reading graph input")
     val lines = graphInput.text.lines()
     val graph = Graph()
