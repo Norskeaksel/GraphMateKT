@@ -1,52 +1,54 @@
 package graphMateKT.graphics.desktopGui
 
 import graphMateKT.graphics.LaptopResolution
-import graphMateKT.graphics.desktopGui.buttonHandlers.handleVizualizeGraph
-import graphMateKT.graphics.desktopGui.buttonHandlers.handleVizualizeGrid
+import graphMateKT.graphics.desktopGui.componentHandlers.handleNodeSetting
+import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGraph
+import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGrid
 import javafx.application.Application
 import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
-import javafx.scene.layout.Region
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.text.Font
 import javafx.stage.Stage
 import javafx.util.Duration
 
-const val GUI_FONT_SIZE = 24.0
-const val INFO_ICON_FONT_SIZE = 40.0
-
 class DesktopGUI : Application() {
+    private val guiFontSize = 24.0
+    private val infoIconFontSize = 40.0
+    private var nodesNotSet = true
+
     override fun start(stage: Stage) {
         val algorithmSelector = ComboBox<Algorithms>()
         algorithmSelector.items.addAll(Algorithms.entries)
         algorithmSelector.promptText = "Select algorithm"
 
-        val startNodesLabel = Label("Start node(s):")
-        val startNodes = TextField()
-        startNodes.text = "0,5"
-        val startNodesBox = HBox(10.0, startNodesLabel, startNodes)
+        val startNodeLabel = Label("Start node:")
+        val startNode = TextField()
+        val startNodesBox = HBox(10.0, startNodeLabel, startNode)
+
+        val targetNodeLabel = Label("Target node:")
+        val targetNode = TextField()
+        val targetNodesBox = HBox(10.0, targetNodeLabel, targetNode)
 
         val vizualizeGraphBtn = Button("Vizualize Graph")
         val vizualizeGridBtn = Button("Vizualize Grid")
 
         val infoIconUnicode = "\uD83D\uDEC8"
         val graphInfoIcon = Label(infoIconUnicode).apply {
-            font = Font.font(INFO_ICON_FONT_SIZE)
+            font = Font.font(infoIconFontSize)
             tooltip = Tooltip("Define nodes and edges of the graph.\nOne entry per line.")
                 .apply {
-                    font = Font.font(GUI_FONT_SIZE)
+                    font = Font.font(guiFontSize)
                     showDelay = Duration.ZERO
                 }
         }
         val gridInfoIcon = Label(infoIconUnicode).apply {
-            font = Font.font(INFO_ICON_FONT_SIZE)
+            font = Font.font(infoIconFontSize)
             tooltip =
                 Tooltip("Define the width and height of the grid (example: 50 50) OR paste a rectangle of characters")
                     .apply {
-                        font = Font.font(GUI_FONT_SIZE)
+                        font = Font.font(guiFontSize)
                         showDelay = Duration.ZERO
                     }
         }
@@ -80,34 +82,44 @@ class DesktopGUI : Application() {
            .......
         """.trimIndent()
 
-        val graphVBox = VBox(5.0, graphBtns, graphInput)
-        val gridVBox = VBox(5.0, gridBtns, gridInput)
-        // Make the components symmetrical
-        graphVBox.prefWidth = 0.0
-        gridVBox.prefWidth = 0.0
+        val gridPane = GridPane(10.0, 10.0)
+        gridPane.add(algorithmSelector, 0, 0)
+        gridPane.add(startNodesBox, 0, 1)
+        gridPane.add(targetNodesBox, 1, 1)
+        gridPane.add(graphBtns, 0, 2)
+        gridPane.add(gridBtns, 1, 2)
+        gridPane.add(graphInput, 0, 3)
+        gridPane.add(gridInput, 1, 3)
+        repeat(2) {
+            val columnConstraints = ColumnConstraints()
+            columnConstraints.percentWidth = 50.0
+            gridPane.columnConstraints.add(columnConstraints)
+        }
+        GridPane.setVgrow(graphInput, Priority.ALWAYS)
+        GridPane.setVgrow(gridInput, Priority.ALWAYS)
 
-        VBox.setVgrow(graphInput, Priority.ALWAYS)
-        VBox.setVgrow(gridInput, Priority.ALWAYS)
-
-        val graphAndGridComponents = HBox(10.0, graphVBox, gridVBox)
-        HBox.setHgrow(graphVBox, Priority.ALWAYS)
-        HBox.setHgrow(gridVBox, Priority.ALWAYS)
-
-        val layout = VBox(10.0, algorithmSelector, startNodesBox, graphAndGridComponents)
-        VBox.setVgrow(graphAndGridComponents, Priority.ALWAYS)
-
-        val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
-        scene.root.style = "-fx-font-size: ${GUI_FONT_SIZE}px;"
+        val scene = Scene(gridPane, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
+        scene.root.style = "-fx-font-size: ${guiFontSize}px;"
         stage.title = "GraphMateKT"
         stage.scene = scene
         stage.show()
 
+        algorithmSelector.setOnAction {
+            if(nodesNotSet)
+                handleNodeSetting(algorithmSelector, startNodeLabel, startNode, targetNode)
+        }
+
+        startNode.textProperty().addListener { _, _, _ ->
+            if (startNode.isFocused)
+                nodesNotSet = false
+        }
+
         vizualizeGraphBtn.setOnAction {
-            handleVizualizeGraph(graphInput, algorithmSelector)
+            handleVizualizeGraph(graphInput, algorithmSelector, startNode, targetNode)
         }
 
         vizualizeGridBtn.setOnAction {
-            handleVizualizeGrid(gridInput, algorithmSelector)
+            handleVizualizeGrid(gridInput, algorithmSelector, startNode, targetNode)
         }
     }
 }

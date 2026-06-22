@@ -1,12 +1,18 @@
-package graphMateKT.graphics.desktopGui.buttonHandlers
+package graphMateKT.graphics.desktopGui.componentHandlers
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphics.desktopGui.Algorithms
 import graphMateKT.graphics.graphGraphics.visualizeGraph
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 
-fun handleVizualizeGraph(graphInput: TextArea, algorithmSelector: ComboBox<Algorithms>) {
+fun handleVizualizeGraph(
+    graphInput: TextArea,
+    algorithmSelector: ComboBox<Algorithms>,
+    startNode: TextField,
+    targetNode: TextField
+) {
     println("Reading graph input")
     val lines = graphInput.text.lines()
     val graph = Graph()
@@ -23,5 +29,17 @@ fun handleVizualizeGraph(graphInput: TextArea, algorithmSelector: ComboBox<Algor
         }
     }
     println("Graph building complete")
+    val starts = startNode.text.split(",").map { it.trim() }
+    val start = starts[0].trim()
+    val target = targetNode.text.trim().let { if (it == "") null else it }
+    when (algorithmSelector.value) {
+        Algorithms.BFS -> if (starts.size > 1) graph.bfs(starts, target) else graph.bfs(start, target)
+        Algorithms.DFS -> graph.dfs(start)
+        Algorithms.Dijkstra -> graph.dijkstra(start, target)
+        Algorithms.StronglyConnectedComponents -> graph.stronglyConnectedComponents()
+        Algorithms.TopologicalSort -> graph.topologicalSort()
+        else -> { /* Do nothing */
+        }
+    }
     graph.visualizeGraph()
 }

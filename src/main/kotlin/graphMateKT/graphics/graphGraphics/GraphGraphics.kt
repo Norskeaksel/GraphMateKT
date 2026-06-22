@@ -37,7 +37,7 @@ internal class GraphGraphics : Application() {
         }
         val animationKeyFrameTime =
             animationTicTimeOverride ?: (10_000.0 / graphVisualizer.numVertices())
-        val initialPlacement: SmartPlacementStrategy = SmartCircularSortedPlacementStrategy()
+        val initialPlacement: SmartPlacementStrategy = InitialNodePlacer()
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)

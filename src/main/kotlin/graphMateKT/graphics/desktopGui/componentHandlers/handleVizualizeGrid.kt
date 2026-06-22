@@ -1,16 +1,18 @@
-package graphMateKT.graphics.desktopGui.buttonHandlers
+package graphMateKT.graphics.desktopGui.componentHandlers
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.graphics.desktopGui.Algorithms
 import graphMateKT.graphics.gridGraphics.visualizeGrid
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 
-fun handleVizualizeGrid(gridInput: TextArea, algorithmSelector: ComboBox<Algorithms>) {
+fun handleVizualizeGrid(
+    gridInput: TextArea, algorithmSelector: ComboBox<Algorithms>, startNode: TextField, targetNode: TextField
+) {
     val grid: Grid
     val lines = gridInput.text.lines()
-    if (lines.all { it == "" })
-        return
+    if (lines.all { it == "" }) return
     val firstLine = lines[0].trim()
     if (firstLine.split(Regex("\\s+")).size == 2) {
         val (width, height) = lines[0].trim().split(Regex("\\s+")).map { it.toIntOrNull() }
