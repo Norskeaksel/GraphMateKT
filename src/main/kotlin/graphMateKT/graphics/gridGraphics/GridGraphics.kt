@@ -13,6 +13,7 @@ import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.input.KeyCode
 import javafx.scene.paint.Color
+import javafx.scene.transform.Scale
 import javafx.stage.Stage
 import javafx.util.Duration
 import kotlin.math.max
@@ -53,9 +54,21 @@ internal class GridGraphics : Application() {
             drawSquare(node.x, node.y, Color.BLACK)
         }
         root.children.add(canvas)
-        stage.scene = Scene(root)
+        val scene = Scene(root)
+        stage.scene = scene
         stage.width = sceneWith + 13
         stage.height = sceneHeight + 35 // Account for window title bar
+
+        // Scale the canvas (and everything drawn on it) when the window is resized.
+        val scale = Scale(1.0, 1.0, 0.0, 0.0)
+        canvas.transforms.add(scale)
+        scene.widthProperty().addListener { _, _, newWidth ->
+            scale.x = newWidth.toDouble() / sceneWith
+        }
+        scene.heightProperty().addListener { _, _, newHeight ->
+            scale.y = newHeight.toDouble() / sceneHeight
+        }
+
         stage.centerOnScreen()
         stage.show()
         animateVisitedNodes(stage)
