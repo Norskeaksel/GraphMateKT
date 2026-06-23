@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-fun handleVizualizeGrid(
+internal fun handleVizualizeGrid(
     gridInput: TextArea, algorithmSelector: ComboBox<Algorithms>, startNode: TextField, targetNode: TextField
 ) {
     val grid: Grid

@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-fun handleVizualizeIntGraph(
+internal fun handleVizualizeIntGraph(
     graphInput: TextArea,
     algorithmSelector: ComboBox<Algorithms>,
     startNode: TextField,
@@ -30,7 +30,7 @@ fun handleVizualizeIntGraph(
             3 -> graph.addEdge( u, v, uvw[2].toDoubleOrNull() ?: run { System.err.println("Invalid weight '${uvw[2]}'. Defaulting to 1.0"); 1.0 })
                 .also { println("Adding edge from $u to $v with weight ${uvw[2].toDoubleOrNull() ?: 1.0}") }
             // @formatter:on
-            else -> System.err.println("Ignoring invalid input on line ${i + 1}")
+            else -> error("Each graph input row m")
         }
     }
     println("Graph building complete")

@@ -7,7 +7,7 @@ import javafx.scene.control.TextField
 import javafx.scene.control.ToggleGroup
 
 
-fun handleNodeSetting(
+internal fun handleAlgorithmSelection(
     visualisationMode: ToggleGroup,
     algorithmSelector: ComboBox<Algorithms>,
     startNode: TextField,

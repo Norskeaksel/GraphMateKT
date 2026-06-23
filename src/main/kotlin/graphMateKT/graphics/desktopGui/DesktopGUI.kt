@@ -1,18 +1,24 @@
 package graphMateKT.graphics.desktopGui
 
 import graphMateKT.graphics.LaptopResolution
-import graphMateKT.graphics.desktopGui.componentHandlers.handleNodeSetting
+import graphMateKT.graphics.desktopGui.componentHandlers.handleModeToggling
+import graphMateKT.graphics.desktopGui.componentHandlers.handleAlgorithmSelection
 import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGraph
 import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGrid
 import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeIntGraph
 import javafx.application.Application
-import javafx.geometry.Insets;
+import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.text.Font
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.util.Duration
+import java.io.PrintWriter
+import java.io.StringWriter
+
 
 class DesktopGUI : Application() {
     private val guiFontSize = 24.0
@@ -67,13 +73,27 @@ class DesktopGUI : Application() {
         val graphInfoIcon = infoIcon("Define nodes and edges of the graph.\nOne entry per line.")
         val vizualizeBtnAndIcon = HBox(10.0, vizualizeGraphBtn, graphInfoIcon)
 
+        val inputLabel = Label("Graph input:").apply { font = Font.font(guiFontSize) }
+        val inputInfoIcon = infoIcon(ModeText.graphInputInfo)
+        val inputLabelAndIcon = HBox(10.0, inputLabel, inputInfoIcon).apply {
+            alignment = Pos.CENTER_LEFT
+        }
+
         val graphInput = TextArea()
         graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
-        graphInput.text = ExampleInput.graphInput
+        graphInput.text = ModeText.graphInput
         VBox.setVgrow(graphInput, Priority.ALWAYS)
 
         val layout =
-            VBox(10.0, visualizerSelector, algorithmSelector, textFields, vizualizeBtnAndIcon, graphInput)
+            VBox(
+                10.0,
+                visualizerSelector,
+                algorithmSelector,
+                textFields,
+                vizualizeBtnAndIcon,
+                inputLabelAndIcon,
+                graphInput
+            )
 
         val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
         scene.root.style = "-fx-font-size: ${guiFontSize}px;"
@@ -82,38 +102,50 @@ class DesktopGUI : Application() {
         stage.show()
 
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
-            if(graphBtn.isSelected) {
-                graphInput.text = ExampleInput.graphInput
-            }
-            if(gridBtn.isSelected) {
-                graphInput.text = ExampleInput.gridInput
-            }
-            if(intGraphBtn.isSelected) {
-                graphInput.text = ExampleInput.intGraphInput
-            }
+            handleModeToggling(graphInput, gridBtn, graphBtn, intGraphBtn, inputLabel, inputInfoIcon)
         }
 
         algorithmSelector.setOnAction {
             if (nodesNotSet)
-                handleNodeSetting(visualisationMode, algorithmSelector, startNode, targetNode, startLabel, targetLabel)
+                handleAlgorithmSelection(visualisationMode, algorithmSelector, startNode, targetNode, startLabel, targetLabel)
         }
 
         startNode.textProperty().addListener { _, _, _ ->
             if (startNode.isFocused)
                 nodesNotSet = false
         }
-
         vizualizeGraphBtn.setOnAction {
-            if (graphBtn.isSelected)
-                handleVizualizeGraph(graphInput, algorithmSelector, startNode, targetNode)
-            else if (gridBtn.isSelected) {
-                handleVizualizeGrid(graphInput, algorithmSelector, startNode, targetNode)
-            } else if (intGraphBtn.isSelected) {
-                verifyIntGraphInput(graphInput)
-                handleVizualizeIntGraph(graphInput, algorithmSelector, startNode, targetNode)
+            try {
+                if (graphBtn.isSelected)
+                    handleVizualizeGraph(graphInput, algorithmSelector, startNode, targetNode)
+                else if (gridBtn.isSelected) {
+                    handleVizualizeGrid(graphInput, algorithmSelector, startNode, targetNode)
+                } else if (intGraphBtn.isSelected) {
+                    // verifyIntGraphInput(graphInput)
+                    handleVizualizeIntGraph(graphInput, algorithmSelector, startNode, targetNode)
+                }
+            } catch (e: Exception) {
+                showError(stage, e)
             }
         }
+    }
+
+    private fun showError(owner: Stage, e: Exception) {
+        val alert = Alert(Alert.AlertType.ERROR).apply {
+            initOwner(owner)
+            initModality(Modality.WINDOW_MODAL)
+            title = "Error"
+            headerText = e.javaClass.simpleName
+            contentText = e.message ?: "An unexpected error occurred."
+            dialogPane.style = "-fx-font-size: 13px;"
+
+            val stackTrace = StringWriter().also { e.printStackTrace(PrintWriter(it)) }.toString()
+            dialogPane.expandableContent = TextArea(stackTrace).apply {
+                isEditable = false
+                isWrapText = false
+            }
+        }
+        alert.showAndWait()
     }
 
     private fun verifyIntGraphInput(graphInput: TextArea) {

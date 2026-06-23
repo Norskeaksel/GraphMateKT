@@ -1,6 +1,6 @@
 package graphMateKT.graphics.desktopGui
 
-object ExampleInput {
+object ModeText {
     val graphInput = """
         Alice Bob 10.0
         Alice Cat 3.0
@@ -30,4 +30,7 @@ object ExampleInput {
         2 4 2.0
         3 4 5.0
         """.trimIndent()
+    val graphInputInfo = "Edges from node u to node v with an optional weight (Example: Alice Bob 2.0)."
+    val gridInputInfo = "Width and height of the grid (Example: 30 40), OR a rectangle string where each character represents a node."
+    val intGraphInputInfo = "Nr of integer nodes and nr of edges, followed by edges with optional weight. Example:\n2 1\n1 0"
 }

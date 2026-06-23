@@ -7,7 +7,7 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-fun handleVizualizeGraph(
+internal fun handleVizualizeGraph(
     graphInput: TextArea,
     algorithmSelector: ComboBox<Algorithms>,
     startNode: TextField,
