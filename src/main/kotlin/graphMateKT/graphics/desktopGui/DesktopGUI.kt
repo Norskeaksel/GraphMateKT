@@ -10,8 +10,6 @@ import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGrid
 import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeIntGraph
 import graphMateKT.graphics.desktopGui.componentHandlers.toolTip
 import javafx.application.Application
-import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.*
@@ -54,43 +52,31 @@ class DesktopGUI : Application() {
         val targetNodeInfoIcon =
             infoIcon("The target node for search algorithms.\nIf set, vizualize the path to the target node, once it's found.")
 
-        val textFields = GridPane(10.0, 10.0).apply {
-            add(startLabel, 0, 0)
-            add(startNode, 1, 0)
-            add(startNodeInfoIcon, 2, 0)
-            add(targetLabel, 0, 1)
-            add(targetNode, 1, 1)
-            add(targetNodeInfoIcon, 2, 1)
-        }
-        val columnConstraints = listOf(ColumnConstraints(), ColumnConstraints(100.0))
-        textFields.columnConstraints.addAll(columnConstraints)
+        val inputInfoIcon = infoIcon(GUIConstants.graphInfo)
 
-        val vizualizeGraphBtn = Button("Vizualize Graph")
-        val graphInfoIcon = infoIcon("Define nodes and edges of the graph.\nOne entry per line.")
-        val vizualizeBtnAndIcon = HBox(10.0, vizualizeGraphBtn, graphInfoIcon)
+        val vizualizeGraphBtn = Button("Vizualize")
 
-        val inputLabel = Label("Graph input:").apply { font = Font.font(guiFontSize) }
-        val inputInfoIcon = infoIcon(GUIConstants.graphInputInfo)
-        val inputLabelAndIcon = HBox(10.0, inputLabel, inputInfoIcon).apply {
-            alignment = Pos.CENTER_LEFT
+        val infoRows = GridPane(10.0, 10.0).apply {
+            add(algorithmSelector, 0, 0, 2, 1)
+            add(algorithmInfoIcon, 2, 0)
+            add(startLabel, 0, 1)
+            add(startNode, 1, 1)
+            add(startNodeInfoIcon, 2, 1)
+            add(targetLabel, 0, 2)
+            add(targetNode, 1, 2)
+            add(targetNodeInfoIcon, 2, 2)
+            add(vizualizeGraphBtn, 0, 3, 2, 1)
+            add(inputInfoIcon, 2, 3)
         }
+        val columnConstraints = listOf(ColumnConstraints(), ColumnConstraints(120.0))
+        infoRows.columnConstraints.addAll(columnConstraints)
 
         val graphInput = TextArea()
         graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
         graphInput.text = GUIConstants.graphInput
         VBox.setVgrow(graphInput, Priority.ALWAYS)
 
-        val layout =
-            VBox(
-                10.0,
-                visualizerSelector,
-                algorithmInfoIcon,
-                algorithmSelector,
-                textFields,
-                vizualizeBtnAndIcon,
-                inputLabelAndIcon,
-                graphInput,
-            )
+        val layout = VBox(10.0, visualizerSelector, infoRows, graphInput)
 
         val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
         scene.root.style = "-fx-font-size: ${guiFontSize}px;"
@@ -100,7 +86,7 @@ class DesktopGUI : Application() {
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            handleModeToggling(graphInput, modeBtns, inputLabel, inputInfoIcon)
+            handleModeToggling(graphInput, modeBtns, inputInfoIcon)
         }
 
         algorithmSelector.setOnAction {

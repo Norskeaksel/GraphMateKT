@@ -17,24 +17,20 @@ internal fun toolTip(text: String) = Tooltip(text).apply {
 internal fun handleModeToggling(
     graphInput: TextArea,
     modeBtns: Triple<ToggleButton, ToggleButton, ToggleButton>,
-    inputLabel: Label,
     inputInfoIcon: Label,
 ) {
     val (graphBtn, gridBtn, intGraphBtn) = modeBtns
     graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
     if (graphBtn.isSelected) {
         graphInput.text = GUIConstants.graphInput
-        inputLabel.text = "Graph input:"
-        inputInfoIcon.tooltip = toolTip(GUIConstants.graphInputInfo)
+        inputInfoIcon.tooltip = toolTip(GUIConstants.graphInfo)
     }
     if (gridBtn.isSelected) {
         graphInput.text = GUIConstants.gridInput
-        inputLabel.text = "Grid input:"
         inputInfoIcon.tooltip = toolTip(GUIConstants.gridInputInfo)
     }
     if (intGraphBtn.isSelected) {
         graphInput.text = GUIConstants.intGraphInput
-        inputLabel.text = "IntGraph input:"
         inputInfoIcon.tooltip = toolTip(GUIConstants.intGraphInputInfo)
     }
 }

@@ -20,27 +20,22 @@ internal fun handleVizualizeIntGraph(
     lines.forEachIndexed { i, line ->
         if (i == 0) return@forEachIndexed
         val uvw = line.trim().split(Regex("\\s+"))
-        // @formatter:off
-        if (uvw.size !in 2..3)    run { System.err.println("Ignoring invalid input on line ${i + 1}"); return@forEachIndexed }
-        val u = uvw[0].toIntOrNull() ?: run { System.err.println("Ignoring invalid input on line ${i + 1}"); return@forEachIndexed }
-        val v = uvw[1].toIntOrNull() ?: run { System.err.println("Ignoring invalid input on line ${i + 1}"); return@forEachIndexed }
-
+        val u = uvw[0].toInt()
+        val v = uvw[1].toInt()
         when (uvw.size) {
             2 -> graph.addEdge(u, v).also { println("Adding edge from $u to $v") }
-            3 -> graph.addEdge( u, v, uvw[2].toDoubleOrNull() ?: run { System.err.println("Invalid weight '${uvw[2]}'. Defaulting to 1.0"); 1.0 })
-                .also { println("Adding edge from $u to $v with weight ${uvw[2].toDoubleOrNull() ?: 1.0}") }
-            // @formatter:on
-            else -> error("Each graph input row m")
+            3 -> graph.addEdge(u, v, uvw[2].toDouble())
+                .also { println("Adding edge from $u to $v with weight ${uvw[2].toDouble()}") }
+
+            else -> error("Each IntGraph input row must contain either 2 or 3 numbers.")
         }
     }
-    println("Graph building complete")
-    val starts = startNode.text.split(",").map { it.trim().toInt() }
-    val start = starts[0]
-    val target = targetNode.text.trim().let { if (it == "") null else it.toInt() }
+    val start = startNode.text.trim().toIntOrNull()
+    val target = targetNode.text.trim().toIntOrNull()
     when (algorithmSelector.value) {
-        Algorithms.BFS -> if (starts.size > 1) graph.bfs(starts, target) else graph.bfs(start, target)
-        Algorithms.DFS -> graph.dfs(start)
-        Algorithms.Dijkstra -> graph.dijkstra(start, target)
+        Algorithms.BFS -> start?.let { graph.bfs(it, target) } ?: error("Start node must be an integer.")
+        Algorithms.DFS -> start?.let { graph.dfs(it) } ?: error("Start node must be an integer.")
+        Algorithms.Dijkstra -> start?.let { graph.dijkstra(start, target) } ?: error("Start node must be an integer.")
         Algorithms.StronglyConnectedComponents -> graph.stronglyConnectedComponents()
         Algorithms.TopologicalSort -> graph.topologicalSort()
         else -> { /* Do nothing */

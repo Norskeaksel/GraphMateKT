@@ -28,9 +28,7 @@ Eve
 2 4 2.0
 1 4 5.0"""
 
-    const val graphInputInfo = "Lines of edges from a node to another node with an optional weight. Example:\nAlice Bob 2.0\nChad Eve"
-    const val gridInputInfo =
-        "Width and height of the grid (Example: 30 40), OR:\nA rectangle string where each character represents a node. Example:\nabc\n101"
-    const val intGraphInputInfo =
-        "Nr of integer nodes and nr of edges, followed by edges with optional weight. Example:\n2 1\n1 0 1.0"
+    const val graphInfo = "Visualize a graph defined by edges from one node to another node with an optional weight. Example:\nAlice Bob 2.0\nChad Eve"
+    const val gridInputInfo = "Visualize a grid defined by a width and height (Example: 30 40), OR;\ndefined by rectangle string where each character represents a node. Example:\nabc\n101"
+    const val intGraphInputInfo = "Visualize an IntGraph defined by the nr of integer nodes and nr of edges,\nfollowed by edges with optional weight. Example:\n2 1\n1 0 1.0"
 }
