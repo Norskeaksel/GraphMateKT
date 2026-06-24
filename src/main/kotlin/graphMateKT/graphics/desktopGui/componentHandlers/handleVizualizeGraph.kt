@@ -22,19 +22,17 @@ internal fun handleVizualizeGraph(
             1 -> graph.addNode(uvw[0]).also { println("Adding node: ${uvw[0]}") }
             2 -> graph.addEdge(uvw[0], uvw[1]).also { println("Adding edge from ${uvw[0]} to ${uvw[1]}") }
             // @formatter:off
-            3 -> graph.addEdge( uvw[0], uvw[1], uvw[2].toDoubleOrNull() ?: run { System.err.println("Invalid weight '${uvw[2]}'. Defaulting to 1.0"); 1.0 })
-                .also { println("Adding edge from ${uvw[0]} to ${uvw[1]} with weight ${uvw[2].toDoubleOrNull() ?: 1.0}") }
+            3 -> graph.addEdge( uvw[0], uvw[1], uvw[2].toDoubleOrNull() ?: error("Edge weights must be numbers, not '${uvw[2]}'"))
+                .also { println("Adding edge from ${uvw[0]} to ${uvw[1]} with weight ${uvw[2].toDouble() }")}
             // @formatter:on
-            else -> System.err.println("Ignoring invalid input on line ${i + 1}")
+            else -> error("Each line must contain between 1 and 3 strings.")
         }
     }
     println("Graph building complete")
-    // TODO handle null values
-    val starts = startNode.text.split(",").map { it.trim() }
-    val start = starts[0].trim()
+    val start = startNode.text.trim()
     val target = targetNode.text.trim().let { if (it == "") null else it }
     when (algorithmSelector.value) {
-        Algorithms.BFS -> if (starts.size > 1) graph.bfs(starts, target) else graph.bfs(start, target)
+        Algorithms.BFS -> graph.bfs(start, target)
         Algorithms.DFS -> graph.dfs(start)
         Algorithms.Dijkstra -> graph.dijkstra(start, target)
         Algorithms.StronglyConnectedComponents -> graph.stronglyConnectedComponents()

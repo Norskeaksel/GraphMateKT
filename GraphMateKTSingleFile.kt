@@ -211,7 +211,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 
     // SEARCH ALGORITHMS
 
-    /** Performs a Breadth-First Search, which finds the shortest path from the starting node to all other nodes,
+    /** Performs a Breadth-First Search, which finds the shortest path from the starting node(s) to all other nodes,
      * assuming the graph is unweighted (all edges have a weight of 1.0)
      * It stores results that can be retrieved with the following functions:
      *
@@ -249,7 +249,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @returnRuns bfs(listOf(startNode), target, reset) */
     fun bfs(startNode: T, target: T? = null, reset: Boolean = true) = bfs(listOf(startNode), target, reset)
 
-    /** Performs a Depth-First Search on the graph which finds all nodes that's reachable from the starting node it.
+    /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
