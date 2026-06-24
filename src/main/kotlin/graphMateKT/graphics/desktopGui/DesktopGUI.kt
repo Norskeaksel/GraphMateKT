@@ -1,14 +1,9 @@
 package graphMateKT.graphics.desktopGui
 
 import graphMateKT.graphics.LaptopResolution
-import graphMateKT.graphics.desktopGui.componentHandlers.handleModeToggling
-import graphMateKT.graphics.desktopGui.componentHandlers.handleAlgorithmSelection
-import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGraph
-import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeGrid
-import graphMateKT.graphics.desktopGui.componentHandlers.handleVizualizeIntGraph
+import graphMateKT.graphics.desktopGui.componentHandlers.*
 import javafx.application.Application
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.*
@@ -25,6 +20,7 @@ class DesktopGUI : Application() {
     private val infoIconFontSize = 40.0
     private var nodesNotSet = true
     private val infoIcon = "\uD83D\uDEC8"
+    private val rightPadding = Insets(0.0, 10.0, 0.0, 0.0)
 
     private fun infoIcon(tooltipText: String) = Label(infoIcon).apply {
         font = Font.font(infoIconFontSize)
@@ -59,6 +55,12 @@ class DesktopGUI : Application() {
         val targetNodeInfoIcon =
             infoIcon("The target node for search algorithms.\nIf set, vizualize the path to the target node, once it's found.")
 
+        val vizualizeGraphBtn = Button("Vizualize Graph")
+        val graphInfoIcon = infoIcon("Define nodes and edges of the graph.\nOne entry per line.")
+
+        val inputLabel = Label("Graph input").apply { font = Font.font(guiFontSize) }
+        val inputInfoIcon = infoIcon(ModeText.graphInputInfo)
+
         val textFields = GridPane(10.0, 10.0).apply {
             add(startLabel, 0, 0)
             add(startNode, 1, 0)
@@ -66,34 +68,22 @@ class DesktopGUI : Application() {
             add(targetLabel, 0, 1)
             add(targetNode, 1, 1)
             add(targetNodeInfoIcon, 2, 1)
-            padding = Insets(0.0, 10.0, 0.0, 10.0)
+            add(inputLabel, 0, 2)
+            add(inputInfoIcon, 2, 2)
+            add(vizualizeGraphBtn, 0, 3)
+            add(graphInfoIcon, 2, 3)
+            padding = rightPadding
         }
+        val columnConstraints = listOf(ColumnConstraints(), ColumnConstraints(100.0))
+        textFields.columnConstraints.addAll(columnConstraints)
 
-        val vizualizeGraphBtn = Button("Vizualize Graph")
-        val graphInfoIcon = infoIcon("Define nodes and edges of the graph.\nOne entry per line.")
-        val vizualizeBtnAndIcon = HBox(10.0, vizualizeGraphBtn, graphInfoIcon)
-
-        val inputLabel = Label("Graph input:").apply { font = Font.font(guiFontSize) }
-        val inputInfoIcon = infoIcon(ModeText.graphInputInfo)
-        val inputLabelAndIcon = HBox(10.0, inputLabel, inputInfoIcon).apply {
-            alignment = Pos.CENTER_LEFT
-        }
 
         val graphInput = TextArea()
         graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
         graphInput.text = ModeText.graphInput
         VBox.setVgrow(graphInput, Priority.ALWAYS)
 
-        val layout =
-            VBox(
-                10.0,
-                visualizerSelector,
-                algorithmSelector,
-                textFields,
-                vizualizeBtnAndIcon,
-                inputLabelAndIcon,
-                graphInput
-            )
+        val layout = VBox(10.0, visualizerSelector, algorithmSelector, textFields, graphInput)
 
         val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
         scene.root.style = "-fx-font-size: ${guiFontSize}px;"
@@ -107,7 +97,14 @@ class DesktopGUI : Application() {
 
         algorithmSelector.setOnAction {
             if (nodesNotSet)
-                handleAlgorithmSelection(visualisationMode, algorithmSelector, startNode, targetNode, startLabel, targetLabel)
+                handleAlgorithmSelection(
+                    visualisationMode,
+                    algorithmSelector,
+                    startNode,
+                    targetNode,
+                    startLabel,
+                    targetLabel
+                )
         }
 
         startNode.textProperty().addListener { _, _, _ ->

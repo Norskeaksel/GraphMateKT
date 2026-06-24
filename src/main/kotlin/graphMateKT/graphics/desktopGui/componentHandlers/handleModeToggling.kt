@@ -18,17 +18,17 @@ internal fun handleModeToggling(
     graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
     if (graphBtn.isSelected) {
         graphInput.text = ModeText.graphInput
-        inputLabel.text = "Graph input:"
+        inputLabel.text = "Graph input"
         inputInfoIcon.tooltip = Tooltip(ModeText.gridInputInfo)
     }
     if (gridBtn.isSelected) {
         graphInput.text = ModeText.gridInput
-        inputLabel.text = "Grid input:"
+        inputLabel.text = "Grid input"
         inputInfoIcon.tooltip = Tooltip(ModeText.gridInputInfo)
     }
     if (intGraphBtn.isSelected) {
         graphInput.text = ModeText.intGraphInput
-        inputLabel.text = "IntGraph input:"
+        inputLabel.text = "IntGraph input"
         inputInfoIcon.tooltip = Tooltip(ModeText.intGraphInput)
     }
 }
