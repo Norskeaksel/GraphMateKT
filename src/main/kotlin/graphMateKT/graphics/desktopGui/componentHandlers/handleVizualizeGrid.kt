@@ -9,32 +9,39 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
 internal fun handleVizualizeGrid(
-    gridInput: TextArea, algorithmSelector: ComboBox<Algorithms>, startNode: TextField, targetNode: TextField
+    gridInput: TextArea,
+    algorithmSelector: ComboBox<Algorithms>,
+    startNode: TextField,
+    targetNode: TextField,
+    wallNode: TextField,
 ) {
     val lines = gridInput.text.lines()
-    val firstLine = lines[0].trim()
-    val startData = startNode.text.trim()
-    var start: Tile = Tile(0, 0)
-    var starts = listOf(start)
-    var target: Tile? = null
-    val grid = if (lines.size == 1 && firstLine.split(Regex("\\s+")).size == 2) {
-        val (width, height) = lines[0].trim().split(Regex("\\s+")).map { it.toInt() }
-        Grid(width, height)
-    } else if (lines.any { it.length == lines[0].length }) {
-        Grid(lines)
-    } else {
-        error("Invalid grid input.")
-    }
-    // TODO handle walls starts and targets
+    require(lines.all { it.length == lines[0].length }) { "All grid lines must have the same length, unless constructed with a width and height." }
+    val grid = Grid(lines)
+    val nodes = grid.nodes()
+    grid.deleteNodesWithData(wallNode.text.trim().singleOrNull() ?: ' ')
     grid.connectGridDefault()
+
+    val starts = nodes.filter { it.data == startNode.text.trim().singleOrNull() }
+    val start = starts.firstOrNull() ?: Tile(-1, -1)
+    val target = nodes.find { it.data == (targetNode.text.trim().singleOrNull()) }
     when (algorithmSelector.value) {
-        Algorithms.BFS -> grid.bfs(start, target)
+        Algorithms.BFS -> grid.bfs(starts, target)
         Algorithms.DFS -> grid.dfs(start)
         Algorithms.Dijkstra -> grid.dijkstra(start, target)
-        Algorithms.StronglyConnectedComponents -> grid.stronglyConnectedComponents()
-        Algorithms.TopologicalSort -> grid.topologicalSort()
-        else -> { /* Do nothing */
-        }
+        else -> {}
     }
-    grid.visualizeGrid()
+    when (algorithmSelector.value) {
+        Algorithms.StronglyConnectedComponents -> run {
+            val (nodeVisitationOrder, nodeDistances) = grid.stronglyConnectedComponents().reversed()
+                .flatMapIndexed { i, component ->
+                    grid.dfs(component.first())
+                    grid.currentVisitedNodes().map { it to i.toDouble() }
+                }.unzip()
+            grid.visualizeGrid(currentVisitedNodes = nodeVisitationOrder, nodeDistances = nodeDistances)
+        }
+
+        Algorithms.TopologicalSort -> grid.topologicalSort().let { order -> grid.visualizeGrid(finalPath = order) }
+        else -> grid.visualizeGrid()
+    }
 }

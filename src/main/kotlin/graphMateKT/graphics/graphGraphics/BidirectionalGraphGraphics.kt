@@ -40,11 +40,11 @@ internal class BidirectionalGraphGraphics : Application() {
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)
-        val scene = Scene(container, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
+        val scene = Scene(container)
 
         stage.title = screenTitle
         stage.scene = scene
-        stage.centerOnScreen()
+        stage.isMaximized = true
         stage.show()
         graphView.init()
 

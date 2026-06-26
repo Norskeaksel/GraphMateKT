@@ -4,6 +4,7 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.layout.VBox
+import javafx.stage.Modality
 import javafx.stage.Stage
 
 private var fxToolkitNotStarted = true
@@ -16,7 +17,8 @@ internal fun launchVisualization(app: Application) {
     }
     val task = Runnable {
         val stage = Stage()
-        val scene = Scene(VBox(), 1000.0, 1000.0)
+        stage.initModality(Modality.APPLICATION_MODAL)
+        val scene = Scene(VBox())
         stage.scene = scene
         stage.show()
         app.start(stage)

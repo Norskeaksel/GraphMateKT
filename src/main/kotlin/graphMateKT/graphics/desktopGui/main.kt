@@ -2,6 +2,10 @@ package graphMateKT.graphics.desktopGui
 
 import graphMateKT.graphics.launchVisualization
 
-fun main() {
+fun launchGraphMateKTGUI() {
     launchVisualization(DesktopGUI())
+}
+
+internal fun main() {
+    launchGraphMateKTGUI()
 }

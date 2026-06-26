@@ -49,7 +49,7 @@ internal fun honeyheist(): String {
     grid.bfs(start)
     val distance = grid.distanceTo(end)
     val path = grid.getPath(end)
-    println(path.map { it.data })
+    println(path?.map { it.data })
     return if (distance <= n) {
         distance.toString()
     } else {

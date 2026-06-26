@@ -32,7 +32,7 @@ internal fun importspaghetti(): String {
         g.bfs(node, node)
         if(g.foundTarget() && g.depth() < shortestCycleLength) {
             shortestCycleLength = g.depth()
-            shortestCyclePath = g.getPath(node)
+            shortestCyclePath = g.getPath(node) ?: listOf(node)
         }
     }
     if(shortestCycleLength == Int.MAX_VALUE) return "SHIP IT"

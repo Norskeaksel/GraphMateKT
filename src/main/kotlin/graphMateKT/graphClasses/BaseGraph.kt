@@ -1,6 +1,5 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.IntComponents
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
@@ -416,12 +415,13 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** Retrieves the path from the starting node to the specified target node based on the most recent search results.
      *
      * @param target The target node for which the path is to be retrieved.
-     * @return A list of nodes representing the path from the start to the target node.
+     * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
      * @throws IllegalStateException If no search algorithm (DFS, BFS, Dijkstra) has been executed yet. */
-    fun getPath(target: T): List<T> {
+    fun getPath(target: T): List<T>? {
         val targetId = node2Id(target)
         val pathIds = searchResults?.let { getPath(targetId, it.parents) }
             ?: error("Can't getPath because no search has (DFS, BFS, Dijkstra) been run yet")
+        if (pathIds.isEmpty()) return null
         val path = pathIds.mapNotNull { id2Node(it) }
         return path
     }
@@ -436,7 +436,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             }
             path.add(current)
         }
-        return path.reversed()
+        return if (path.size > 1) path.reversed() else emptyList()
     }
 
 // HELPER FUNCTIONS

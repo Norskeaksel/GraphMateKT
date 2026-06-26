@@ -45,7 +45,7 @@ internal class GraphGraphics : Application() {
 
         stage.title = screenTitle
         stage.scene = scene
-        stage.centerOnScreen()
+        stage.isMaximized = true
         stage.show()
         graphView.init()
 

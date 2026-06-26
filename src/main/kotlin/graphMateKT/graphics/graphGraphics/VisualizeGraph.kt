@@ -49,7 +49,7 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         BidirectionalGraphGraphics.animationTicTimeOverride = animationTicTimeOverride
         BidirectionalGraphGraphics.startPaused = startPaused
         BidirectionalGraphGraphics.closeOnEnd = closeOnEnd
-        launchVisualization(GraphGraphics())
+        launchVisualization(BidirectionalGraphGraphics())
     } else {
         @Suppress("UNCHECKED_CAST")
         GraphGraphics.graph = this as BaseGraph<Any>

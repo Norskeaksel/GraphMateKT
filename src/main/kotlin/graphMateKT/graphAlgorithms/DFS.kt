@@ -7,28 +7,6 @@ import graphMateKT.graphClasses.AdjacencyList
 internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
 
-    /*fun dfsDeep( // Does not work with forEachNeighbour
-        start: Int,
-        initialSearchResults: GraphSearchResults? = null,
-    ): GraphSearchResults {
-        r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = mutableListOf()
-        var currentDepth = 0
-        DeepRecursiveFunction<Int, Unit> { id ->
-            if (r.visited[id]) return@DeepRecursiveFunction
-            r.visited[id] = true
-            r.currentVisited.add(id)
-            r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph.forEachNeighbour(id) { v ->
-                r.parents[v] = id
-                this.callRecursive(v)
-            }
-            r.processedOrder.add(id)
-            currentDepth-- //Done with this node. Backtracking to previous one.
-        }.invoke(start)
-        return r
-    } */
-
     fun dfs(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
@@ -42,7 +20,7 @@ internal class DFS(private val graph: AdjacencyList) {
             r.depth = (depth).coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
-                visit(v, depth+1)
+                visit(v, depth + 1)
             }
             r.processedOrder.add(id)
         }
