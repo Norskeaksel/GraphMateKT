@@ -33,7 +33,7 @@ internal class GridGraphics : Application() {
         var screenWidthMultiplier: Double = 1.0
     }
 
-    val tilesToAnimate = if (currentVisitedNodes.isEmpty()) grid.currentVisitedNodes() else currentVisitedNodes
+    val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() }
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
     val sceneWith = LaptopResolution.HEIGHT * screenWidthMultiplier
     val sceneHeight = sceneWith * ratio
@@ -145,8 +145,8 @@ internal class GridGraphics : Application() {
         if (value !in min..max) {
             error("Value $value is not in range $min..$max")
         }
-        val normalized =
-            (value - min) / (max - min) - 1e-6 // -1e-6 to avoid 1.0 and thus trying to interpolate out of bounds
+        val normalized = (-1e-6 // -1e-6 to avoid 1.0 and thus trying to interpolate out of bounds
+                + (value - min) / (max - min + 1e-6)) // + 1e-6 to avoid dividing by zero.
         val colors = arrayOf(
             Color.RED,
             Color.ORANGE,

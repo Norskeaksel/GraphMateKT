@@ -1,5 +1,5 @@
 package graphMateKT.graphics.desktopGui
 
-enum class Algorithms {
+internal enum class Algorithms {
     BFS, DFS, Dijkstra, StronglyConnectedComponents, TopologicalSort, None
 }

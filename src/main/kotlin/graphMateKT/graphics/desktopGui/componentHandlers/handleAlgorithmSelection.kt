@@ -16,7 +16,7 @@ internal fun handleAlgorithmSelection(
             Algorithms.Dijkstra -> "Performs Dijkstra's algorithm, which finds the shortest path from the starting node to all other nodes."
             Algorithms.TopologicalSort -> "Builds an order of nodes so that the first nodes has no outgoing edges,\nthen nodes with edges pointing to these and so on, assuming the graph is a Directed Acyclic Graph (DAG).\nThis is done by running a DFS from each node and ordering the nodes by descending depth (post-order)."
             Algorithms.StronglyConnectedComponents -> "Identifies groups where each node is reachable from every other node in the group."
-            Algorithms.None -> "Visualize the graph without running any algorithm."
+            else -> "Visualize the graph without running any algorithm."
         }
     )
 }

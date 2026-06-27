@@ -35,7 +35,7 @@ import graphMateKT.graphics.launchVisualization
  * @throws IllegalStateException If the graph is improperly configured for visualization. */
 fun <T : Any> BaseGraph<T>.visualizeGraph(
     bidirectional: Boolean = false,
-    finalPath:List<T> = finalPath(),
+    finalPath:List<T> = finalPath() ?: emptyList(),
     screenTitle: String = "Graph visualizer (Click or space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,

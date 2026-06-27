@@ -94,7 +94,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      *
      * @return A list of visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.map { id2Node(it)!! }
+        searchResults?.currentVisited?.mapNotNull { id2Node(it) }
             ?: emptyList()
 
 
@@ -107,8 +107,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
      * (DFS, BFS, Dijkstra)
      *
-     * @return A list of nodes representing the final path or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun finalPath(): List<T> = finalPath ?: emptyList()
+     * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, Dijkstra) has been run yet or no path was found */
+    fun finalPath(): List<T>? = finalPath
 
     /** Checks if the target node was found during the most recent search operation (BFS, Dijkstra).
      *

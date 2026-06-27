@@ -117,7 +117,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      *
      * @return A list of visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
     fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.map { id2Node(it)!! }
+        searchResults?.currentVisited?.mapNotNull { id2Node(it) }
             ?: emptyList()
 
 
@@ -130,8 +130,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
      * (DFS, BFS, Dijkstra)
      *
-     * @return A list of nodes representing the final path or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun finalPath(): List<T> = finalPath ?: emptyList()
+     * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, Dijkstra) has been run yet or no path was found */
+    fun finalPath(): List<T>? = finalPath
 
     /** Checks if the target node was found during the most recent search operation (BFS, Dijkstra).
      *
@@ -211,7 +211,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
 
     // SEARCH ALGORITHMS
 
-    /** Performs a Breadth-First Search, which finds the shortest path from the starting node(s) to all other nodes,
+    /** Performs a Breadth-First Search, which finds the shortest path from the starting node to all other nodes,
      * assuming the graph is unweighted (all edges have a weight of 1.0)
      * It stores results that can be retrieved with the following functions:
      *
@@ -438,12 +438,13 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** Retrieves the path from the starting node to the specified target node based on the most recent search results.
      *
      * @param target The target node for which the path is to be retrieved.
-     * @return A list of nodes representing the path from the start to the target node.
+     * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
      * @throws IllegalStateException If no search algorithm (DFS, BFS, Dijkstra) has been executed yet. */
-    fun getPath(target: T): List<T> {
+    fun getPath(target: T): List<T>? {
         val targetId = node2Id(target)
         val pathIds = searchResults?.let { getPath(targetId, it.parents) }
             ?: error("Can't getPath because no search has (DFS, BFS, Dijkstra) been run yet")
+        if (pathIds.isEmpty()) return null
         val path = pathIds.mapNotNull { id2Node(it) }
         return path
     }
@@ -458,7 +459,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             }
             path.add(current)
         }
-        return path.reversed()
+        return if (path.size > 1) path.reversed() else emptyList()
     }
 
 // HELPER FUNCTIONS
@@ -1069,51 +1070,25 @@ internal class BFS(private val graph: AdjacencyList) {
 
 internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
-
-    /*fun dfsDeep( // Does not work with forEachNeighbour
-        start: Int,
-        initialSearchResults: GraphSearchResults? = null,
-    ): GraphSearchResults {
-        r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = mutableListOf()
-        var currentDepth = 0
-        DeepRecursiveFunction<Int, Unit> { id ->
-            if (r.visited[id]) return@DeepRecursiveFunction
-            r.visited[id] = true
-            r.currentVisited.add(id)
-            r.depth = (++currentDepth).coerceAtLeast(r.depth)
-            graph.forEachNeighbour(id) { v ->
-                r.parents[v] = id
-                this.callRecursive(v)
-            }
-            r.processedOrder.add(id)
-            currentDepth-- //Done with this node. Backtracking to previous one.
-        }.invoke(start)
-        return r
-    } */
-
     fun dfs(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
         r.currentVisited = mutableListOf()
-        var currentDepth = 0
-
-        fun visit(id: Int) {
+        fun visit(id: Int, depth: Int) {
             if (r.visited[id]) return
             r.visited[id] = true
             r.currentVisited.add(id)
-            r.depth = (++currentDepth).coerceAtLeast(r.depth)
+            r.depth = (depth).coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
-                visit(v)
+                visit(v, depth + 1)
             }
             r.processedOrder.add(id)
-            currentDepth-- // Done with this node. Backtracking to previous one.
         }
 
-        visit(start)
+        visit(start, 1)
         return r
     }
 
@@ -1134,7 +1109,7 @@ internal class DFS(private val graph: AdjacencyList) {
             if (deleted[i]) continue
             dfs(i, r)
         }
-        return r.processedOrder//.reversed() //Reversed depending on the order
+        return r.processedOrder
     }
 }
 

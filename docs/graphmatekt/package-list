@@ -118,12 +118,43 @@ $dokka.location:graphMateKT.graphClasses/IntGraph/addEdge/#kotlin.Int#kotlin.Int
 $dokka.location:graphMateKT.graphClasses/IntGraph/addNode/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/add-node.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/nodes.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/stronglyConnectedComponents/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/strongly-connected-components.html
-$dokka.location:graphMateKT.graphGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/index.html
-$dokka.location:graphMateKT.graphGraphics//visualizeComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Any]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-components.html
-$dokka.location:graphMateKT.graphGraphics//visualizeGraph/graphMateKT.graphClasses.BaseGraph[TypeParam(bounds=[kotlin.Any])]#kotlin.Boolean#kotlin.collections.List[TypeParam(bounds=[kotlin.Any])]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-graph.html
-$dokka.location:graphMateKT.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-int-components.html
-$dokka.location:graphMateKT.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/index.html
-$dokka.location:graphMateKT.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/visualize-grid.html
+$dokka.location:graphMateKT.graphics.desktopGui////PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/index.html
+$dokka.location:graphMateKT.graphics.desktopGui//launchGraphMateKTGUI/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/launch-graph-mate-k-t-g-u-i.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.BFS///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-b-f-s/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.DFS///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-d-f-s/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.Dijkstra///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-dijkstra/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.None///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-none/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.StronglyConnectedComponents///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-strongly-connected-components/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms.TopologicalSort///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/-topological-sort/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms///PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms/entries/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/entries.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms/valueOf/#kotlin.String/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/value-of.html
+$dokka.location:graphMateKT.graphics.desktopGui/Algorithms/values/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-algorithms/values.html
+$dokka.location:graphMateKT.graphics.desktopGui/DesktopGUI///PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-desktop-g-u-i/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/DesktopGUI/DesktopGUI/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-desktop-g-u-i/-desktop-g-u-i.html
+$dokka.location:graphMateKT.graphics.desktopGui/DesktopGUI/start/#javafx.stage.Stage/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-desktop-g-u-i/start.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants///PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/index.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/GRAPH_INFO/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-g-r-a-p-h_-i-n-f-o.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/GRAPH_INPUT/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-g-r-a-p-h_-i-n-p-u-t.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/GRID_INPUT/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-g-r-i-d_-i-n-p-u-t.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/GRID_INPUT_INFO/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-g-r-i-d_-i-n-p-u-t_-i-n-f-o.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/GUI_FONT_SIZE/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-g-u-i_-f-o-n-t_-s-i-z-e.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/INFO_ICON_FONT_SIZE/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-i-n-f-o_-i-c-o-n_-f-o-n-t_-s-i-z-e.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/INT_GRAPH_INPUT/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-i-n-t_-g-r-a-p-h_-i-n-p-u-t.html
+$dokka.location:graphMateKT.graphics.desktopGui/GUIConstants/INT_GRAPH_INPUT_INFO/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/-g-u-i-constants/-i-n-t_-g-r-a-p-h_-i-n-p-u-t_-i-n-f-o.html
+$dokka.location:graphMateKT.graphics.graphGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/index.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Any]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-components.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeGraph/graphMateKT.graphClasses.BaseGraph[TypeParam(bounds=[kotlin.Any])]#kotlin.Boolean#kotlin.collections.List[TypeParam(bounds=[kotlin.Any])]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-graph.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-int-components.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer///PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/index.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/InitialNodePlacer/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/-initial-node-placer.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/place/#kotlin.Double#kotlin.Double#com.brunomnsilva.smartgraph.graphview.SmartGraphPanel[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/place.html
+$dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
+$dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
+$dokka.location:graphMateKT.graphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics/index.html
+$dokka.location:graphMateKT.graphics/LaptopResolution///PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/index.html
+$dokka.location:graphMateKT.graphics/LaptopResolution/HEIGHT/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/-h-e-i-g-h-t.html
+$dokka.location:graphMateKT.graphics/LaptopResolution/WIDTH/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/-w-i-d-t-h.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
@@ -139,5 +170,7 @@ $dokka.location:graphMateKT/Tile/y/#/PointingToDeclaration/graphmatekt/graphMat
 fastInputReader
 graphMateKT
 graphMateKT.graphClasses
-graphMateKT.graphGraphics
-graphMateKT.gridGraphics
+graphMateKT.graphics
+graphMateKT.graphics.desktopGui
+graphMateKT.graphics.graphGraphics
+graphMateKT.graphics.gridGraphics

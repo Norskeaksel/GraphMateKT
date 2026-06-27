@@ -1,6 +1,7 @@
 package graphMateKT.solutions
 
 import graphMateKT.graphClasses.Graph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 import graphMateKT.readString
 
 
@@ -25,7 +26,7 @@ internal fun  familydag(): String {
                 }
             }
             ans.appendLine()
-            //graph.visualize()
+            // graph.visualizeGraph()
             graph = Graph()
             continue
         }

@@ -36,7 +36,7 @@ screenWidthMultiplier = 0.5
  * @throws IllegalStateException If the grid is improperly configured for visualization. */
 fun Grid.visualizeGrid(
     currentVisitedNodes: List<Tile> = currentVisitedNodes(),
-    finalPath: List<Tile> = finalPath(),
+    finalPath: List<Tile> = finalPath() ?: emptyList(),
     nodeDistances: List<Double> = currentVisitedNodes.map { distanceTo(it) },
     screenTitle: String = "Grid visualizer (Click or space to pause and resume)",
     animationTicTimeOverride: Double? = null,

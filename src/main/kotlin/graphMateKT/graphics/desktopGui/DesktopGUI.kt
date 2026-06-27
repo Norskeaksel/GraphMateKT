@@ -15,7 +15,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 
-class DesktopGUI : Application() {
+internal class DesktopGUI : Application() {
     private val infoIcon = "\uD83D\uDEC8"
     private fun infoIcon(tooltipText: String) = Label(infoIcon).apply {
         font = Font.font(INFO_ICON_FONT_SIZE)

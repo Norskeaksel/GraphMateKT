@@ -6,7 +6,6 @@ import graphMateKT.graphClasses.AdjacencyList
 
 internal class DFS(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
-
     fun dfs(
         start: Int,
         initialSearchResults: GraphSearchResults? = null,
@@ -46,6 +45,6 @@ internal class DFS(private val graph: AdjacencyList) {
             if (deleted[i]) continue
             dfs(i, r)
         }
-        return r.processedOrder//.reversed() //Reversed depending on the order
+        return r.processedOrder
     }
 }

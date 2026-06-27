@@ -1,6 +1,6 @@
 package graphMateKT.graphics.desktopGui
 
-object GUIConstants {
+internal object GUIConstants {
     const val GUI_FONT_SIZE = 24.0
     const val INFO_ICON_FONT_SIZE = 40.0
 
