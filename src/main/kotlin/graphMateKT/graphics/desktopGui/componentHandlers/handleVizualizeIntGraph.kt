@@ -20,6 +20,7 @@ internal fun handleVizualizeIntGraph(
     println("Reading IntGraph input")
     val lines = graphInput.text.lines()
     val (n, m) = lines.first().split(" ").map { it.toInt() }
+    require(lines.all { it.split(" ").size != 1 }) { "IntGraphs cannot add a singular node. The nodes have already been defined to be from 0 to ${n - 1}." }
     val intGraph = IntGraph(n, m * if (!bidirectional) 1 else 2)
     val tempGraph = buildGraph(lines.drop(1), bidirectional)
     val connections = mutableSetOf<Pair<Int, Int>>()

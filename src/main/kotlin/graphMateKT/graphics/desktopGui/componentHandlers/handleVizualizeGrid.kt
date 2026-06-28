@@ -16,7 +16,7 @@ internal fun handleVizualizeGrid(
     wallNode: TextField,
 ) {
     val lines = gridInput.text.lines()
-    require(lines.all { it.length == lines[0].length }) { "All grid lines must have the same length, unless constructed with a width and height." }
+    require(lines.all { it.length == lines[0].length }) { "All grid lines must have the same length." }
     val grid = Grid(lines)
     val nodes = grid.nodes()
     grid.deleteNodesWithData(wallNode.text.trim().singleOrNull() ?: ' ')

@@ -25,9 +25,9 @@ internal class DesktopGUI : Application() {
     override fun start(stage: Stage) {
 
         val visualisationMode = ToggleGroup()
-        val graphBtn = ToggleButton("Vizualize Graph").apply { isSelected = true }
-        val gridBtn = ToggleButton("Vizualize Grid")
-        val intGraphBtn = ToggleButton("Vizualize IntGraph")
+        val graphBtn = ToggleButton("Visualize Graph").apply { isSelected = true }
+        val gridBtn = ToggleButton("Visualize Grid")
+        val intGraphBtn = ToggleButton("Visualize IntGraph")
         graphBtn.toggleGroup = visualisationMode
         gridBtn.toggleGroup = visualisationMode
         intGraphBtn.toggleGroup = visualisationMode
@@ -53,7 +53,7 @@ internal class DesktopGUI : Application() {
         directed.toggleGroup = directedOrNot
         val undirected = RadioButton("Undirected")
         undirected.toggleGroup = directedOrNot
-        val radioBtnsInfoIcon = infoIcon("Weather the graph edges goes one or both ways. Not relevant for grids.")
+        val radioBtnsInfoIcon = infoIcon("Weather the graph edges goes one or both ways.")
 
         val wallLabel = Label("Wall node:")
         val wallNode = TextField("#").apply {
@@ -62,26 +62,30 @@ internal class DesktopGUI : Application() {
             }
         }
         val wallNodeInfoIcon =
-            infoIcon("The character representing walls in the grid. Example: #\nOnly relevant for grids.")
+            infoIcon("The character representing walls in the grid. Example: #.")
 
 
         val inputInfoIcon = infoIcon(GUIConstants.GRAPH_INFO)
 
-        val vizualizeGraphBtn = Button("Vizualize graph")
+        val vizualizeGraphBtn = Button("Visualize Graph")
 
         // @formatter:off
         val infoRows = GridPane(10.0, 10.0).apply {
-            add(algorithmSelector, 0, 0, 5, 1); add(algorithmInfoIcon, 5, 0)
+            add(algorithmSelector, 0, 0, 2, 1); add(algorithmInfoIcon, 2, 0)
             add(startLabel, 0, 1); add(startNode, 1, 1); add(startNodeInfoIcon, 2, 1)
-            add(targetLabel, 3, 1); add(targetNode, 4, 1); add(targetNodeInfoIcon, 5, 1)
-            add(directed, 0, 2); add(undirected, 1, 2); add(radioBtnsInfoIcon, 2, 2)
-            add(wallLabel, 3, 2); add(wallNode, 4, 2); add(wallNodeInfoIcon, 5, 2)
-            add(vizualizeGraphBtn, 0, 3, 2, 1)
-            add(inputInfoIcon, 2, 3)
+            add(targetLabel, 0, 2); add(targetNode, 1, 2); add(targetNodeInfoIcon, 2, 2)
+            add(directed, 0, 3); add(undirected, 1, 3); add(radioBtnsInfoIcon, 2, 3)
+            add(wallLabel, 0, 3); add(wallNode, 1, 3); add(wallNodeInfoIcon, 2, 3)
+            add(vizualizeGraphBtn, 0, 4, 2, 1)
+            add(inputInfoIcon, 2, 4)
         }
         // @formatter:on
-        val columnConstraints = listOf(150.0, 160.0, 50.0, 140.0, 100.0, 50.0).map { ColumnConstraints(it) }
+        val columnConstraints = listOf(150.0, 200.0, 50.0).map { ColumnConstraints(it) }
         infoRows.columnConstraints.addAll(columnConstraints)
+        val radioBtnRow = listOf(directed, undirected, radioBtnsInfoIcon)
+        val wallRow = listOf(wallLabel, wallNode, wallNodeInfoIcon).onEach {
+            it.isVisible = false; it.isManaged = false
+        }
 
         val graphInput = TextArea()
         graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
@@ -98,7 +102,7 @@ internal class DesktopGUI : Application() {
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            handleModeToggling(graphInput, modeBtns, inputInfoIcon, vizualizeGraphBtn)
+            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, inputInfoIcon, vizualizeGraphBtn)
         }
 
         algorithmSelector.setOnAction {

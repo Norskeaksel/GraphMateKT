@@ -35,6 +35,13 @@ See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest 
 , the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
 as described in [Bruno Silva](https://github.com/brunomnsilva)'s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
+## Library GUI
+A GUI is included in the library, which can be used to see some of the algorithms and the graph and grid visualisation
+capabilities of the GraphMateKT library. It can be invoked by running `launchGraphMateKTGUI()`. For convenience, a jar
+file of the GUI is included [here](out/artifacts/GraphMateKT_jar), which can be downloaded and run with
+`java -jar GraphMateKT.jar`. Note that the `smartgraph.css` and `smartgraph.properties`, must still be present in the
+directory the jar file is run from, for the GUI to work as intended.
+
 ### Using the library in a single file.
 In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
 external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
