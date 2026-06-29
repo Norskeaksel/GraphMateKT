@@ -40,8 +40,8 @@ s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repositor
 
 ## Library GUI
 
-A GUI is included in the library, which can be used to see some of the algorithms and the graph and grid visualisation
-capabilities of the GraphMateKT library. It can be invoked by running `launchGraphMateKTGUI()`. For convenience, a jar
+A GUI is included in the library, which can be used to see some of its algorithms and graph and grid visualisation
+capabilities. The GUI can be invoked by running `launchGraphMateKTGUI()`. For convenience, a jar
 file of the GUI is included [here](out/artifacts/GraphMateKT_jar), which can be downloaded and run with
 `java -jar GraphMateKT.jar`. Note that the `smartgraph.css` and `smartgraph.properties`, must still be present in the
 directory the jar file is run from, for the GUI to work as intended.
