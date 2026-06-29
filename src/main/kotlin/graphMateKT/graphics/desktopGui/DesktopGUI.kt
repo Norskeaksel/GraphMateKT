@@ -53,7 +53,7 @@ internal class DesktopGUI : Application() {
         directed.toggleGroup = directedOrNot
         val undirected = RadioButton("Undirected")
         undirected.toggleGroup = directedOrNot
-        val radioBtnsInfoIcon = infoIcon("Weather the graph edges goes one or both ways.")
+        val radioBtnsInfoIcon = infoIcon("Whether the nodes have edges in both directions.\nIf undirected, the nr of edges in IntGraphs must be doubled.")
 
         val wallLabel = Label("Wall node:")
         val wallNode = TextField("#").apply {

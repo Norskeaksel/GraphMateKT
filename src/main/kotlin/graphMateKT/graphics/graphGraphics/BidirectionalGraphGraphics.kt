@@ -44,6 +44,8 @@ internal class BidirectionalGraphGraphics : Application() {
 
         stage.title = screenTitle
         stage.scene = scene
+        stage.width = LaptopResolution.width
+        stage.height = LaptopResolution.height
         stage.isMaximized = true
         stage.show()
         graphView.init()
