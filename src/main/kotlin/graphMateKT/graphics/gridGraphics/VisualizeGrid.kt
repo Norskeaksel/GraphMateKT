@@ -2,7 +2,7 @@ package graphMateKT.graphics.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.graphics.launchVisualization
+import graphMateKT.graphics.FxLauncher
 
 /** Visualizes the grid and optionally its traversal process using a graphical interface.
  *
@@ -53,5 +53,5 @@ fun Grid.visualizeGrid(
     GridGraphics.startPaused = startPaused
     GridGraphics.closeOnEnd = closeOnEnd
     GridGraphics.screenWidthMultiplier = screenWidthMultiplier
-    launchVisualization(GridGraphics())
+    FxLauncher.launch(GridGraphics())
 }

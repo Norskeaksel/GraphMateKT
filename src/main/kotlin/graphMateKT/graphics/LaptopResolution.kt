@@ -1,6 +1,8 @@
 package graphMateKT.graphics
 
-object LaptopResolution {
-    const val WIDTH = 1024.0
-    const val HEIGHT = 768.0
+import javafx.stage.Screen
+
+internal object LaptopResolution {
+    val width: Double get() = Screen.getPrimary().visualBounds.width - 100
+    val height: Double get() = Screen.getPrimary().visualBounds.height - 100
 }

@@ -67,7 +67,7 @@ internal class DesktopGUI : Application() {
 
         val inputInfoIcon = infoIcon(GUIConstants.GRAPH_INFO)
 
-        val vizualizeGraphBtn = Button("Visualize Graph")
+        val vizualizeBtn = Button("Visualize Graph")
 
         // @formatter:off
         val infoRows = GridPane(10.0, 10.0).apply {
@@ -76,7 +76,7 @@ internal class DesktopGUI : Application() {
             add(targetLabel, 0, 2); add(targetNode, 1, 2); add(targetNodeInfoIcon, 2, 2)
             add(directed, 0, 3); add(undirected, 1, 3); add(radioBtnsInfoIcon, 2, 3)
             add(wallLabel, 0, 3); add(wallNode, 1, 3); add(wallNodeInfoIcon, 2, 3)
-            add(vizualizeGraphBtn, 0, 4, 2, 1)
+            add(vizualizeBtn, 0, 4, 2, 1)
             add(inputInfoIcon, 2, 4)
         }
         // @formatter:on
@@ -94,7 +94,7 @@ internal class DesktopGUI : Application() {
 
         val layout = VBox(10.0, visualizerSelector, infoRows, graphInput)
 
-        val scene = Scene(layout, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
+        val scene = Scene(layout, LaptopResolution.width, LaptopResolution.height)
         scene.root.style = "-fx-font-size: ${GUI_FONT_SIZE}px;"
         stage.title = "GraphMateKT GUI"
         stage.scene = scene
@@ -102,7 +102,7 @@ internal class DesktopGUI : Application() {
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, inputInfoIcon, vizualizeGraphBtn)
+            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, inputInfoIcon, vizualizeBtn)
         }
 
         algorithmSelector.setOnAction {
@@ -112,7 +112,7 @@ internal class DesktopGUI : Application() {
             )
         }
 
-        vizualizeGraphBtn.setOnAction {
+        vizualizeBtn.setOnAction {
             try {
                 if (graphBtn.isSelected)
                     handleVizualizeGraph(graphInput, algorithmSelector, startNode, targetNode, !directed.isSelected)

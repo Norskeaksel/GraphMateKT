@@ -129,10 +129,6 @@ $dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/InitialNode
 $dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/place/#kotlin.Double#kotlin.Double#com.brunomnsilva.smartgraph.graphview.SmartGraphPanel[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/place.html
 $dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
-$dokka.location:graphMateKT.graphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics/index.html
-$dokka.location:graphMateKT.graphics/LaptopResolution///PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/index.html
-$dokka.location:graphMateKT.graphics/LaptopResolution/HEIGHT/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/-h-e-i-g-h-t.html
-$dokka.location:graphMateKT.graphics/LaptopResolution/WIDTH/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics/-laptop-resolution/-w-i-d-t-h.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
@@ -148,7 +144,6 @@ $dokka.location:graphMateKT/Tile/y/#/PointingToDeclaration/graphmatekt/graphMat
 fastInputReader
 graphMateKT
 graphMateKT.graphClasses
-graphMateKT.graphics
 graphMateKT.graphics.desktopGui
 graphMateKT.graphics.graphGraphics
 graphMateKT.graphics.gridGraphics

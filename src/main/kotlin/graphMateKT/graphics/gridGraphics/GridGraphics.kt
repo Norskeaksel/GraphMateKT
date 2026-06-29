@@ -35,7 +35,7 @@ internal class GridGraphics : Application() {
 
     val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() }
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
-    val sceneWith = LaptopResolution.HEIGHT * screenWidthMultiplier
+    val sceneWith = LaptopResolution.height * screenWidthMultiplier
     val sceneHeight = sceneWith * ratio
 
     var animationKeyFrameTime =

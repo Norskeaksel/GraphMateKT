@@ -2,11 +2,10 @@ package graphMateKT.graphics.graphGraphics
 
 import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
-import graphMateKT.graphClasses.BaseGraph
 import graphMateKT.graphics.LaptopResolution
+import graphMateKT.graphClasses.BaseGraph
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -41,10 +40,12 @@ internal class GraphGraphics : Application() {
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)
-        val scene = Scene(container, LaptopResolution.WIDTH, LaptopResolution.HEIGHT)
+        val scene = Scene(container)
 
         stage.title = screenTitle
         stage.scene = scene
+        stage.width = LaptopResolution.width
+        stage.height = LaptopResolution.height
         stage.isMaximized = true
         stage.show()
         graphView.init()

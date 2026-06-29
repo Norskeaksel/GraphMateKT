@@ -17,19 +17,19 @@ internal fun handleModeToggling(
     radioBtnRow: List<Labeled>,
     wallRow: List<Control>,
     inputInfoIcon: Label,
-    vizualizeGraphBtn: Button,
+    vizualizeBtn: Button,
 ) {
     val (graphBtn, gridBtn, intGraphBtn) = modeBtns
     graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
     if (graphBtn.isSelected) {
         graphInput.text = GUIConstants.GRAPH_INPUT
         inputInfoIcon.tooltip = toolTip(GUIConstants.GRAPH_INFO)
-        vizualizeGraphBtn.text = graphBtn.text
+        vizualizeBtn.text = graphBtn.text
     }
     if (gridBtn.isSelected) {
         graphInput.text = GUIConstants.GRID_INPUT
         inputInfoIcon.tooltip = toolTip(GUIConstants.GRID_INPUT_INFO)
-        vizualizeGraphBtn.text = graphBtn.text
+        vizualizeBtn.text = gridBtn.text
         wallRow.forEach { it.isVisible = true; it.isManaged = true }
         radioBtnRow.forEach { it.isVisible = false; it.isManaged = false}
     }
@@ -40,6 +40,6 @@ internal fun handleModeToggling(
     if (intGraphBtn.isSelected) {
         graphInput.text = GUIConstants.INT_GRAPH_INPUT
         inputInfoIcon.tooltip = toolTip(GUIConstants.INT_GRAPH_INPUT_INFO)
-        vizualizeGraphBtn.text = intGraphBtn.text
+        vizualizeBtn.text = intGraphBtn.text
     }
 }

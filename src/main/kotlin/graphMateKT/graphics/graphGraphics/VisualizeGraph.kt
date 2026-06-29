@@ -1,7 +1,7 @@
 package graphMateKT.graphics.graphGraphics
 
 import graphMateKT.graphClasses.BaseGraph
-import graphMateKT.graphics.launchVisualization
+import graphMateKT.graphics.FxLauncher
 
 /** Visualizes the graph with Bruno Silva's JavaFXSmartGraph library.
  *
@@ -49,7 +49,7 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         BidirectionalGraphGraphics.animationTicTimeOverride = animationTicTimeOverride
         BidirectionalGraphGraphics.startPaused = startPaused
         BidirectionalGraphGraphics.closeOnEnd = closeOnEnd
-        launchVisualization(BidirectionalGraphGraphics())
+        FxLauncher.launch(BidirectionalGraphGraphics())
     } else {
         @Suppress("UNCHECKED_CAST")
         GraphGraphics.graph = this as BaseGraph<Any>
@@ -58,6 +58,6 @@ fun <T : Any> BaseGraph<T>.visualizeGraph(
         GraphGraphics.animationTicTimeOverride = animationTicTimeOverride
         GraphGraphics.startPaused = startPaused
         GraphGraphics.closeOnEnd = closeOnEnd
-        launchVisualization(GraphGraphics())
+        FxLauncher.launch(GraphGraphics())
     }
 }
