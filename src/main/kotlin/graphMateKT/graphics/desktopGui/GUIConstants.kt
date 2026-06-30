@@ -13,11 +13,11 @@ Alice Chad 2.0
 Eve
 1 0 5.0"""
 
-    const val GRID_INPUT = """0....#1
-###.##.
+    const val GRID_INPUT = """0....#0
+###.#..
 ..#.#..
-#.#.#.#
-.#....0"""
+#.#.#..
+.#....1"""
 
     const val INT_GRAPH_INPUT = """6 7
 0 2 3.0

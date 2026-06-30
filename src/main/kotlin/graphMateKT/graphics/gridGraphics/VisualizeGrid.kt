@@ -27,7 +27,7 @@ screenWidthMultiplier = 0.5
  *
  * @param currentVisitedNodes A list of tiles representing the nodes visited in order during the traversal.
  * @param finalPath A list of tiles representing the final path in the grid.
- * @param nodeDistances A list of distances to each visited node.
+ * @param nodeDistances A list of distances to each visited node, which determines its color if visited.
  * @param screenTitle The title of the visualization window.
  * @param animationTicTimeOverride Overrides the default animation speed in milliseconds.
  * @param closeOnEnd If `true`, closes the visualization window when the animation ends.

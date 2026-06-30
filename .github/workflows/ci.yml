@@ -20,9 +20,6 @@ jobs:
           distribution: 'temurin' # A popular, free, and open-source distribution of OpenJDK
           cache: 'maven' # Caches Maven dependencies to speed up future builds.
 
-      - name: Run tests with Maven in batch mode
-        run: mvn -B test
-
       - name: Verify GraphMateKTSingleFile.kt is up to date
         run: |
           bash scripts/generate-single-file.sh
@@ -31,3 +28,6 @@ jobs:
             git --no-pager diff -- GraphMateKTSingleFile.kt
             exit 1
           fi
+
+      - name: Run tests with Maven in batch mode
+        run: mvn -B test
