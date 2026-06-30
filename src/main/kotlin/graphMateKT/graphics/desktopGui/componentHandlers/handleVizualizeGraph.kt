@@ -12,11 +12,11 @@ internal fun handleVizualizeGraph(
     algorithmSelector: ComboBox<Algorithms>,
     startNode: TextField,
     targetNode: TextField,
-    bidirectional: Boolean,
+    isBidirectional: Boolean,
 ) {
     println("Reading Graph input")
     val lines = graphInput.text.lines()
-    val graph = buildGraph(lines, bidirectional)
+    val graph = buildGraph(lines, isBidirectional)
     val start = startNode.text.trim()
     val target = targetNode.text.trim()
     when (algorithmSelector.value) {
@@ -29,11 +29,11 @@ internal fun handleVizualizeGraph(
         }
 
         Algorithms.TopologicalSort -> graph.topologicalSort().let { order ->
-            graph.visualizeGraph(bidirectional = bidirectional, finalPath = order)
+            graph.visualizeGraph(isBidirectional = isBidirectional, finalPath = order)
             return
         }
 
         else -> {}
     }
-    graph.visualizeGraph(bidirectional = bidirectional)
+    graph.visualizeGraph(isBidirectional = isBidirectional)
 }

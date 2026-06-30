@@ -2,11 +2,11 @@ package graphMateKT.graphics.desktopGui.componentHandlers
 
 import graphMateKT.graphClasses.Graph
 
-internal fun buildGraph(lines: List<String>, bidirectional: Boolean): Graph {
+internal fun buildGraph(lines: List<String>, isBidirectional: Boolean): Graph {
     val graph = Graph()
     lines.forEach { line ->
         val uvw = line.trim().split(Regex("\\s+"))
-        if (!bidirectional) {
+        if (!isBidirectional) {
             when (uvw.size) {
                 1 -> graph.addNode(uvw[0]).also { println("Adding node: ${uvw[0]}") }
                 2 -> graph.addEdge(uvw[0], uvw[1]).also { println("Adding edge from ${uvw[0]} to ${uvw[1]}") }

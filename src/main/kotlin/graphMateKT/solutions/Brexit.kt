@@ -47,6 +47,6 @@ private fun stayOrLeave(g: IntGraph, x: Int, l: Int): String {
         if (loopTime > 2000L) break
     }
     // debug(finalPath)
-    // g.visualize(bidirectional = true, finalPath=finalPath)
+    // g.visualize(isBidirectional = true, finalPath=finalPath)
     return if (g.neighbours(x).count { v -> leavers[v] } >= g.neighbours(x).size / 2.0) "leave" else "stay"
 }

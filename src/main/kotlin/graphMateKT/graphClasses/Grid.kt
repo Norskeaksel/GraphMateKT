@@ -204,7 +204,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * This function iterates through all nodes in the grid and connects each node to its neighbors as determined
      * by the `getNeighbours` function. The connections can be either unidirectional or bidirectional, based on the
-     * `bidirectional` parameter.
+     * `isBidirectional` parameter.
      *
      * <i>Example usage:<i>
      * ```
@@ -216,15 +216,15 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * grid.visualizeGrid()
      * ```
      *
-     * @param bidirectional If `true`, connections between nodes are bidirectional. If `false`, connections are unidirectional.
+     * @param isBidirectional If `true`, connections between nodes are bidirectional. If `false`, connections are unidirectional.
      * Defaults to false because many connection pattens are inherently unidirectional, and we want to avoid duplicate edges.
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
-    fun connectGrid(bidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
+    fun connectGrid(isBidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
         nodes().forEach { t ->
             val neighbours = getNeighbours(t)
             neighbours.forEach {
-                if (bidirectional) {
+                if (isBidirectional) {
                     connect(t, it)
                 } else {
                     addEdge(t, it)

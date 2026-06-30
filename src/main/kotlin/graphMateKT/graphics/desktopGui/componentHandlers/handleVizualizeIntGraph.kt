@@ -15,23 +15,23 @@ internal fun handleVizualizeIntGraph(
     algorithmSelector: ComboBox<Algorithms>,
     startNode: TextField,
     targetNode: TextField,
-    bidirectional: Boolean,
+    isBidirectional: Boolean,
 ) {
     println("Reading IntGraph input")
     val lines = graphInput.text.lines()
     val (n, m) = lines.first().split(" ").map { it.toInt() }
     require(lines.all { it.split(" ").size != 1 }) { "IntGraphs cannot add a singular node. The nodes have already been defined to be from 0 to ${n - 1}." }
-    val edgeMultiplier = if (!bidirectional) 1 else 2
+    val edgeMultiplier = if (!isBidirectional) 1 else 2
     require(lines.size * edgeMultiplier <= m) { "Can't add a ${m + 1}th edge, becaues it exceedes nrOfEdges=$m." }
     val intGraph = IntGraph(n, m * edgeMultiplier)
-    val tempGraph = buildGraph(lines.drop(1), bidirectional)
+    val tempGraph = buildGraph(lines.drop(1), isBidirectional)
     val connections = mutableSetOf<Pair<Int, Int>>()
     tempGraph.nodes().forEach { node ->
         tempGraph.edges(node).forEach { edge ->
             val u = node.toString().toInt()
             val v = edge.second.toString().toInt()
             val connection = min(u, v) to max(v, u)
-            if (connection in connections && bidirectional)
+            if (connection in connections && isBidirectional)
                 return@forEach
             intGraph.addEdge(u, v, edge.first)
             connections.add(connection)
@@ -49,11 +49,11 @@ internal fun handleVizualizeIntGraph(
         }
 
         Algorithms.TopologicalSort -> intGraph.topologicalSort().let { order ->
-            intGraph.visualizeGraph(bidirectional = bidirectional, finalPath = order)
+            intGraph.visualizeGraph(isBidirectional = isBidirectional, finalPath = order)
             return
         }
 
         else -> {}
     }
-    intGraph.visualizeGraph(bidirectional = bidirectional)
+    intGraph.visualizeGraph(isBidirectional = isBidirectional)
 }

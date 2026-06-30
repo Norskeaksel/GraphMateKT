@@ -24,7 +24,7 @@ internal fun main() {
 
     // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
     fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
-    grid.connectGrid(bidirectional = true, ::connectDownOrRight)
+    grid.connectGrid(isBidirectional = true, ::connectDownOrRight)
 
     // Nodes in a grid consists of Tile objects with x, y coordinates and data
     val startNode = Tile(width / 2, height / 2)

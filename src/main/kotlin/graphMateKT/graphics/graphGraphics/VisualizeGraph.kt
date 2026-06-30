@@ -15,7 +15,7 @@ import graphMateKT.graphics.FxLauncher
     graph.connect("A", "B")
     graph.connect("A", "C")
     graph.visualizeGraph(
-        bidirectional = true,
+        isBidirectional = true,
         finalPath = listOf("A", "B"),
         screenTitle = "GraphMateKT visualizeGraph example usage",
         animationTicTimeOverride = 2000.0,
@@ -26,7 +26,7 @@ import graphMateKT.graphics.FxLauncher
  * **NOTE:** to use this visualizeGraph() function, the files smartgraph.css and smartgraph.properties must be **added manually** to the root of your project,
  * as described in Bruno Silva's JavaFXSmartGraph repository: https://github.com/brunomnsilva/JavaFXSmartGraph
 
- * @param bidirectional If `true`, visualizes the graph as bidirectional, otherwise as directed.
+ * @param isBidirectional If `true`, visualizes the graph as bidirectional, otherwise as directed.
  * @param finalPath A list of nodes that can override the final path, and be animated instead. If not provided, the graph's own final path is used.
  * @param screenTitle The title of the visualization window.
  * @param animationTicTimeOverride Overrides the default animation speed in milliseconds.
@@ -34,14 +34,14 @@ import graphMateKT.graphics.FxLauncher
  * @param startPaused If `true`, starts the visualization in a paused state.
  * @throws IllegalStateException If the graph is improperly configured for visualization. */
 fun <T : Any> BaseGraph<T>.visualizeGraph(
-    bidirectional: Boolean = false,
+    isBidirectional: Boolean = false,
     finalPath:List<T> = finalPath() ?: emptyList(),
     screenTitle: String = "Graph visualizer (Click or space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,
 ) {
-    if (bidirectional) {
+    if (isBidirectional) {
         @Suppress("UNCHECKED_CAST")
         BidirectionalGraphGraphics.graph = this as BaseGraph<Any>
         BidirectionalGraphGraphics.finalPath = finalPath
