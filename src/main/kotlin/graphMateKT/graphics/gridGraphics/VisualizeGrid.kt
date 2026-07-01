@@ -38,7 +38,7 @@ fun Grid.visualizeGrid(
     currentVisitedNodes: List<Tile> = currentVisitedNodes(),
     finalPath: List<Tile> = finalPath() ?: emptyList(),
     nodeDistances: List<Double> = currentVisitedNodes.map { distanceTo(it) },
-    screenTitle: String = "Grid visualizer (Click or space to pause and resume)",
+    screenTitle: String = "Grid visualizer (Click space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,

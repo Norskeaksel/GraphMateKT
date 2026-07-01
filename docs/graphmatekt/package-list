@@ -101,6 +101,7 @@ $dokka.location:graphMateKT.graphClasses/Grid/connectGrid/#kotlin.Boolean#kotlin
 $dokka.location:graphMateKT.graphClasses/Grid/connectGridDefault/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/connect-grid-default.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodeAtXY/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-node-at-x-y.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodesWithData/#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-nodes-with-data.html
+$dokka.location:graphMateKT.graphClasses/Grid/firstNodeWithData/#kotlin.Any/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/first-node-with-data.html
 $dokka.location:graphMateKT.graphClasses/Grid/getAllNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-all-neighbours.html
 $dokka.location:graphMateKT.graphClasses/Grid/getDiagonalNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-diagonal-neighbours.html
 $dokka.location:graphMateKT.graphClasses/Grid/getStraightNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-straight-neighbours.html

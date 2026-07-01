@@ -36,7 +36,7 @@ import graphMateKT.graphics.FxLauncher
 fun <T : Any> BaseGraph<T>.visualizeGraph(
     isBidirectional: Boolean = false,
     finalPath:List<T> = finalPath() ?: emptyList(),
-    screenTitle: String = "Graph visualizer (Click or space to pause and resume)",
+    screenTitle: String = "Graph visualizer (Click space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,

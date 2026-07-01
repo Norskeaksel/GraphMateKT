@@ -26,7 +26,7 @@ internal class GridGraphics : Application() {
         var currentVisitedNodes: List<Tile> = emptyList()
         var finalPath: List<Tile> = emptyList()
         var nodeDistances: List<Double> = emptyList()
-        var screenTitle = "Grid visualizer (Click or space to pause and resume)"
+        var screenTitle = "Grid visualizer. (Click space to pause and resume animations.)"
         var animationKeyFrameOverride: Double? = null
         var startPaused = false
         var closeOnEnd = false
@@ -113,10 +113,6 @@ internal class GridGraphics : Application() {
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
             }
-        }
-
-        scene.setOnMouseClicked {
-            toggleAnimation(timeline)
         }
 
         timeline.setOnFinished {

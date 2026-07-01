@@ -2,7 +2,6 @@ package graphMateKT.graphics.graphGraphics
 
 import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer
 import com.brunomnsilva.smartgraph.graph.GraphEdgeList
-import com.brunomnsilva.smartgraph.graphview.SmartCircularSortedPlacementStrategy
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
 import graphMateKT.graphClasses.BaseGraph
@@ -20,7 +19,7 @@ internal class BidirectionalGraphGraphics : Application() {
     companion object {
         lateinit var graph: BaseGraph<Any>
         var finalPath: List<Any> = emptyList()
-        var screenTitle = "JavaFXGraph Visualization"
+        var screenTitle = "Graph visualizer. (Click space to pause and resume animations.)"
         var animationTicTimeOverride: Double? = null
         var startPaused = false
         var closeOnEnd = false
@@ -40,14 +39,15 @@ internal class BidirectionalGraphGraphics : Application() {
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)
-        val scene = Scene(container)
-
-        stage.title = screenTitle
-        stage.scene = scene
-        stage.width = LaptopResolution.width
-        stage.height = LaptopResolution.height
-        stage.isMaximized = true
-        stage.show()
+        val graphVisualization = Scene(container)
+        stage.apply {
+            title = screenTitle
+            scene = graphVisualization
+            width = LaptopResolution.width
+            height = LaptopResolution.height
+            isMaximized = true
+            show()
+        }
         graphView.init()
 
         val transitionTime = Duration.seconds(3.0)
@@ -76,14 +76,10 @@ internal class BidirectionalGraphGraphics : Application() {
 
         timeline.play()
 
-        scene.setOnKeyPressed { event ->
+        graphVisualization.setOnKeyPressed { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
             }
-        }
-
-        scene.setOnMouseClicked {
-            toggleAnimation(timeline)
         }
     }
 
@@ -103,15 +99,17 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any
     nodes().forEach { node ->
         g.insertVertex(node)
     }
+    val zeroWidthSpace = '\u200B'
+    var edgeCounter = 0
     val addedEdges = mutableSetOf<Pair<Any, Any>>()
     nodes().forEach { u ->
         val edges = edges(u).ifEmpty { neighbours(u).map { 1.0 to it } }
-        edges.forEach { (w,v) ->
+        edges.forEach { (w, v) ->
             val uv = u to v
             val vu = v to u
             if (uv !in addedEdges && vu !in addedEdges) {
-                val fromToWeight = Triple(u, v, w)
-                g.insertEdge(u, v, fromToWeight)
+                val uniqueWeightLabel = w.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
+                g.insertEdge(u, v, uniqueWeightLabel)
                 addedEdges.add(uv)
                 addedEdges.add(vu)
             }

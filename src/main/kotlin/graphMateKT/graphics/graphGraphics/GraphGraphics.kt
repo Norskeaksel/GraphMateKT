@@ -20,7 +20,7 @@ internal class GraphGraphics : Application() {
     companion object {
         lateinit var graph: BaseGraph<Any>
         var finalPath: List<Any> = emptyList()
-        var screenTitle = "JavaFXGraph Visualization"
+        var screenTitle = "Graph visualizer. (Click space to pause and resume animations.)"
         var animationTicTimeOverride: Double? = null
         var startPaused = false
         var closeOnEnd = false
@@ -40,14 +40,15 @@ internal class GraphGraphics : Application() {
         val graphView: SmartGraphPanel<Any, Any> = SmartGraphPanel(graphVisualizer, initialPlacement)
         graphView.setAutomaticLayout(true)
         val container = SmartGraphDemoContainer(graphView)
-        val scene = Scene(container)
-
-        stage.title = screenTitle
-        stage.scene = scene
-        stage.width = LaptopResolution.width
-        stage.height = LaptopResolution.height
-        stage.isMaximized = true
-        stage.show()
+        val graphVisualization = Scene(container)
+        stage.apply {
+            title = BidirectionalGraphGraphics.screenTitle
+            scene = graphVisualization
+            width = LaptopResolution.width
+            height = LaptopResolution.height
+            isMaximized = true
+            show()
+        }
         graphView.init()
 
         val transitionTime = Duration.seconds(3.0)
@@ -77,14 +78,10 @@ internal class GraphGraphics : Application() {
         if (!startPaused) {
             timeline.play()
         }
-        scene.setOnKeyPressed { event ->
+        graphVisualization.setOnKeyPressed { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
             }
-        }
-
-        scene.setOnMouseClicked {
-            toggleAnimation(timeline)
         }
     }
 
@@ -104,11 +101,13 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): DigraphEdgeList<Any, A
     nodes().forEach { node ->
         g.insertVertex(node)
     }
+    val zeroWidthSpace = '\u200B'
+    var edgeCounter = 0
     nodes().forEach { node ->
         val edges = edges(node).ifEmpty { neighbours(node).map { 1.0 to it } }
         edges.forEach { edge ->
-            val fromToWeight = Triple(node, edge.second, edge.first)
-            g.insertEdge(node, edge.second, fromToWeight)
+            val uniqueWeightLabel = edge.first.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
+            g.insertEdge(node, edge.second, uniqueWeightLabel)
         }
     }
     return g

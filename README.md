@@ -5,7 +5,7 @@
 GraphMateKT is a thoroughly tested graph library that contains classes and algorithms for making, traversing and
 visualizing grids and graphs. This can for example be used to create and debug competitive programming solutions.
 The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using the graph library to solve various problems. These solutions
-are then used as units tests for the library, to ensure robustness throughout development.
+are also used as units tests for the library, to ensure robustness throughout development.
 
 The library contains the general `Graph` class, which can be used to create graphs of any datatype, the `IntGraph` class
 , which is performance optimized for integer nodes, and the `Grid` class, where each node has x and y coordinates in
@@ -89,78 +89,80 @@ Once the graph is built, you may use the following graph algorithms:
 [Example usage:](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
 ```kotlin
-package examples
+package graphMateKT.examples
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.graphGraphics.visualizeGraph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 
 
-fun main() {
-    // --- Example Graph Definition ---
-    val graph = Graph()
-    graph.addEdge(0, 1, 10.0)
-    graph.addEdge(0, 2, 3.0)
-    graph.addEdge(1, 3, 2.0)
-    graph.addEdge(2, 1, 4.0)
-    graph.addEdge(2, 3, 8.0)
-    graph.addEdge(2, 4, 2.0)
-    graph.addEdge(3, 4, 5.0)
+internal fun main() {
+  // --- Example Graph Definition ---
+  val graph = Graph()
+  graph.addEdge(0, 1, 10.0)
+  graph.addEdge(0, 2, 3.0)
+  graph.addEdge(1, 3, 2.0)
+  graph.addEdge(2, 1, 4.0)
+  graph.addEdge(2, 3, 8.0)
+  graph.addEdge(2, 4, 2.0)
+  graph.addEdge(3, 4, 5.0)
+  graph.addNode(5) // Adding an isolated node is also possible
 
-    graph.addNode(5) // Adding an isolated node is also possible
-    val startNode = 0
-    val targetNode = 3
-    graph.dijkstra(startNode, targetNode) // Provide a goal target node to stop the search when the target is found
-    val nodes: List<Int> =
-        graph.nodes().map { it as Int } // Nodes are of type Any and must therefore be cast to Int
-    println("Shortest paths from source node $startNode:")
-    nodes.forEach { node ->
-        val distValue = graph.distanceTo(node)
-        val path = graph.getPath(node)
-        println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
+  val startNode = 0
+  val targetNode = 3
+  graph.dijkstra(startNode)
+  val nodes: List<Int> =
+    graph.nodes().map { it as Int } // Nodes are of type Any and must therefore be cast to Int
+  println("Shortest paths from source node $startNode:")
+  nodes.forEach { node ->
+    val distValue = graph.distanceTo(node)
+    val path = graph.getPath(node)
+    println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
+  }
+  /* Output:
+      Shortest paths from source node 0:
+      Distance to node 0: 0.0 Path: [0]
+      Distance to node 1: 7.0 Path: [0, 2, 1]
+      Distance to node 2: 3.0 Path: [0, 2]
+      Distance to node 3: 9.0 Path: [0, 2, 1, 3]
+      Distance to node 4: 5.0 Path: [0, 2, 4]
+      Distance to node 5: Infinity Path: null
+  */
+  // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
+  graph.visualizeGraph(
+    screenTitle = "Visualizing Dijkstra's shortest path with GraphMateKT",
+    animationTicTimeOverride = 1000.0,
+    startPaused = true,
+  )
+
+
+  /* --- Example IntGraph Definition ---
+       * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consist of nodes from 0 to size-1.
+  */
+  val n = graph.size()
+  val intGraph = IntGraph(n, graph.nrOfEdges())
+  // Add the same edges as the above Graph
+  graph.nodes().forEach { fromNode ->
+    graph.edges(fromNode).forEach { edge ->
+      val weight = edge.first
+      val toNode = edge.second as Int // Cast type Any to Int
+      intGraph.addEdge(fromNode as Int, toNode, weight)
     }
-    /* Output:
-        Shortest paths from source node 0:
-        Distance to node 0: 0.0 Path: [0]
-        Distance to node 1: 7.0 Path: [0, 2, 1]
-        Distance to node 2: 3.0 Path: [0, 2]
-        Distance to node 3: 9.0 Path: [0, 2, 1, 3]
-        Distance to node 4: 5.0 Path: [0, 2, 4]
-        Distance to node 5: Infinity Path: null
-    */
-
-
-    /* --- Example IntGraph Definition ---
-         An IntGraph needs to be initialized with a fixed size and number of edges, because it consists of integer
-         nodes from 0 to size-1 and stores its edges in fixed-size arrays.
-    */
-    val n = graph.size()
-    val intGraph = IntGraph(n, graph.nrOfEdges())
-    // Add the same edges as the above Graph
-    graph.nodes().forEach { fromNode ->
-        graph.edges(fromNode).forEach { edge ->
-            val weight = edge.first
-            val toNode = edge.second as Int // Cast type Any to Int
-            intGraph.addEdge(fromNode as Int, toNode, weight)
-        }
-    }
-    intGraph.dijkstra(startNode, targetNode)
-    val intNodes: List<Int> = intGraph.nodes()
-    println("Shortest paths from source node $startNode:")
-    intNodes.forEach { node ->
-        val distValue = intGraph.distanceTo(node)
-        val path = intGraph.getPath(node)
-        println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
-    }
-    // Outputs the same as the code above
-
-    // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
-    graph.visualizeGraph(
-        // Also works with intGraph.visualizeSearch(
-        screenTitle = "Visualizing Dijkstra's shortest path with GraphMateKT",
-        animationTicTimeOverride = 1000.0,
-        startPaused = true,
-    )
+  }
+  intGraph.dijkstra(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
+  val intNodes: List<Int> = intGraph.nodes()
+  println("Shortest paths from source node $startNode:")
+  intNodes.forEach { node ->
+    val distValue = intGraph.distanceTo(node)
+    val path = intGraph.finalPath() // Use final path instead of `getPath(node)`
+    println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
+  }
+  // Outputs the same as the code above
+  intGraph.visualizeGraph(
+    screenTitle = "Visualizing Dijkstra's shortest path with GraphMateKT",
+    animationTicTimeOverride = 1000.0,
+    startPaused = true,
+  )
 }
 ```
 
@@ -193,7 +195,7 @@ import graphMateKT.Tile
 import graphMateKT.gridGraphics.visualizeGrid
 
 fun main() {
-    // Example Grid Definition. We can also initialize it with a list of strings
+    // Example Grid Definition. We could also have initialized it with a list of strings
     val width = 99
     val height = 99
     val grid = Grid(width, height)

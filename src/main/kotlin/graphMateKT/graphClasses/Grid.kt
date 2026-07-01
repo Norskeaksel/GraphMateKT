@@ -137,6 +137,13 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         nodes[id] = null
     }
 
+    /** Returns the first tile in the grid (row-wise from left to right) that contains the requested data.
+     *
+     * @param data The value to look for in the grid.
+     * @return The first matching tile.
+     * @throws NoSuchElementException If no tile with matching data exists. */
+    fun firstNodeWithData(data: Any) = nodes.first { it?.data == data }!!
+
     /** Deletes the node at the specified (x, y) coordinates in the grid.
      *
      * If the coordinates are outside the grid, a warning is printed, and no action is taken.

@@ -25,17 +25,13 @@ internal class DesktopGUI : Application() {
     override fun start(stage: Stage) {
 
         val visualisationMode = ToggleGroup()
-        val graphBtn = ToggleButton("Visualize Graph").apply { isSelected = true }
-        val gridBtn = ToggleButton("Visualize Grid")
-        val intGraphBtn = ToggleButton("Visualize IntGraph")
-        graphBtn.toggleGroup = visualisationMode
-        gridBtn.toggleGroup = visualisationMode
-        intGraphBtn.toggleGroup = visualisationMode
+        val graphBtn = ToggleButton("Visualize Graph").apply { isSelected = true; toggleGroup = visualisationMode }
+        val gridBtn = ToggleButton("Visualize Grid").apply { toggleGroup = visualisationMode }
+        val intGraphBtn = ToggleButton("Visualize IntGraph").apply { toggleGroup = visualisationMode }
         val visualizerSelector = HBox(10.0, graphBtn, gridBtn, intGraphBtn)
 
-        val algorithmSelector = ComboBox<Algorithms>()
-        algorithmSelector.items.addAll(Algorithms.entries)
-        algorithmSelector.promptText = "Select algorithm"
+        val algorithmSelector =
+            ComboBox<Algorithms>().apply { items.addAll(Algorithms.entries); promptText = "Select algorithm" }
         val algorithmInfoIcon = infoIcon("Select an algorithm to learn about what it does.")
 
         val startLabel = Label("Start node:")
@@ -48,11 +44,8 @@ internal class DesktopGUI : Application() {
             infoIcon("The target node for Dijkstra of BFS.\nIf set, vizualize the path to the target node, after the search is complete.")
 
         val directedOrNot = ToggleGroup()
-        val directed = RadioButton("Directed")
-        directed.isSelected = true
-        directed.toggleGroup = directedOrNot
-        val undirected = RadioButton("Undirected")
-        undirected.toggleGroup = directedOrNot
+        val directed = RadioButton("Directed").apply { isSelected = true; toggleGroup = directedOrNot }
+        val undirected = RadioButton("Undirected").apply { toggleGroup = directedOrNot }
         val radioBtnsInfoIcon =
             infoIcon("Whether the nodes have edges in both directions.\nIf undirected, the nr of edges in IntGraphs must be doubled.")
 
@@ -65,9 +58,7 @@ internal class DesktopGUI : Application() {
         val wallNodeInfoIcon =
             infoIcon("The character representing walls in the grid. Example: #.")
 
-
         val inputInfoIcon = infoIcon(GUIConstants.GRAPH_INFO)
-
         val vizualizeBtn = Button("Visualize Graph")
 
         // @formatter:off
@@ -94,12 +85,14 @@ internal class DesktopGUI : Application() {
         VBox.setVgrow(graphInput, Priority.ALWAYS)
 
         val layout = VBox(10.0, visualizerSelector, infoRows, graphInput)
-
-        val scene = Scene(layout, LaptopResolution.width, LaptopResolution.height)
-        scene.root.style = "-fx-font-size: ${GUI_FONT_SIZE}px;"
-        stage.title = "GraphMateKT GUI"
-        stage.scene = scene
-        stage.show()
+        val gui = Scene(layout, LaptopResolution.width, LaptopResolution.height).apply {
+            root.style = "-fx-font-size: ${GUI_FONT_SIZE}px;"
+        }
+        stage.run {
+            title = "GraphMateKT GUI"
+            scene = gui
+            show()
+        }
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
