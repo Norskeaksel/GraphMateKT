@@ -72,7 +72,7 @@ internal class DesktopGUI : Application() {
             add(inputInfoIcon, 2, 4)
         }
         // @formatter:on
-        val columnConstraints = listOf(150.0, 200.0, 50.0).map { ColumnConstraints(it) }
+        val columnConstraints = listOf(190.0, 200.0, 100.0).map { ColumnConstraints(it) }
         infoRows.columnConstraints.addAll(columnConstraints)
         val radioBtnRow = listOf(directed, undirected, radioBtnsInfoIcon)
         val wallRow = listOf(wallLabel, wallNode, wallNodeInfoIcon).onEach {
