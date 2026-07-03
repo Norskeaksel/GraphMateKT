@@ -5,7 +5,7 @@ import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
 import java.util.*
 
 
-class InitialNodePlacer : SmartPlacementStrategy {
+internal class InitialNodePlacer : SmartPlacementStrategy {
     override fun <V, E> place(width: Double, height: Double, smartGraphPanel: SmartGraphPanel<V, E>) {
         val rand = Random()
         for (vertex in smartGraphPanel.smartVertices) {
