@@ -28,10 +28,10 @@ internal fun day20a(input: List<String>, cheatGoal: Int, fairTime: Int): Int {
         val cheatDist = grid.distanceTo(endNode)
         timeSaved = (fairTime - cheatDist).toInt()
         println("timeSaved: $timeSaved")
-        val path = grid.getPath(endNode)
+        val path = grid.getPath(endNode) ?: break
         grid = gridWithoutCheatPath(path, grid)
     }
-    // grid.visualizeGrid(screenWidthOverride=2000.0)
+    // grid.visualizeGrid(screenWidthMultiplier=2.2)
     return c
 }
 

@@ -2,16 +2,17 @@
 
 ![My Workflow Status](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml/badge.svg)
 
-GraphMateKT contains classes and algorithms for making, traversing and visualizing graphs and grids.
-This can for example be used to create and debug competitive programming solutions.
-The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using this graphLibraryPackage to solve
-various problems.
-The library contains the general `Graph` class, which can be used to create graphs of any datatype,
-the `IntGraph` class, which is performance optimized for integer nodes,
-and the `Grid` class, where each node has x and y coordinates in addition to containing any data type.
-All the classes inherit from the
-abstract [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
-class, which defines the basic functionality of the graphs.
+GraphMateKT is a thoroughly tested graph library that contains classes and algorithms for making, traversing and
+visualizing grids and graphs. This can for example be used to create and debug competitive programming solutions.
+The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using the graph library to solve various problems. These solutions
+are also used as units tests for the library, to ensure robustness throughout development.
+
+The library contains the general `Graph` class, which can be used to create graphs of any datatype, the `IntGraph` class
+, which is performance optimized for integer nodes, and the `Grid` class, where each node has x and y coordinates in
+addition to containing any data type. All the classes inherit from the abstract
+[BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
+class, which defines
+the basic functionality of the graphs.
 
 ## Documentation
 
@@ -22,21 +23,28 @@ class, which defines the basic functionality of the graphs.
 Add the following dependency to your `pom.xml` file:
 
 ```xml
+
 <dependency>
-  <groupId>io.github.norskeaksel</groupId>
-  <artifactId>graphmatekt</artifactId>
-  <version>1.0.0</version>
+    <groupId>io.github.norskeaksel</groupId>
+    <artifactId>graphmatekt</artifactId>
+    <version>1.0.0</version>
 </dependency>
 ```
 
 See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest version number.
 
-:warning: Please note that to use the ```Graph().visualizeGraph() function```, the files `smartgraph.css` and
-`smartgraph.properties` **must be added manually** to the root of your project, as described
-in [Bruno Silva](https://github.com/brunomnsilva)'s
-[JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
+:warning: Please note that for the ```Graph().visualizeGraph() function``` to work as intended
+, the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
+as described in [Bruno Silva](https://github.com/brunomnsilva)'
+s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
+
+## Library GUI
+
+A GUI is included in the library, which can be used to see some of its algorithms and graph and grid visualization
+capabilities. The GUI can be invoked by running `launchGraphMateKTGUI()`.
 
 ### Using the library in a single file.
+
 In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
 external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
 the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note, this file does not
@@ -73,19 +81,19 @@ Once the graph is built, you may use the following graph algorithms:
 - **Prims (MST)**:
     - `minimumSpanningTree()`
 - **NrOfPaths**:
-  - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
+    - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
 
 [Example usage:](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
 ```kotlin
-package examples
+package graphMateKT.examples
 
 import graphMateKT.graphClasses.Graph
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.graphGraphics.visualizeGraph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 
 
-fun main() {
+internal fun main() {
   // --- Example Graph Definition ---
   val graph = Graph()
   graph.addEdge(0, 1, 10.0)
@@ -95,11 +103,11 @@ fun main() {
   graph.addEdge(2, 3, 8.0)
   graph.addEdge(2, 4, 2.0)
   graph.addEdge(3, 4, 5.0)
-
   graph.addNode(5) // Adding an isolated node is also possible
+
   val startNode = 0
   val targetNode = 3
-  graph.dijkstra(startNode, targetNode) // Provide a goal target node to stop the search when the target is found
+  graph.dijkstra(startNode)
   val nodes: List<Int> =
     graph.nodes().map { it as Int } // Nodes are of type Any and must therefore be cast to Int
   println("Shortest paths from source node $startNode:")
@@ -117,11 +125,16 @@ fun main() {
       Distance to node 4: 5.0 Path: [0, 2, 4]
       Distance to node 5: Infinity Path: null
   */
+  // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
+  graph.visualizeGraph(
+    screenTitle = "Visualizing Dijkstra's shortest path with GraphMateKT",
+    animationTicTimeOverride = 1000.0,
+    startPaused = true,
+  )
 
 
   /* --- Example IntGraph Definition ---
-       An IntGraph needs to be initialized with a fixed size and number of edges, because it consists of integer
-       nodes from 0 to size-1 and stores its edges in fixed-size arrays.
+       * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consist of nodes from 0 to size-1.
   */
   val n = graph.size()
   val intGraph = IntGraph(n, graph.nrOfEdges())
@@ -133,19 +146,16 @@ fun main() {
       intGraph.addEdge(fromNode as Int, toNode, weight)
     }
   }
-  intGraph.dijkstra(startNode, targetNode)
+  intGraph.dijkstra(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
   val intNodes: List<Int> = intGraph.nodes()
   println("Shortest paths from source node $startNode:")
   intNodes.forEach { node ->
     val distValue = intGraph.distanceTo(node)
-    val path = intGraph.getPath(node)
+    val path = intGraph.finalPath() // Use final path instead of `getPath(node)`
     println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
   }
   // Outputs the same as the code above
-
-  // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
-  graph.visualizeGraph(
-    // Also works with intGraph.visualizeSearch(
+  intGraph.visualizeGraph(
     screenTitle = "Visualizing Dijkstra's shortest path with GraphMateKT",
     animationTicTimeOverride = 1000.0,
     startPaused = true,
@@ -182,66 +192,66 @@ import graphMateKT.Tile
 import graphMateKT.gridGraphics.visualizeGrid
 
 fun main() {
-  // Example Grid Definition. We can also initialize it with a list of strings
-  val width = 99
-  val height = 99
-  val grid = Grid(width, height)
+    // Example Grid Definition. We could also have initialized it with a list of strings
+    val width = 99
+    val height = 99
+    val grid = Grid(width, height)
 
-  // We can delete nodes, by specifying them, their coordinates or their data. However, deletions MUST take place
-  // before connections are added. Otherwise, the grid can contain connections to the deleted tiles
-  // Let's use some custom functions to delete some patterns
+    // We can delete nodes, by specifying them, their coordinates or their data. However, deletions MUST take place
+    // before connections are added. Otherwise, the grid can contain connections to the deleted tiles
+    // Let's use some custom functions to delete some patterns
 
-  grid.deleteSquareAtOffset(4)
-  grid.deleteDiamondAtOffset(8)
-  grid.deleteSquareAtOffset(10)
-  grid.deleteDiamondAtOffset(20)
-  grid.deleteSquareAtOffset(22)
-  grid.deleteDiamondAtOffset(44)
-  grid.deleteSquareAtOffset(46)
+    grid.deleteSquareAtOffset(4)
+    grid.deleteDiamondAtOffset(8)
+    grid.deleteSquareAtOffset(10)
+    grid.deleteDiamondAtOffset(20)
+    grid.deleteSquareAtOffset(22)
+    grid.deleteDiamondAtOffset(44)
+    grid.deleteSquareAtOffset(46)
 
-  // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
-  fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
-  grid.connectGrid(bidirectional = true, ::connectDownOrRight)
+    // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
+    fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
+    grid.connectGrid(bidirectional = true, ::connectDownOrRight)
 
-  // Nodes in a grid consists of Tile objects with x, y coordinates and data
-  val startNode = Tile(width / 2, height / 2)
+    // Nodes in a grid consists of Tile objects with x, y coordinates and data
+    val startNode = Tile(width / 2, height / 2)
 
-  // We can run a seach algorithm like BFS (Breadth-First Search) from a start node
-  val target = Tile(width - 1, height - 1) // Define a target to find a path to it
-  grid.bfs(startNode, target)
+    // We can run a seach algorithm like BFS (Breadth-First Search) from a start node
+    val target = Tile(width - 1, height - 1) // Define a target to find a path to it
+    grid.bfs(startNode, target)
 
-  // Visualizing the grid, the BFS and the final fastest path to the target
-  grid.visualizeGrid(
-    screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
-    screenWidthOverride = 880.0,
-    startPaused = true,
-  )
+    // Visualizing the grid, the BFS and the final fastest path to the target
+    grid.visualizeGrid(
+        screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
+        screenWidthMultiplier = 0.88,
+        startPaused = true,
+    )
 }
 
 private fun Grid.deleteSquareAtOffset(centerOffset: Int) {
-  val center = width / 2
-  val lowerBound = center - centerOffset
-  val upperBound = center + centerOffset
-  for (i in lowerBound + 2 until upperBound - 1) {
-    deleteNodeAtXY(i, lowerBound)
-    deleteNodeAtXY(i, upperBound)
-    deleteNodeAtXY(lowerBound, i)
-    deleteNodeAtXY(upperBound, i)
-  }
+    val center = width / 2
+    val lowerBound = center - centerOffset
+    val upperBound = center + centerOffset
+    for (i in lowerBound + 2 until upperBound - 1) {
+        deleteNodeAtXY(i, lowerBound)
+        deleteNodeAtXY(i, upperBound)
+        deleteNodeAtXY(lowerBound, i)
+        deleteNodeAtXY(upperBound, i)
+    }
 }
 
 private fun Grid.deleteDiamondAtOffset(centerOffset: Int) {
-  val center = width / 2
-  var dx = centerOffset
-  var dy = 1
-  repeat(centerOffset) {
-    deleteNodeAtXY(center - dx, center - dy)
-    deleteNodeAtXY(center + dx, center - dy)
-    deleteNodeAtXY(center - dx, center + dy)
-    deleteNodeAtXY(center + dx, center + dy)
-    dx--
-    dy++
-  }
+    val center = width / 2
+    var dx = centerOffset
+    var dy = 1
+    repeat(centerOffset) {
+        deleteNodeAtXY(center - dx, center - dy)
+        deleteNodeAtXY(center + dx, center - dy)
+        deleteNodeAtXY(center - dx, center + dy)
+        deleteNodeAtXY(center + dx, center + dy)
+        dx--
+        dy++
+    }
 }
 ```
 

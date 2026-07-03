@@ -26,9 +26,5 @@ internal fun torn2pieces(): String {
     graph.addNode(end)
     graph.bfs(start, end)
     val path = graph.getPath(end)
-    return if (path.size == 1) {
-        "no route found"
-    } else {
-        path.joinToString(" ")
-    }
+    return path?.joinToString(" ") ?: "no route found"
 }

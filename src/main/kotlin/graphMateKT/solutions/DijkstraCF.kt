@@ -19,9 +19,6 @@ internal fun  dijkstraCF(): List<Int> {
         g.connect(u, v, w.toDouble())
     }
     g.dijkstra(1)
-    val path = g.getPath(n)
-    if (path.size == 1 && path[0] != 1) {
-        return listOf(-1)
-    }
+    val path = g.getPath(n) ?: return listOf(-1)
     return path
 }

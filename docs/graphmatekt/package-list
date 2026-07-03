@@ -101,6 +101,7 @@ $dokka.location:graphMateKT.graphClasses/Grid/connectGrid/#kotlin.Boolean#kotlin
 $dokka.location:graphMateKT.graphClasses/Grid/connectGridDefault/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/connect-grid-default.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodeAtXY/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-node-at-x-y.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodesWithData/#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-nodes-with-data.html
+$dokka.location:graphMateKT.graphClasses/Grid/firstNodeWithData/#kotlin.Any/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/first-node-with-data.html
 $dokka.location:graphMateKT.graphClasses/Grid/getAllNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-all-neighbours.html
 $dokka.location:graphMateKT.graphClasses/Grid/getDiagonalNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-diagonal-neighbours.html
 $dokka.location:graphMateKT.graphClasses/Grid/getStraightNeighbours/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/get-straight-neighbours.html
@@ -118,12 +119,17 @@ $dokka.location:graphMateKT.graphClasses/IntGraph/addEdge/#kotlin.Int#kotlin.Int
 $dokka.location:graphMateKT.graphClasses/IntGraph/addNode/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/add-node.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/nodes.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/stronglyConnectedComponents/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/strongly-connected-components.html
-$dokka.location:graphMateKT.graphGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/index.html
-$dokka.location:graphMateKT.graphGraphics//visualizeComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Any]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-components.html
-$dokka.location:graphMateKT.graphGraphics//visualizeGraph/graphMateKT.graphClasses.BaseGraph[TypeParam(bounds=[kotlin.Any])]#kotlin.Boolean#kotlin.collections.List[TypeParam(bounds=[kotlin.Any])]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-graph.html
-$dokka.location:graphMateKT.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphGraphics/visualize-int-components.html
-$dokka.location:graphMateKT.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/index.html
-$dokka.location:graphMateKT.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.gridGraphics/visualize-grid.html
+$dokka.location:graphMateKT.graphics.desktopGui////PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/index.html
+$dokka.location:graphMateKT.graphics.desktopGui//launchGraphMateKTGUI/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.desktopGui/launch-graph-mate-k-t-g-u-i.html
+$dokka.location:graphMateKT.graphics.graphGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/index.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Any]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-components.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeGraph/graphMateKT.graphClasses.BaseGraph[TypeParam(bounds=[kotlin.Any])]#kotlin.Boolean#kotlin.collections.List[TypeParam(bounds=[kotlin.Any])]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-graph.html
+$dokka.location:graphMateKT.graphics.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-int-components.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer///PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/index.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/InitialNodePlacer/#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/-initial-node-placer.html
+$dokka.location:graphMateKT.graphics.graphGraphics/InitialNodePlacer/place/#kotlin.Double#kotlin.Double#com.brunomnsilva.smartgraph.graphview.SmartGraphPanel[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/-initial-node-placer/place.html
+$dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
+$dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
@@ -139,5 +145,6 @@ $dokka.location:graphMateKT/Tile/y/#/PointingToDeclaration/graphmatekt/graphMat
 fastInputReader
 graphMateKT
 graphMateKT.graphClasses
-graphMateKT.graphGraphics
-graphMateKT.gridGraphics
+graphMateKT.graphics.desktopGui
+graphMateKT.graphics.graphGraphics
+graphMateKT.graphics.gridGraphics

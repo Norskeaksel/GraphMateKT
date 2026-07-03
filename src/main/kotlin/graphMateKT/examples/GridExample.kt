@@ -2,7 +2,7 @@ package graphMateKT.examples
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.gridGraphics.visualizeGrid
+import graphMateKT.graphics.gridGraphics.visualizeGrid
 
 internal fun main() {
     // Example Grid Definition. We can also initialize it with a list of strings
@@ -24,7 +24,7 @@ internal fun main() {
 
     // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
     fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
-    grid.connectGrid(bidirectional = true, ::connectDownOrRight)
+    grid.connectGrid(isBidirectional = true, ::connectDownOrRight)
 
     // Nodes in a grid consists of Tile objects with x, y coordinates and data
     val startNode = Tile(width / 2, height / 2)
@@ -36,7 +36,7 @@ internal fun main() {
     // Visualizing the grid, the BFS and the final fastest path to the target
     grid.visualizeGrid(
         screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
-        screenWidthOverride = 880.0,
+        screenWidthMultiplier = 0.88,
         startPaused = true,
     )
 }
