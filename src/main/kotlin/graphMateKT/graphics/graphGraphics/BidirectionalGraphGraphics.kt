@@ -5,7 +5,7 @@ import com.brunomnsilva.smartgraph.graph.GraphEdgeList
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
 import graphMateKT.graphClasses.BaseGraph
-import graphMateKT.graphics.LaptopResolution
+import graphMateKT.graphics.desktopGui.GUIConstants
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -43,8 +43,8 @@ internal class BidirectionalGraphGraphics : Application() {
         stage.apply {
             title = screenTitle
             scene = graphVisualization
-            width = LaptopResolution.width
-            height = LaptopResolution.height
+            width = GUIConstants.width
+            height = GUIConstants.height
             isMaximized = true
             show()
         }

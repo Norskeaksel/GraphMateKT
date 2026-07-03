@@ -4,8 +4,8 @@ import com.brunomnsilva.smartgraph.containers.SmartGraphDemoContainer
 import com.brunomnsilva.smartgraph.graph.DigraphEdgeList
 import com.brunomnsilva.smartgraph.graphview.SmartGraphPanel
 import com.brunomnsilva.smartgraph.graphview.SmartPlacementStrategy
-import graphMateKT.graphics.LaptopResolution
 import graphMateKT.graphClasses.BaseGraph
+import graphMateKT.graphics.desktopGui.GUIConstants
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -44,8 +44,8 @@ internal class GraphGraphics : Application() {
         stage.apply {
             title = BidirectionalGraphGraphics.screenTitle
             scene = graphVisualization
-            width = LaptopResolution.width
-            height = LaptopResolution.height
+            width = GUIConstants.width
+            height = GUIConstants.height
             isMaximized = true
             show()
         }

@@ -1,6 +1,5 @@
 package graphMateKT.graphics.desktopGui
 
-import graphMateKT.graphics.LaptopResolution
 import graphMateKT.graphics.desktopGui.GUIConstants.GUI_FONT_SIZE
 import graphMateKT.graphics.desktopGui.componentHandlers.*
 import javafx.application.Application
@@ -74,7 +73,7 @@ internal class DesktopGUI : Application() {
         VBox.setVgrow(graphInput, Priority.ALWAYS)
 
         val layout = VBox(10.0, visualizerSelector, infoRows, graphInput)
-        val gui = Scene(layout, LaptopResolution.width, LaptopResolution.height).apply {
+        val gui = Scene(layout, GUIConstants.width, GUIConstants.height).apply {
             root.style = "-fx-font-size: ${GUI_FONT_SIZE}px;"
         }
         stage.run {

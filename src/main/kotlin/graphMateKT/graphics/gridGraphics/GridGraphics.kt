@@ -2,7 +2,7 @@ package graphMateKT.graphics.gridGraphics
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.graphics.LaptopResolution
+import graphMateKT.graphics.desktopGui.GUIConstants
 import javafx.animation.KeyFrame
 import javafx.animation.PauseTransition
 import javafx.animation.Timeline
@@ -35,7 +35,7 @@ internal class GridGraphics : Application() {
 
     val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() }
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
-    val sceneWith = LaptopResolution.height * screenWidthMultiplier
+    val sceneWith = GUIConstants.height * screenWidthMultiplier
     val sceneHeight = sceneWith * ratio
 
     var animationKeyFrameTime =
