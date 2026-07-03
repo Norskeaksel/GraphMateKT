@@ -2,13 +2,11 @@ package graphMateKT.graphics.desktopGui
 
 import graphMateKT.graphics.LaptopResolution
 import graphMateKT.graphics.desktopGui.GUIConstants.GUI_FONT_SIZE
-import graphMateKT.graphics.desktopGui.GUIConstants.INFO_ICON_FONT_SIZE
 import graphMateKT.graphics.desktopGui.componentHandlers.*
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.layout.*
-import javafx.scene.text.Font
 import javafx.stage.Modality
 import javafx.stage.Stage
 import java.io.PrintWriter
@@ -16,11 +14,6 @@ import java.io.StringWriter
 
 
 internal class DesktopGUI : Application() {
-    private val infoIcon = "\uD83D\uDEC8"
-    private fun infoIcon(tooltipText: String) = Label(infoIcon).apply {
-        font = Font.font(INFO_ICON_FONT_SIZE)
-        tooltip = toolTip(tooltipText)
-    }
 
     override fun start(stage: Stage) {
 
@@ -32,22 +25,16 @@ internal class DesktopGUI : Application() {
 
         val algorithmSelector =
             ComboBox<Algorithms>().apply { items.addAll(Algorithms.entries); promptText = "Select algorithm" }
-        val algorithmInfoIcon = infoIcon("Select an algorithm to learn about what it does.")
 
         val startLabel = Label("Start node:")
         val startNode = TextField("0")
-        val startNodeInfoIcon = infoIcon("The starting node for search algorithms. (BFS, DFS, Dijkstra)")
 
         val targetLabel = Label("Target node:")
         val targetNode = TextField("1")
-        val targetNodeInfoIcon =
-            infoIcon("The target node for Dijkstra of BFS.\nIf set, vizualize the path to the target node, after the search is complete.")
 
         val directedOrNot = ToggleGroup()
         val directed = RadioButton("Directed").apply { isSelected = true; toggleGroup = directedOrNot }
         val undirected = RadioButton("Undirected").apply { toggleGroup = directedOrNot }
-        val radioBtnsInfoIcon =
-            infoIcon("Whether the nodes have edges in both directions.\nIf undirected, the nr of edges in IntGraphs must be doubled.")
 
         val wallLabel = Label("Wall node:")
         val wallNode = TextField("#").apply {
@@ -55,29 +42,31 @@ internal class DesktopGUI : Application() {
                 if (change.controlNewText.length <= 1) change else null
             }
         }
-        val wallNodeInfoIcon =
-            infoIcon("The character representing walls in the grid. Example: #.")
 
-        val inputInfoIcon = infoIcon(GUIConstants.GRAPH_INFO)
+        val infoText = InfoText()
         val vizualizeBtn = Button("Visualize Graph")
 
         // @formatter:off
         val infoRows = GridPane(10.0, 10.0).apply {
-            add(algorithmSelector, 0, 0, 2, 1); add(algorithmInfoIcon, 2, 0)
-            add(startLabel, 0, 1); add(startNode, 1, 1); add(startNodeInfoIcon, 2, 1)
-            add(targetLabel, 0, 2); add(targetNode, 1, 2); add(targetNodeInfoIcon, 2, 2)
-            add(directed, 0, 3); add(undirected, 1, 3); add(radioBtnsInfoIcon, 2, 3)
-            add(wallLabel, 0, 3); add(wallNode, 1, 3); add(wallNodeInfoIcon, 2, 3)
+            add(algorithmSelector, 0, 0, 2, 1)
+            add(startLabel, 0, 1); add(startNode, 1, 1)
+            add(targetLabel, 0, 2); add(targetNode, 1, 2)
+            add(directed, 0, 3); add(undirected, 1, 3)
+            add(wallLabel, 0, 3); add(wallNode, 1, 3)
             add(vizualizeBtn, 0, 4, 2, 1)
-            add(inputInfoIcon, 2, 4)
+            add(infoText, 2, 0, 1, 5)
         }
         // @formatter:on
-        val columnConstraints = listOf(190.0, 200.0, 100.0).map { ColumnConstraints(it) }
-        infoRows.columnConstraints.addAll(columnConstraints)
-        val radioBtnRow = listOf(directed, undirected, radioBtnsInfoIcon)
-        val wallRow = listOf(wallLabel, wallNode, wallNodeInfoIcon).onEach {
+        val col0 = 190.0
+        val col1 = 200.0
+        infoRows.columnConstraints.addAll(ColumnConstraints(col0), ColumnConstraints(col1))
+        val radioBtnRow = listOf(directed, undirected)
+        val wallRow = listOf(wallLabel, wallNode).onEach {
             it.isVisible = false; it.isManaged = false
         }
+
+        infoText.wrappingWidthProperty()
+            .bind(infoRows.widthProperty().subtract(col0 + col1 + 3 * infoRows.hgap))
 
         val graphInput = TextArea()
         graphInput.style = if (gridBtn.isSelected) "-fx-font-family: Monospace" else ""
@@ -96,13 +85,13 @@ internal class DesktopGUI : Application() {
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, inputInfoIcon, vizualizeBtn)
+            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, infoText, vizualizeBtn)
         }
 
         algorithmSelector.setOnAction {
             handleAlgorithmSelection(
                 algorithmSelector,
-                algorithmInfoIcon,
+                infoText,
             )
         }
 
