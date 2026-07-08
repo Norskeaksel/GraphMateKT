@@ -7,22 +7,22 @@ import kotlin.io.path.Path
 
 private fun createSolution(name: String) = """package graphMateKT.solutions
 
-import graphMateKT.INPUT
-import graphMateKT._reader
-import graphMateKT.readInt
-import graphMateKT.readInts
+import fastInputReader.InputReader
+import java.io.InputStream
+
 
 internal fun main() {
-    val ans = $name()
+    val ans = $name(System.`in`)
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/$name */
-internal fun $name(): String {
-    val n = readInt()
-    repeat(n){
-    
+internal fun $name(inputStream: InputStream): String {
+    val scanner = InputReader(inputStream)
+    val c = scanner.nextInt()
+    repeat(c) {
+
     }
     return ""
 }
@@ -52,10 +52,10 @@ class ${name.capitalize()}Test {
     @Test
     fun ${name}${'a' + it}() {
         val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
-        _reader = File("src/test/SampleInput/${name.capitalize()}/input${it + 1}").inputStream().bufferedReader()
-        assertThat($name()).isEqualTo(expectedOutput)
+        File("src/test/SampleInput/${name.capitalize()}/input${it + 1}").inputStream().use{
+            assertThat($name(it)).isEqualTo(expectedOutput)
+        }
     }
-
 """
     }
     test += "}"

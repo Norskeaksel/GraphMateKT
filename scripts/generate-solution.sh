@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")/.."
 cd src/main/kotlin/graphMateKT
-cat solutions/Dominos.kt HelperTypes.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
+cat solutions/Graduation.kt HelperTypes.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
 graphClasses/Grid.kt graphClasses/AdjacencyList.kt graphClasses/FlattenedAdjacencyList.kt graphClasses/NestedAdjacencyList.kt \
 graphAlgorithms/BFS.kt graphAlgorithms/DFS.kt graphAlgorithms/Dijkstra.kt graphAlgorithms/FloydWarshall.kt \
 graphAlgorithms/GraphSearchResults.kt graphAlgorithms/NrOfPaths.kt \

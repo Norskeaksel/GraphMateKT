@@ -3,6 +3,7 @@ package graphMateKT.graphics.desktopGui.componentHandlers
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
 import graphMateKT.graphics.desktopGui.Algorithms
+import graphMateKT.graphics.gridGraphics.visualizeGridComponents
 import graphMateKT.graphics.gridGraphics.visualizeGrid
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
@@ -33,12 +34,8 @@ internal fun handleVizualizeGrid(
     }
     when (algorithmSelector.value) {
         Algorithms.StronglyConnectedComponents -> run {
-            val (nodeVisitationOrder, nodeDistances) = grid.stronglyConnectedComponents().reversed()
-                .flatMapIndexed { i, component ->
-                    grid.dfs(component.first())
-                    grid.currentVisitedNodes().map { it to i.toDouble() }
-                }.unzip()
-            grid.visualizeGrid(currentVisitedNodes = nodeVisitationOrder, nodeDistances = nodeDistances)
+            val components = grid.stronglyConnectedComponents()
+            components.visualizeGridComponents()
         }
 
         Algorithms.TopologicalSort -> grid.topologicalSort().let { order -> grid.visualizeGrid(finalPath = order) }

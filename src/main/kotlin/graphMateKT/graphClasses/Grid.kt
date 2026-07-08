@@ -2,6 +2,7 @@ package graphMateKT.graphClasses
 
 import graphMateKT.Edge
 import graphMateKT.Edges
+import graphMateKT.GridComponents
 import graphMateKT.Tile
 import graphMateKT.graphAlgorithms.DFS
 
@@ -116,7 +117,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! } }
 
-    override fun stronglyConnectedComponents() =
+    override fun stronglyConnectedComponents(): GridComponents =
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 

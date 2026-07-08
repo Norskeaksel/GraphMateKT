@@ -8,6 +8,8 @@ typealias Edges = MutableList<Edge>
 typealias Components = List<List<Any>>
 /** List of list of integer nodes */
 typealias IntComponents = List<List<Int>>
+/** List of list of Tile nodes */
+typealias GridComponents = List<List<Tile>>
 
 /** Represents a node in the Grid graph with x and y coordinates and optional data, which can be considered the node value
  *
