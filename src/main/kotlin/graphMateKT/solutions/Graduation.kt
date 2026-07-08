@@ -15,10 +15,9 @@ internal fun main() {
 internal fun Graduation(): Int {
     readInts(3)
     val grid = Grid(readLines())
-    val dataGroups = grid.nodes().groupBy { it.data }
-    val columGroups = grid.nodes().groupBy { it.x }
+    val dataGroups = grid.nodes().groupBy { it.data }//.mapValues { it.value.toSet() }
     grid.connectGrid { t ->
-        dataGroups[t.data]!! + columGroups[t.x]!!
+        dataGroups[t.data]!! + grid.getStraightNeighbours(t).filter { it.x == t.x }
     }
     val components = grid.stronglyConnectedComponents()
     return components.size
