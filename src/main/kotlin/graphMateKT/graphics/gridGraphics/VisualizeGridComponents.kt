@@ -17,7 +17,7 @@ import graphMateKT.graphClasses.Grid
  * }
  * val scc = grid.stronglyConnectedComponents()
  * scc.visualizeComponents() */
-fun GridComponents.visualizeGridComponents() {
+fun GridComponents.visualizeGridComponents(animationTicTimeOverride: Double? = null) {
     val (width, height) = flatten().fold(0 to 0) { (maxX, maxY), t ->
         (t.x + 1).coerceAtLeast(maxX) to (t.y + 1).coerceAtLeast(maxY)
     }
@@ -25,5 +25,9 @@ fun GridComponents.visualizeGridComponents() {
     val (nodeVisitationOrder, nodeDistances) = reversed().flatMapIndexed { i, component ->
         component.map { it to i.toDouble() }
     }.unzip()
-    grid.visualizeGrid(currentVisitedNodes = nodeVisitationOrder, nodeDistances = nodeDistances)
+    grid.visualizeGrid(
+        currentVisitedNodes = nodeVisitationOrder,
+        nodeDistances = nodeDistances,
+        animationTicTimeOverride = animationTicTimeOverride
+    )
 }

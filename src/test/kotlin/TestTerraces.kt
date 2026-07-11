@@ -46,8 +46,8 @@ class TerracesTest {
         repeat(z){
             input.add(line)
         }
-        /*input.joinToString("\n").byteInputStream().use {
+        input.joinToString("\n").byteInputStream().use {
             assertThat(terraces(it)).isEqualTo(expectedOutput)
-        }*/
+        }
     }
 }

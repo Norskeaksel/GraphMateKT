@@ -3,7 +3,7 @@ package graphMateKT.solutions
 import fastInputReader.InputReader
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
-import graphMateKT.graphics.gridGraphics.visualizeGrid
+// import graphMateKT.graphics.gridGraphics.visualizeGrid
 import java.io.InputStream
 
 
@@ -26,18 +26,26 @@ internal fun terraces(inputStream: InputStream): Int {
         }
     }
     grid.connectGrid { t ->
-        grid.getStraightNeighbours(t).filter { (it.data as Int) <= (t.data as Int) }
+        grid.getStraightNeighbours(t).filter { it.data == t.data }
     }
-    val potentialBottoms =
-        grid.nodes().filter { t -> grid.getStraightNeighbours(t).all { it.data as Int >= t.data as Int } }.sortedBy { it.data as Int }
-    val trueBottoms = mutableSetOf<Tile>()
-    val currentVisited = mutableListOf<Tile>()
-    potentialBottoms.forEach { pb ->
-        grid.bfs(pb)
-        val currentVisitedNodes = grid.currentVisitedNodes()
-        if (currentVisitedNodes.isEmpty()) return@forEach
-        trueBottoms.addAll(currentVisitedNodes.filter {it.data == pb.data})
+    val plateaus = mutableListOf<List<Tile>>()
+    grid.nodes().forEach {
+        grid.bfs(it, reset = false)
+        plateaus.add(grid.currentVisitedNodes())
     }
-    //grid.visualizeGrid(currentVisitedNodes = currentVisited, finalPath = trueBottoms.toList(), startPaused = true)
-    return trueBottoms.size
+    val bottoms = mutableListOf<Tile>()
+    plateaus.forEach { platau ->
+        if (platau.none { u -> grid.getStraightNeighbours(u).any { v -> (v.data as Int) < u.data as Int } }) {
+            bottoms.addAll(platau)
+        }
+    }
+    /*val nodeDistances = plateaus.mapIndexed { i, it -> it.map { i.toDouble() } }.flatten()
+    grid.visualizeGrid(
+        currentVisitedNodes = plateaus.flatten(),
+        nodeDistances = nodeDistances,
+        finalPath = bottoms,
+        animationTicTimeOverride = 200.0,
+        startPaused = true
+    )*/
+    return bottoms.size
 }

@@ -35,14 +35,14 @@ internal class GridGraphics : Application() {
 
     val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() }
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
-    val sceneWith = GUIConstants.height * screenWidthMultiplier
-    val sceneHeight = sceneWith * ratio
+    val sceneWidth = GUIConstants.height * screenWidthMultiplier
+    val sceneHeight = sceneWidth * ratio
 
     var animationKeyFrameTime =
         Duration.millis(animationKeyFrameOverride ?: (10_000.0 / tilesToAnimate.size.coerceAtLeast(10)))
-    val canvas = Canvas(sceneWith, sceneHeight)
+    val canvas = Canvas(sceneWidth, sceneHeight)
     val gc = canvas.graphicsContext2D
-    val xNodes = sceneWith / (grid.width)
+    val xNodes = sceneWidth / (grid.width)
     val yNodes = sceneHeight / grid.height
     val minEdgeLength = xNodes.coerceAtMost(yNodes)
 
@@ -56,19 +56,20 @@ internal class GridGraphics : Application() {
         root.children.add(canvas)
         val scene = Scene(root)
         stage.scene = scene
-        stage.width = sceneWith + 13
+        stage.width = sceneWidth + 13
         stage.height = sceneHeight + 35 // Account for window title bar
+        stage.minWidth = sceneWidth
+        stage.minHeight = sceneHeight
 
         // Scale the canvas (and everything drawn on it) when the window is resized.
         val scale = Scale(1.0, 1.0, 0.0, 0.0)
         canvas.transforms.add(scale)
         scene.widthProperty().addListener { _, _, newWidth ->
-            scale.x = newWidth.toDouble() / sceneWith
+            scale.x = newWidth.toDouble() / sceneWidth
         }
         scene.heightProperty().addListener { _, _, newHeight ->
             scale.y = newHeight.toDouble() / sceneHeight
         }
-
         stage.centerOnScreen()
         stage.show()
         animateVisitedNodes(stage)
