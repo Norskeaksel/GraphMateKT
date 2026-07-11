@@ -8,14 +8,14 @@ import kotlin.system.measureTimeMillis
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
- * However, * it's more performant, because it does not need to maintain an internal mapping between the nodes and their
+ * However, it's more performant, because it does not need to maintain an internal mapping between the nodes and their
  * indexes in the adjacency list. The obvious drawback being it only supports integer nodes.
  * It also requires the number of nodes and edges to be defined at initialization.
  *
  * <i>Example usage:</i>
  *
  * ```
- * val intGraph = IntGraph(3) // Creates a graph with nodes 0, 1 and 2
+ * val intGraph = IntGraph(3, 3) // Creates a graph with nodes 0, 1 and 2, and 3 edges
  * graph.addEdge(0, 1, 5.0)
  * graph.addEdge(0, 2, 2.0)
  * graph.addEdge(2, 1, 1.0)

@@ -1,4 +1,3 @@
-
 import graphMateKT.readInt
 import graphMateKT.readString
 import java.io.File
@@ -9,7 +8,6 @@ private fun createSolution(name: String) = """package graphMateKT.solutions
 
 import fastInputReader.InputReader
 import java.io.InputStream
-
 
 internal fun main() {
     val ans = $name(System.`in`)
@@ -31,21 +29,11 @@ internal fun $name(inputStream: InputStream): String {
 private fun createSolutionTest(name: String, nrOfSampleInputs: Int): String {
     var test = """import graphMateKT.solutions.$name
         
-import graphMateKT.INPUT
-import graphMateKT._reader
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
 import java.io.File
 import org.junit.jupiter.api.Test
 
 class ${name.capitalize()}Test {
-    companion object {
-        @JvmStatic
-        @AfterAll
-        fun resetInput() {
-            _reader = INPUT.bufferedReader()
-        }
-    }   
 """
     repeat(nrOfSampleInputs) {
         test += """
@@ -58,10 +46,23 @@ class ${name.capitalize()}Test {
     }
 """
     }
+    test += """
+        @Test
+        fun ${name}Speed() {
+            val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
+            val input = mutableListOf("")
+            val line = ""
+            repeat(100_000){
+                input.add(line)
+            }
+            input.joinToString("\n").byteInputStream().use {
+                assertThat(colorland(it)).isEqualTo(expectedOutput)
+            }
+        }
+    """
     test += "}"
     return test
 }
-
 
 private fun main() {
     print("Name of the programming puzzle: ")
@@ -78,8 +79,8 @@ private fun main() {
     exampleTestFile.writeText(exampleTest)
     createDirectories(Path(testInputDirectoryPath))
     println(
-        "Created example file: ${exampleFile.absolutePath} and\n" +
-                "test file: ${exampleTestFile.absolutePath} and"
+        "Created solutions file: ${exampleFile.absolutePath}\n" +
+                "test file: ${exampleTestFile.absolutePath}"
     )
     repeat(nrOfSampleInputs) {
         val testInputFile = File("${testInputDirectoryPath}/input${it + 1}")

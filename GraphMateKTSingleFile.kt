@@ -299,7 +299,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
-            searchResults = Dijkstra(adjacencyList).dijkstra(startId, searchResults)
+            searchResults = Dijkstra(adjacencyList).dijkstra(startId)
             target?.let {
                 finalPath = getPath(it)
             }
@@ -572,14 +572,14 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
- * However, * it's more performant, because it does not need to maintain an internal mapping between the nodes and their
+ * However, it's more performant, because it does not need to maintain an internal mapping between the nodes and their
  * indexes in the adjacency list. The obvious drawback being it only supports integer nodes.
  * It also requires the number of nodes and edges to be defined at initialization.
  *
  * <i>Example usage:</i>
  *
  * ```
- * val intGraph = IntGraph(3) // Creates a graph with nodes 0, 1 and 2
+ * val intGraph = IntGraph(3, 3) // Creates a graph with nodes 0, 1 and 2, and 3 edges
  * graph.addEdge(0, 1, 5.0)
  * graph.addEdge(0, 2, 2.0)
  * graph.addEdge(2, 1, 1.0)
@@ -764,6 +764,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         val u = node2Id(node1)
         val v = node2Id(node2)
         localAdjacencyList[u].add(Edge(weight, v))
+        edgesCount++
         adjacencyListIsFinalized = false
     }
 
@@ -902,7 +903,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
-     * if they exist within the grid boundaries and are not deleted.*/
+     * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
         connectGrid { getStraightNeighbours(it) }
     }
@@ -920,6 +921,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 }
 
 
+/** Interface used internally in the graph glasses. Only needed to inherit from BaseGraph */
 interface AdjacencyList {
 
     fun nodes(): IntArray
@@ -1048,7 +1050,7 @@ internal class BFS(private val graph: AdjacencyList) {
         val queue = ArrayDeque<Int>()
         startIds.forEach {
             queue.add(it)
-            r.unweightedDistances[it] = 0
+            r.distances[it] = 0.0
         }
         while (queue.isNotEmpty() && !r.foundTarget) {
             val currentId = queue.removeFirst()
@@ -1057,13 +1059,13 @@ internal class BFS(private val graph: AdjacencyList) {
             r.visited[currentId] = true
             r.currentVisited.add(currentId)
 
-            val currentDistance = r.unweightedDistances[currentId]
+            val currentDistance = r.distances[currentId]
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
-                if ((!r.visited[v] && newDistance < r.unweightedDistances[v]) || v == targetId) {
+                if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
                     r.parents[v] = currentId
-                    r.depth = newDistance.coerceAtLeast(r.depth)
-                    r.unweightedDistances[v] = newDistance
+                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                    r.distances[v] = newDistance
                     if (v == targetId) {
                         r.foundTarget = true
                     }
@@ -1126,9 +1128,9 @@ internal class DFS(private val graph: AdjacencyList) {
 
 internal class Dijkstra(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
-    fun dijkstra(start: Int, previousSearchResults: GraphSearchResults? = null): GraphSearchResults {
-        r = previousSearchResults ?: GraphSearchResults(graph.size)
-        r.weightedDistances[start] = 0.0
+    fun dijkstra(start: Int): GraphSearchResults {
+        r =  GraphSearchResults(graph.size)
+        r.distances[start] = 0.0
         val pq = PriorityQueue<Edge> { a, b -> a.first.compareTo(b.first) }
         pq.add(Edge(0.0, start))
         while (pq.isNotEmpty()) {
@@ -1137,9 +1139,9 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             r.visited[u] = true
             r.currentVisited.add(u)
             graph.forEachEdge(u){ d, v ->
-                val newDistance = r.weightedDistances[u] + d
-                if (newDistance < r.weightedDistances[v]) {
-                    r.weightedDistances[v] = newDistance
+                val newDistance = r.distances[u] + d
+                if (newDistance < r.distances[v]) {
+                    r.distances[v] = newDistance
                     r.parents[v] = u
                     if (!r.visited[v]) {
                         pq.add(Edge(newDistance, v))
@@ -1185,19 +1187,12 @@ internal class FloydWarshall(val graph: AdjacencyList) {
 
 internal data class GraphSearchResults(private val graphSize: Int) {
     val visited = BooleanArray(graphSize)
-    val unweightedDistances: IntArray = IntArray(graphSize) { Int.MAX_VALUE }
-    val weightedDistances: DoubleArray = DoubleArray(graphSize) { Double.POSITIVE_INFINITY }
+    val distances = DoubleArray(graphSize) { Double.POSITIVE_INFINITY }
     val parents: IntArray = IntArray(graphSize) { -1 }
     var depth: Int = 0
     var currentVisited = mutableListOf<Int>()
     var processedOrder = mutableListOf<Int>()
     var foundTarget = false
-    val distances:DoubleArray
-    get() = if (weightedDistances.any { it != Double.POSITIVE_INFINITY }) {
-        weightedDistances
-    } else {
-        unweightedDistances.map(Int::toDouble).toDoubleArray()
-    }
 }
 
 

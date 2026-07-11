@@ -127,10 +127,12 @@ $dokka.location:graphMateKT.graphics.graphGraphics//visualizeGraph/graphMateKT.g
 $dokka.location:graphMateKT.graphics.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-int-components.html
 $dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
+$dokka.location:graphMateKT.graphics.gridGraphics//visualizeGridComponents/kotlin.collections.List[kotlin.collections.List[graphMateKT.Tile]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid-components.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
 $dokka.location:graphMateKT/Edges///PointingToDeclaration/graphmatekt/graphMateKT/-edges/index.html
+$dokka.location:graphMateKT/GridComponents///PointingToDeclaration/graphmatekt/graphMateKT/-grid-components/index.html
 $dokka.location:graphMateKT/IntComponents///PointingToDeclaration/graphmatekt/graphMateKT/-int-components/index.html
 $dokka.location:graphMateKT/Tile///PointingToDeclaration/graphmatekt/graphMateKT/-tile/index.html
 $dokka.location:graphMateKT/Tile/Tile/#kotlin.Int#kotlin.Int#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT/-tile/-tile.html

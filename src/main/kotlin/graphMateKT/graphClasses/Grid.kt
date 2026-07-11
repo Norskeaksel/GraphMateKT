@@ -106,6 +106,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         val u = node2Id(node1)
         val v = node2Id(node2)
         localAdjacencyList[u].add(Edge(weight, v))
+        edgesCount++
         adjacencyListIsFinalized = false
     }
 
@@ -244,7 +245,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
-     * if they exist within the grid boundaries and are not deleted.*/
+     * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
         connectGrid { getStraightNeighbours(it) }
     }

@@ -2,6 +2,7 @@ package graphMateKT.graphClasses
 
 import graphMateKT.Edges
 
+/** Interface used internally in the graph glasses. Only needed to inherit from BaseGraph */
 interface AdjacencyList {
 
     fun nodes(): IntArray

@@ -14,7 +14,7 @@ internal class BFS(private val graph: AdjacencyList) {
         val queue = ArrayDeque<Int>()
         startIds.forEach {
             queue.add(it)
-            r.unweightedDistances[it] = 0
+            r.distances[it] = 0.0
         }
         while (queue.isNotEmpty() && !r.foundTarget) {
             val currentId = queue.removeFirst()
@@ -23,13 +23,13 @@ internal class BFS(private val graph: AdjacencyList) {
             r.visited[currentId] = true
             r.currentVisited.add(currentId)
 
-            val currentDistance = r.unweightedDistances[currentId]
+            val currentDistance = r.distances[currentId]
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
-                if ((!r.visited[v] && newDistance < r.unweightedDistances[v]) || v == targetId) {
+                if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
                     r.parents[v] = currentId
-                    r.depth = newDistance.coerceAtLeast(r.depth)
-                    r.unweightedDistances[v] = newDistance
+                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                    r.distances[v] = newDistance
                     if (v == targetId) {
                         r.foundTarget = true
                     }

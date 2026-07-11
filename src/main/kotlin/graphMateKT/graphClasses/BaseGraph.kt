@@ -274,7 +274,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
-            searchResults = Dijkstra(adjacencyList).dijkstra(startId, searchResults)
+            searchResults = Dijkstra(adjacencyList).dijkstra(startId)
             target?.let {
                 finalPath = getPath(it)
             }
