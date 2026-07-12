@@ -14,8 +14,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
     protected lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
+    protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
-    private var finalPath: List<T>? = null
     private var allDistances: Array<DoubleArray>? = null
 
     // ABSTRACT FUNCTIONS
@@ -364,6 +364,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         if (debugTimeUse) {
             debug("topologicalSort took $time ms.")
         }
+        finalPath = topologicalSorting
         return topologicalSorting
     }
 

@@ -16,7 +16,8 @@ internal class DFS(private val graph: AdjacencyList) {
             if (r.visited[id]) return
             r.visited[id] = true
             r.currentVisited.add(id)
-            r.depth = (depth).coerceAtLeast(r.depth)
+            r.distances[id] = depth.toDouble()
+            r.depth = depth.coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
                 r.parents[v] = id
                 visit(v, depth + 1)

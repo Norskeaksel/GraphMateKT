@@ -116,7 +116,11 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
     override fun topologicalSort() =
-        finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! } }
+        finalizeAdjacencyListIfNeeded().run {
+            DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
+                finalPath = it
+            }
+        }
 
     override fun stronglyConnectedComponents(): GridComponents =
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }

@@ -18,8 +18,8 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/$name */
 internal fun $name(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
-    val c = scanner.nextInt()
-    repeat(c) {
+    val n = scanner.nextInt()
+    repeat(n) {
 
     }
     return ""
@@ -47,20 +47,19 @@ class ${name.capitalize()}Test {
 """
     }
     test += """
-        @Test
-        fun ${name}Speed() {
-            val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
-            val input = mutableListOf("")
-            val line = ""
-            repeat(100_000){
-                input.add(line)
-            }
-            input.joinToString("\n").byteInputStream().use {
-                assertThat(colorland(it)).isEqualTo(expectedOutput)
-            }
+    @Test
+    fun ${name}Speed() {
+        val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
+        val input = mutableListOf("")
+        val line = ""
+        repeat(100_000){
+            input.add(line)
         }
-    """
-    test += "}"
+        input.joinToString("\n").byteInputStream().use {
+            assertThat(${name}(it)).isEqualTo(expectedOutput)
+        }
+    }
+}"""
     return test
 }
 
