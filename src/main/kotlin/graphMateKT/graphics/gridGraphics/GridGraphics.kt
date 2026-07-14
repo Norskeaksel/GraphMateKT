@@ -139,11 +139,13 @@ internal class GridGraphics : Application() {
 
 
     private fun getInterpolatedColor(value: Double, max: Double, min: Double = 0.0): Color {
-        if (value !in min..max) {
-            error("Value $value is not in range $min..$max")
+        val realValue = value.coerceAtMost(Double.MAX_VALUE)
+        val realMax = max.coerceAtMost(Double.MAX_VALUE)
+        if (realValue !in min..realMax) {
+            error("Value $realValue is not in range $min..$realMax")
         }
         val normalized = (-1e-6 // -1e-6 to avoid 1.0 and thus trying to interpolate out of bounds
-                + (value - min) / (max - min + 1e-6)) // + 1e-6 to avoid dividing by zero.
+                + (realValue - min) / (realMax - min + 1e-6)) // + 1e-6 to avoid dividing by zero.
         val colors = arrayOf(
             Color.RED,
             Color.ORANGE,

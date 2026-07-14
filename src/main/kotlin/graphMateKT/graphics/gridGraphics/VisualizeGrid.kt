@@ -37,13 +37,19 @@ screenWidthMultiplier = 0.5
 fun Grid.visualizeGrid(
     currentVisitedNodes: List<Tile> = currentVisitedNodes(),
     finalPath: List<Tile> = finalPath() ?: emptyList(),
-    nodeDistances: List<Double> = currentVisitedNodes.map { distanceTo(it) },
+    nodeDistances: List<Double> = currentVisitedNodes.map { tile ->
+        runCatching { distanceTo(tile) }.getOrDefault(Double.MAX_VALUE)
+    },
     screenTitle: String = "Grid visualizer (Click space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,
     screenWidthMultiplier: Double = 1.0,
 ) {
+    require(animationTicTimeOverride == null || animationTicTimeOverride > 0.0) {
+        "animationTicTimeOverride must be greater then 0.0 or be equal to null."
+    }
+
     GridGraphics.grid = this
     GridGraphics.currentVisitedNodes = currentVisitedNodes
     GridGraphics.finalPath = finalPath
