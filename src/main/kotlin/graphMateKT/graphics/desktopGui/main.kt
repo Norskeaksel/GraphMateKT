@@ -9,6 +9,6 @@ fun launchGraphMateKTGUI() {
     FxLauncher.launch(DesktopGUI())
 }
 
-internal fun main() {
+private fun main() {
     launchGraphMateKTGUI()
 }

@@ -1,9 +1,11 @@
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
-internal fun makeTestInput(testCases: Int, nodes: Int, edges: Int): InputStream {
+internal fun makeTestInput(testCases: Int, nodes: Int, edges: Int, includeTestCases: Boolean = true): InputStream {
     val sb = StringBuilder()
-    sb.appendLine(testCases)
+    if(includeTestCases){
+        sb.appendLine(testCases)
+    }
     repeat(testCases) {
         val rng = kotlin.random.Random(it)
         sb.appendLine("$nodes $edges")

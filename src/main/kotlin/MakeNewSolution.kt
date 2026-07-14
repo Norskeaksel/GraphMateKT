@@ -29,9 +29,12 @@ internal fun $name(inputStream: InputStream): String {
 private fun createSolutionTest(name: String, nrOfSampleInputs: Int): String {
     var test = """import graphMateKT.solutions.$name
         
+
 import org.assertj.core.api.Assertions.assertThat
 import java.io.File
 import org.junit.jupiter.api.Test
+import graphMateKT.debug
+import kotlin.system.measureTimeMillis
 
 class ${name.capitalize()}Test {
 """
@@ -49,14 +52,11 @@ class ${name.capitalize()}Test {
     test += """
     @Test
     fun ${name}Speed() {
-        val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
-        val input = mutableListOf("")
-        val line = ""
-        repeat(100_000){
-            input.add(line)
-        }
-        input.joinToString("\n").byteInputStream().use {
-            assertThat(${name}(it)).isEqualTo(expectedOutput)
+        makeTestInput(testCases = 1, nodes = 5000, edges = 20000).use { input ->
+            val time = measureTimeMillis {
+                $name(input)
+            }
+            debug("$name time use: ${'$'}time ms")
         }
     }
 }"""
