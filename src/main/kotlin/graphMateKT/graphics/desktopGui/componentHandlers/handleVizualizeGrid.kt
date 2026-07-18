@@ -27,7 +27,7 @@ internal fun handleVizualizeGrid(
     val start = starts.firstOrNull() ?: Tile(-1, -1)
     val target = nodes.find { it.data == (targetNode.text.trim().singleOrNull()) }
     when (algorithmSelector.value) {
-        Algorithms.BFS -> grid.bfs(starts, target)
+        Algorithms.BFS -> grid.bfs(starts, listOfNotNull(target))
         Algorithms.DFS -> grid.dfs(start)
         Algorithms.Dijkstra -> grid.dijkstra(start, target)
         else -> {}

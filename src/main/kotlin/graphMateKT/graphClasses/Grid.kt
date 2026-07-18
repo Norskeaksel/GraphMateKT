@@ -65,7 +65,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param stringGrid A list of strings representing the grid
      * */
     constructor(stringGrid: List<String>) : this(stringGrid[0].length, stringGrid.size) {
-        require(stringGrid.any { it.length == width })
+        require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
             line.forEachIndexed { x, c ->
@@ -115,6 +115,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
+    // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
             DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
@@ -126,6 +127,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
+    // TODO: move logic into base class
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height

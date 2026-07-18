@@ -2,7 +2,7 @@ package graphMateKT.solutions
 import graphMateKT.graphClasses.Grid
 
 /** Solves https://adventofcode.com/2024/day/10 */
-internal fun day10a(input: List<String>): Long {
+internal fun day10aHoofIt2024(input: List<String>): Long {
     var ans = 0L
     val grid = Grid(input)
     grid.print()

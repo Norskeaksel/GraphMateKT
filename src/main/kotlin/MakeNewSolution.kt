@@ -52,9 +52,11 @@ class ${name.capitalize()}Test {
     test += """
     @Test
     fun ${name}Speed() {
-        makeTestInput(testCases = 1, nodes = 5000, edges = 20000).use { input ->
+        val input = listOf("1") + List(100) { "1".repeat(100) }
+        val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
+        makeStringsTestInput(input).use { input ->
             val time = measureTimeMillis {
-                $name(input)
+                assertThat($name(input)).isEqualTo(expectedOutput)
             }
             debug("$name time use: ${'$'}time ms")
         }
@@ -62,6 +64,11 @@ class ${name.capitalize()}Test {
 }"""
     return test
 }
+// TODO
+//  1. add question: "Use fastInputReader? [Y/n]"
+//  2. make it runnable from the command line
+//  3. make it update generate-solution.sh
+//  4. make users paste example input and answers
 
 private fun main() {
     print("Name of the programming puzzle: ")

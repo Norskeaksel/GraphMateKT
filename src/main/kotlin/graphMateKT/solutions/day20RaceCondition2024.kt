@@ -42,4 +42,4 @@ private fun gridWithoutCheatPath(path: List<Tile>, grid: Grid): Grid {
     val cheatPath = findPortals(path, grid) ?: return grid
     grid.removeEdge(cheatPath.first(), cheatPath.last())
     return grid
-}*/
+} TODO, reimplement the removeEdge function by adding a boolean array for deleted edges */

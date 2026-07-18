@@ -12,8 +12,10 @@ import kotlin.system.measureTimeMillis
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
 abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
-    protected lateinit var adjacencyList: AdjacencyList
+    internal lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
+
+    // TODO include list of deleted nodes and edges
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -203,19 +205,20 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * - `furthestNode()`
      *
      * @param startNodes A list of starting nodes for the BFS traversal.
-     * @param target An optional target node. If specified, the search will stop once the target is found,
-     * flag the target as found so that foundTarget() returns true, and store the path to the target node for use in visualization.
+     * @param targets An optional list of target noded. If specified, the search will stop once one of the targets are found,
+     * flag the target as found so that foundTarget() returns true, and store the path to the found target node for use in visualization.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
-    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
+    fun bfs(startNodes: List<T>, targets: List<T>? = null, reset: Boolean = true) {
         finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
-            val targetId = target?.let { node2Id(it) } ?: -1
+            val targetIds = targets?.mapNotNull { node2Id(it) } ?: emptyList()
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            target?.let {
-                finalPath = getPath(it)
+            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetIds, searchResults)
+            val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
+            foundTarget?.let {
+                finalPath = getPath(foundTarget)
             }
         }
         if (debugTimeUse) {
@@ -223,9 +226,11 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         }
     }
 
-    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node instead of a list
+    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
+     * an optional target, instead of a list of starting nodes and an optional list of targets
      * @returnRuns bfs(listOf(startNode), target, reset) */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) = bfs(listOf(startNode), target, reset)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) =
+        bfs(listOf(startNode), listOfNotNull(target), reset)
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
@@ -235,7 +240,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * - `visitedNodes()`
      *
      * @param startNode The starting node for the DFS traversal.
-     * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
+     * @param reset A boolean indicating whether to reset the previous search results. If set to false,
+     * previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
         finalizeAdjacencyListIfNeeded()

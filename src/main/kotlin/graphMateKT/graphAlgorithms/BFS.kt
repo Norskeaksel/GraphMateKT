@@ -6,10 +6,14 @@ import graphMateKT.graphClasses.AdjacencyList
 internal class BFS(private val graph: AdjacencyList) {
     fun bfs(
         startIds: List<Int>,
-        targetId: Int = -1,
+        targetIds: List<Int> = emptyList(),
         previousSearchResult: GraphSearchResults? = null,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
+        val targets = BooleanArray(graph.size)
+        targetIds.forEach { targetId ->
+            targets[targetId] = true
+        }
         r.currentVisited.clear()
         val queue = ArrayDeque<Int>()
         startIds.forEach {
@@ -26,11 +30,12 @@ internal class BFS(private val graph: AdjacencyList) {
             val currentDistance = r.distances[currentId]
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
-                if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
+                if ((!r.visited[v] && newDistance < r.distances[v]) || targets[v]) {
                     r.parents[v] = currentId
                     r.depth = newDistance.toInt().coerceAtLeast(r.depth)
                     r.distances[v] = newDistance
-                    if (v == targetId) {
+                    if (targets[v]) {
+                        r.currentVisited.add(v)
                         r.foundTarget = true
                     }
                     queue.add(v)

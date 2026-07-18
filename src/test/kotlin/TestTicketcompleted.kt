@@ -36,7 +36,7 @@ class TicketcompletedTest {
 
     @Test
     fun ticketcompletedSpeed() {
-        makeTestInput(testCases = 1, nodes = 100_000, edges = 1_000_000, false).use { input ->
+        makeGraphTestInput(testCases = 1, nodes = 100_000, edges = 1_000_000, false).use { input ->
             val time = measureTimeMillis {
                 ticketcompleted(input)
             }

@@ -19,7 +19,7 @@ class DominosTest {
 
     @Test
     fun dominosb() {
-        makeTestInput(testCases = 1, nodes = 100000, edges = 100000).use { input ->
+        makeGraphTestInput(testCases = 1, nodes = 100000, edges = 100000).use { input ->
             val time = measureTimeMillis {
                 dominos(input)
             }

@@ -1,8 +1,10 @@
+import graphMateKT.debug
 import graphMateKT.solutions.terraces
         
 import org.assertj.core.api.Assertions.assertThat
 import java.io.File
 import org.junit.jupiter.api.Test
+import kotlin.system.measureTimeMillis
 
 class TerracesTest {
 

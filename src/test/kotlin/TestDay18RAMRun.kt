@@ -31,7 +31,7 @@ class Day18RAMRunTest{
     """.trimIndent().lines()
     @Test
     fun test1a(){
-        val ans = graphMateKT.solutions.day18a(input, 7, 12)
+        val ans = graphMateKT.solutions.day18aRAMRun2024(input, 7, 12)
         assertThat(ans).isEqualTo(22)
     }
 }
