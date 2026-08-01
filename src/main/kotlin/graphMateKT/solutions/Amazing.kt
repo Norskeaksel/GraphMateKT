@@ -40,14 +40,14 @@ internal fun amazing(): String {
             if (response == "wrong")
                 error("should not be wrong")
         }
-        visited[c.xPlusYTimesWidth(DIM)] = true
+        visited[c.idGivenWidth(DIM)] = true
 
 
         for (i in 0..3) {
             val nextX = c.x + dx[i]
             val nextY = c.y + dy[i]
             val nextTile = Tile(nextX, nextY)
-            if (visited[nextTile.xPlusYTimesWidth(DIM)]) continue
+            if (visited[nextTile.idGivenWidth(DIM)]) continue
             dfsMaze(nextTile, c)
         }
 

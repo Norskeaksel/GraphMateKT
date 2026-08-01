@@ -16,16 +16,24 @@ typealias GridComponents = List<List<Tile>>
  * @property x The x-coordinate of the tile.
  * @property y The y-coordinate of the tile.
  * @property data Optional data associated with the tile, which can be considered a node of any type */
-data class Tile(val x: Int, val y: Int, var data: Any? = null){
+data class Tile(val x: Int, val y: Int, val data: Any? = null) {
     /** Checks if the `data` property of the `Tile` is a `Char` and whether that `Char` represents a digit.
      *
      * @return `true` if `data` is a `Char` and is a digit, otherwise `false`. */
-    fun dataIsDigit() = data is Char && (data as Char).isDigit()
+    fun dataIsDigit() = data is Char && data.isDigit()
 
-    fun xPlusYTimesWidth(width:Int) = x + y * width
+    /** Calculates `x + y * width`
+     *
+     * Each tile in a 2D Grid with `n = width * height` elements can be uniquely represented as an integer from 0 to n - 1.
+     * ID'ing tiles like this can be useful for associating additional information with them using arrays, instead of
+     * less performant maps.
+     * @param width The width of the grid the tile belongs to.
+     * @return The unique integer id of the tile. */
+    fun idGivenWidth(width: Int) = x + y * width
 }
 
 internal data class Not(val node: Any)
+
 internal operator fun Any.not() = Not(this)
 
-internal data class TrieNode(val children:MutableMap<Char, TrieNode> = mutableMapOf(), var isTerminal:Boolean = false)
+internal data class TrieNode(val children: MutableMap<Char, TrieNode> = mutableMapOf(), var isTerminal: Boolean = false)

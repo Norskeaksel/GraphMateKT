@@ -38,15 +38,6 @@ $dokka.location:fastInputReader/InputReader/nextStringArray1/#kotlin.Int/Pointin
 $dokka.location:fastInputReader/InputReader/nextStringMatrix/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/next-string-matrix.html
 $dokka.location:fastInputReader/InputReader/nextStringMatrix1/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/next-string-matrix1.html
 $dokka.location:graphMateKT.graphClasses////PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/index.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/index.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/deepCopy/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/deep-copy.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/edges/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/edges.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/forEachEdge/#kotlin.Int#kotlin.Function2[kotlin.Double,kotlin.Int,kotlin.Unit]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/for-each-edge.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/forEachNeighbour/#kotlin.Int#kotlin.Function1[kotlin.Int,kotlin.Unit]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/for-each-neighbour.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/neighbours/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/neighbours.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/nodes.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/reversed/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/reversed.html
-$dokka.location:graphMateKT.graphClasses/AdjacencyList/size/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-adjacency-list/size.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/BaseGraph/#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/-base-graph.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/addEdge/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/add-edge.html
@@ -127,7 +118,10 @@ $dokka.location:graphMateKT.graphics.graphGraphics//visualizeGraph/graphMateKT.g
 $dokka.location:graphMateKT.graphics.graphGraphics//visualizeIntComponents/kotlin.collections.List[kotlin.collections.List[kotlin.Int]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.graphGraphics/visualize-int-components.html
 $dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
-$dokka.location:graphMateKT.graphics.gridGraphics//visualizeGridComponents/kotlin.collections.List[kotlin.collections.List[graphMateKT.Tile]]#/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid-components.html
+$dokka.location:graphMateKT.graphics.gridGraphics//visualizeGridComponents/kotlin.collections.List[kotlin.collections.List[graphMateKT.Tile]]#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid-components.html
+$dokka.location:graphMateKT.solutions////PointingToDeclaration/graphmatekt/graphMateKT.solutions/index.html
+$dokka.location:graphMateKT.solutions//dim/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/dim.html
+$dokka.location:graphMateKT.solutions//maxDepth/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/max-depth.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
@@ -138,8 +132,8 @@ $dokka.location:graphMateKT/Tile///PointingToDeclaration/graphmatekt/graphMateK
 $dokka.location:graphMateKT/Tile/Tile/#kotlin.Int#kotlin.Int#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT/-tile/-tile.html
 $dokka.location:graphMateKT/Tile/data/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/data.html
 $dokka.location:graphMateKT/Tile/dataIsDigit/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/data-is-digit.html
+$dokka.location:graphMateKT/Tile/idGivenWidth/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT/-tile/id-given-width.html
 $dokka.location:graphMateKT/Tile/x/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/x.html
-$dokka.location:graphMateKT/Tile/xPlusYTimesWidth/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT/-tile/x-plus-y-times-width.html
 $dokka.location:graphMateKT/Tile/y/#/PointingToDeclaration/graphmatekt/graphMateKT/-tile/y.html
 fastInputReader
 graphMateKT
@@ -147,3 +141,4 @@ graphMateKT.graphClasses
 graphMateKT.graphics.desktopGui
 graphMateKT.graphics.graphGraphics
 graphMateKT.graphics.gridGraphics
+graphMateKT.solutions

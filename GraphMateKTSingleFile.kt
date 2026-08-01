@@ -19,26 +19,36 @@ typealias GridComponents = List<List<Tile>>
  * @property x The x-coordinate of the tile.
  * @property y The y-coordinate of the tile.
  * @property data Optional data associated with the tile, which can be considered a node of any type */
-data class Tile(val x: Int, val y: Int, var data: Any? = null){
+data class Tile(val x: Int, val y: Int, val data: Any? = null) {
     /** Checks if the `data` property of the `Tile` is a `Char` and whether that `Char` represents a digit.
      *
      * @return `true` if `data` is a `Char` and is a digit, otherwise `false`. */
-    fun dataIsDigit() = data is Char && (data as Char).isDigit()
+    fun dataIsDigit() = data is Char && data.isDigit()
 
-    fun xPlusYTimesWidth(width:Int) = x + y * width
+    /** Calculates `x + y * width`
+     *
+     * Each tile in a 2D Grid with `n = width * height` elements can be uniquely represented as an integer from 0 to n - 1.
+     * ID'ing tiles like this can be useful for associating additional information with them using arrays, instead of
+     * less performant maps.
+     * @param width The width of the grid the tile belongs to.
+     * @return The unique integer id of the tile. */
+    fun idGivenWidth(width: Int) = x + y * width
 }
 
 internal data class Not(val node: Any)
+
 internal operator fun Any.not() = Not(this)
 
-internal data class TrieNode(val children:MutableMap<Char, TrieNode> = mutableMapOf(), var isTerminal:Boolean = false)
+internal data class TrieNode(val children: MutableMap<Char, TrieNode> = mutableMapOf(), var isTerminal: Boolean = false)
 
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
 abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
-    protected lateinit var adjacencyList: AdjacencyList
+    internal lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
+
+    // TODO include list of deleted nodes and edges
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -228,8 +238,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * - `furthestNode()`
      *
      * @param startNodes A list of starting nodes for the BFS traversal.
-     * @param target An optional target node. If specified, the search will stop once the target is found,
-     * flag the target as found so that foundTarget() returns true, and store the path to the target node for use in visualization.
+     * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
+     * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
@@ -239,8 +249,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            target?.let {
-                finalPath = getPath(it)
+            val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
+            foundTarget?.let {
+                finalPath = getPath(foundTarget)
             }
         }
         if (debugTimeUse) {
@@ -248,9 +259,11 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         }
     }
 
-    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node instead of a list
+    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
+     * an optional target, instead of a list of starting nodes and an optional list of targets
      * @returnRuns bfs(listOf(startNode), target, reset) */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) = bfs(listOf(startNode), target, reset)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) =
+        bfs(listOf(startNode), target, reset)
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
@@ -260,7 +273,8 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * - `visitedNodes()`
      *
      * @param startNode The starting node for the DFS traversal.
-     * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
+     * @param reset A boolean indicating whether to reset the previous search results. If set to false,
+     * previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
         finalizeAdjacencyListIfNeeded()
@@ -724,7 +738,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param stringGrid A list of strings representing the grid
      * */
     constructor(stringGrid: List<String>) : this(stringGrid[0].length, stringGrid.size) {
-        require(stringGrid.any { it.length == width })
+        require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
             line.forEachIndexed { x, c ->
@@ -774,6 +788,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
+    // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
             DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
@@ -785,6 +800,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
+    // TODO: move logic into base class
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height
@@ -926,11 +942,9 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 }
 
 
-/** Interface used internally in the graph glasses. Only needed to inherit from BaseGraph */
-interface AdjacencyList {
-
+internal interface AdjacencyList {
     fun nodes(): IntArray
-    fun neighbours(node:Int ): IntArray
+    fun neighbours(node: Int): IntArray
     fun edges(node: Int): Edges
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
     fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
@@ -1047,7 +1061,7 @@ internal class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>
 internal class BFS(private val graph: AdjacencyList) {
     fun bfs(
         startIds: List<Int>,
-        targetId: Int = -1,
+        targetId: Int,
         previousSearchResult: GraphSearchResults? = null,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
@@ -1072,6 +1086,7 @@ internal class BFS(private val graph: AdjacencyList) {
                     r.depth = newDistance.toInt().coerceAtLeast(r.depth)
                     r.distances[v] = newDistance
                     if (v == targetId) {
+                        r.currentVisited.add(v)
                         r.foundTarget = true
                     }
                     queue.add(v)

@@ -52,9 +52,11 @@ class ${name.capitalize()}Test {
     test += """
     @Test
     fun ${name}Speed() {
-        makeTestInput(testCases = 1, nodes = 5000, edges = 20000).use { input ->
+        val input = listOf("1") + List(100) { "1".repeat(100) }
+        val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
+        makeStringsTestInput(input).use { line ->
             val time = measureTimeMillis {
-                $name(input)
+                assertThat($name(line)).isEqualTo(expectedOutput)
             }
             debug("$name time use: ${'$'}time ms")
         }
@@ -62,7 +64,6 @@ class ${name.capitalize()}Test {
 }"""
     return test
 }
-
 private fun main() {
     print("Name of the programming puzzle: ")
     val name = readString()

@@ -1,5 +1,4 @@
 import graphMateKT.debug
-import graphMateKT.solutions.dominos
 import graphMateKT.solutions.promotions
 
 import org.assertj.core.api.Assertions.assertThat
@@ -33,7 +32,7 @@ class PromotionsTest {
     }
     @Test
     fun promotionsSpeed() {
-        makeTestInput(testCases = 1, nodes = 5000, edges = 20000).use { input ->
+        makeGraphTestInput(testCases = 1, nodes = 5000, edges = 20000).use { input ->
             val time = measureTimeMillis {
                 promotions(input)
             }

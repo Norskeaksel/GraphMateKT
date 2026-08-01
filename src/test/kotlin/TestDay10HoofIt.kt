@@ -1,4 +1,4 @@
-import graphMateKT.solutions.day10a
+import graphMateKT.solutions.day10aHoofIt2024
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -35,17 +35,17 @@ class Day10HoofItTest{
 
     @Test
     fun test1a(){
-        val ans = day10a(exa)
+        val ans = day10aHoofIt2024(exa)
         assertThat(ans).isEqualTo(2)
     }
     @Test
     fun test1b(){
-        val ans = day10a(exb)
+        val ans = day10aHoofIt2024(exb)
         assertThat(ans).isEqualTo(4)
     }
     @Test
     fun test1() {
-        val ans = day10a(input)
+        val ans = day10aHoofIt2024(input)
         assertThat(ans).isEqualTo(36)
     }
 }

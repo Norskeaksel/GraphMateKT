@@ -1,9 +1,9 @@
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
-internal fun makeTestInput(testCases: Int, nodes: Int, edges: Int, includeTestCases: Boolean = true): InputStream {
+internal fun makeGraphTestInput(testCases: Int, nodes: Int, edges: Int, includeTestCases: Boolean = true): InputStream {
     val sb = StringBuilder()
-    if(includeTestCases){
+    if (includeTestCases) {
         sb.appendLine(testCases)
     }
     repeat(testCases) {
@@ -14,6 +14,14 @@ internal fun makeTestInput(testCases: Int, nodes: Int, edges: Int, includeTestCa
             val v = rng.nextInt(nodes - 1) + 1
             sb.appendLine("$u $v")
         }
+    }
+    return ByteArrayInputStream(sb.toString().toByteArray())
+}
+
+internal fun makeStringsTestInput(lines: List<String>): InputStream {
+    val sb = StringBuilder()
+    lines.forEach { line ->
+        sb.appendLine(line)
     }
     return ByteArrayInputStream(sb.toString().toByteArray())
 }
