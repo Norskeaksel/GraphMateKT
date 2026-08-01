@@ -33,7 +33,7 @@ internal class GridGraphics : Application() {
         var screenWidthMultiplier: Double = 1.0
     }
 
-    val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() }
+    val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() } // TODO allow empty
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
     val sceneWidth = GUIConstants.height * screenWidthMultiplier
     val sceneHeight = sceneWidth * ratio
@@ -97,7 +97,7 @@ internal class GridGraphics : Application() {
         // Add extra tile to avoid closing on end too soon
         (finalPath + listOf(Tile(-1, -1))).forEachIndexed { i, node ->
             val keyFrame = KeyFrame(
-                animationKeyFrameTime.multiply(1.05 * (i.toDouble() + tilesToAnimate.size + 1)),
+                animationKeyFrameTime.multiply(1.05 * (i.toDouble() * 2 + tilesToAnimate.size + 1)),
                 squareDrawer(
                     node, Color.GREEN
                 )

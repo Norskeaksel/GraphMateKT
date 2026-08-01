@@ -54,9 +54,9 @@ class ${name.capitalize()}Test {
     fun ${name}Speed() {
         val input = listOf("1") + List(100) { "1".repeat(100) }
         val expectedOutput = ""${'"'}${'"'}${'"'}${'"'}
-        makeStringsTestInput(input).use { input ->
+        makeStringsTestInput(input).use { line ->
             val time = measureTimeMillis {
-                assertThat($name(input)).isEqualTo(expectedOutput)
+                assertThat($name(line)).isEqualTo(expectedOutput)
             }
             debug("$name time use: ${'$'}time ms")
         }

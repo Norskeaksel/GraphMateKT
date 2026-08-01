@@ -205,17 +205,17 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * - `furthestNode()`
      *
      * @param startNodes A list of starting nodes for the BFS traversal.
-     * @param targets An optional list of target noded. If specified, the search will stop once one of the targets are found,
-     * flag the target as found so that foundTarget() returns true, and store the path to the found target node for use in visualization.
+     * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
+     * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
-    fun bfs(startNodes: List<T>, targets: List<T>? = null, reset: Boolean = true) {
+    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
         finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
-            val targetIds = targets?.mapNotNull { node2Id(it) } ?: emptyList()
+            val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetIds, searchResults)
+            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
             val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
             foundTarget?.let {
                 finalPath = getPath(foundTarget)
@@ -230,7 +230,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * an optional target, instead of a list of starting nodes and an optional list of targets
      * @returnRuns bfs(listOf(startNode), target, reset) */
     fun bfs(startNode: T, target: T? = null, reset: Boolean = true) =
-        bfs(listOf(startNode), listOfNotNull(target), reset)
+        bfs(listOf(startNode), target, reset)
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:

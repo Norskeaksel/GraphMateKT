@@ -41,7 +41,7 @@ internal fun robotTurtles(inputStream: InputStream): String {
     // grid.visualizeGrid(finalPath = finalPath, screenWidthMultiplier = 2.0)
     val ans = StringBuilder()
     finalPath.let {
-        it.forEachIndexed { i, t ->
+        it.forEachIndexed { i, _ ->
             if (i == 0) return@forEachIndexed
             val u = it[i - 1]
             val v = it[i]
