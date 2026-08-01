@@ -16,7 +16,7 @@ internal fun main() {
 
 var dim = 0
 
-/** Solves https://open.kattis.com/problems/Day16ReindeerMaze2024 */
+/** Solves https://adventofcode.com/2024/day/16 */
 internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {
     val scanner = InputReader(inputStream)
     val wall = '#'

@@ -11,7 +11,6 @@ internal fun main() {
     print(repostsBFS())
 }
 
-// TODO separate codefoces, AoC and kattis solutions
 /** Solves https://codeforces.com/problemset/problem/522/A */
 internal fun repostsBFS(): Int {
     val n = readInt()
