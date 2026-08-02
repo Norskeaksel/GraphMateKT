@@ -5,7 +5,7 @@ import graphMateKT.graphClasses.Graph
 internal fun buildGraph(lines: List<String>, isBidirectional: Boolean): Graph {
     val graph = Graph()
     lines.forEach { line ->
-        val uvw = line.trim().split(Regex("\\s+"))
+        val uvw = line.split("//").first().trim().split(Regex("\\s+"))
         if (!isBidirectional) {
             when (uvw.size) {
                 1 -> graph.addNode(uvw[0]).also { println("Adding node: ${uvw[0]}") }

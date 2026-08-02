@@ -41,7 +41,16 @@ s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repositor
 ## Library GUI
 
 A GUI is included in the library, which can be used to see some of its algorithms and graph and grid visualization
-capabilities. The GUI can be invoked by running `launchGraphMateKTGUI()`.
+capabilities. The GUI can be invoked by running `launchGraphMateKTGUI()`. [Example usage:](src/main/kotlin/graphMateKT/examples/LaunchGUI.kt)
+
+```kotlin
+import graphMateKT.graphics.desktopGui.launchGraphMateKTGUI
+
+internal fun main(){
+  launchGraphMateKTGUI()
+}
+
+```
 
 ### Using the library in a single file.
 

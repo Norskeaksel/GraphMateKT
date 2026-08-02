@@ -10,13 +10,6 @@ internal class InfoText : Text() {
             field = value
             refresh()
         }
-
-    var graphInfo = GUIConstants.GRAPH_INFO
-        set(value) {
-            field = value
-            refresh()
-        }
-
     var gridMode = false
         set(value) {
             field = value
@@ -32,7 +25,6 @@ internal class InfoText : Text() {
     private fun refresh() {
         val directedOrWallInfo = if (gridMode) GUIConstants.WALL_NODE_INFO else GUIConstants.DIRECTED_INFO
         text = listOf(
-            graphInfo,
             algorithmInfo,
             GUIConstants.START_NODE_INFO,
             GUIConstants.TARGET_NODE_INFO,

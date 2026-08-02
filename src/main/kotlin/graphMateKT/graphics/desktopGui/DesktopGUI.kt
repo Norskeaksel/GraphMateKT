@@ -43,7 +43,7 @@ internal class DesktopGUI : Application() {
         }
 
         val infoText = InfoText()
-        val vizualizeBtn = Button("Visualize Graph")
+        val visualizeBtn = Button("Visualize")
 
         // @formatter:off
         val infoRows = GridPane(10.0, 10.0).apply {
@@ -52,7 +52,7 @@ internal class DesktopGUI : Application() {
             add(targetLabel, 0, 2); add(targetNode, 1, 2)
             add(directed, 0, 3); add(undirected, 1, 3)
             add(wallLabel, 0, 3); add(wallNode, 1, 3)
-            add(vizualizeBtn, 0, 4, 2, 1)
+            add(visualizeBtn, 0, 4, 2, 1)
             add(infoText, 2, 0, 1, 5)
         }
         // @formatter:on
@@ -84,7 +84,7 @@ internal class DesktopGUI : Application() {
 
         val modeBtns = Triple(graphBtn, gridBtn, intGraphBtn)
         visualisationMode.selectedToggleProperty().addListener { _, _, _ ->
-            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow, infoText, vizualizeBtn)
+            handleModeToggling(graphInput, modeBtns, radioBtnRow, wallRow)
         }
 
         algorithmSelector.setOnAction {
@@ -94,7 +94,7 @@ internal class DesktopGUI : Application() {
             )
         }
 
-        vizualizeBtn.setOnAction {
+        visualizeBtn.setOnAction {
             try {
                 if (graphBtn.isSelected)
                     handleVizualizeGraph(graphInput, algorithmSelector, startNode, targetNode, !directed.isSelected)
