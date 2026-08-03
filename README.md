@@ -31,8 +31,6 @@ Add the following dependency to your `pom.xml` file:
 </dependency>
 ```
 
-See [here](https://github.com/Norskeaksel/GraphMateKT/packages/) for the latest version number.
-
 :warning: Please note that for the ```Graph().visualizeGraph() function``` to work as intended
 , the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
 as described in [Bruno Silva](https://github.com/brunomnsilva)'
