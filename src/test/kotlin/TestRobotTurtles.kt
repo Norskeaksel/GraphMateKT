@@ -34,7 +34,7 @@ class RobotTurtlesTest {
     @Test
     fun robotTurtlesd() {
         val expectedOutput = """no solution"""
-        File("src/test/SampleInput/RobotTurtles/inputSpeed").inputStream().use{
+        File("src/test/SampleInput/RobotTurtles/input4").inputStream().use{
             assertThat(robotTurtles(it)).isEqualTo(expectedOutput)
         }
     }

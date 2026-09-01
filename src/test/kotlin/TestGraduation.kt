@@ -33,7 +33,7 @@ class GraduationTest {
     @Test
     fun Graduationd() {
         val expectedOutput = 2
-        File("src/test/SampleInput/Graduation/inputSpeed").inputStream().use{
+        File("src/test/SampleInput/Graduation/input4").inputStream().use{
             assertThat(graduation(it)).isEqualTo(expectedOutput)
         }
     }

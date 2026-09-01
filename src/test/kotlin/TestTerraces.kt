@@ -35,7 +35,7 @@ class TerracesTest {
     @Test
     fun Terracesd() {
         val expectedOutput = 2
-        File("src/test/SampleInput/Terraces/inputSpeed").inputStream().use{
+        File("src/test/SampleInput/Terraces/input4").inputStream().use{
             assertThat(terraces(it)).isEqualTo(expectedOutput)
         }
     }

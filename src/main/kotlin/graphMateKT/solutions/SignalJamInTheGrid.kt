@@ -35,6 +35,6 @@ internal fun signalJamInTheGrid(inputStream: InputStream): Int {
         }
     }
     grid.dijkstra(start, end)
-    grid.visualizeGrid()
+    //grid.visualizeGrid()
     return if(grid.foundTarget()) grid.distanceTo(end).coerceAtMost(grid.distanceTo(firstEnd)).toInt() else -1
 }

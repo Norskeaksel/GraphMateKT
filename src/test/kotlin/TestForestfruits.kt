@@ -28,7 +28,7 @@ class ForestfruitsTest {
     @Test
     fun forestfruitsd() {
         val expectedOutput = -1L
-        File("src/test/SampleInput/Forestfruits/inputSpeed").inputStream().use {
+        File("src/test/SampleInput/Forestfruits/input4").inputStream().use {
             assertThat(forestfruits(it)).isEqualTo(expectedOutput)
         }
     }

@@ -47,7 +47,7 @@ class IlluminationTest {
     @Test
     fun illuminationc() {
         val expectedOutput = """1"""
-        _reader = File("src/test/SampleInput/Illumination/inputSpeed").inputStream().bufferedReader()
+        _reader = File("src/test/SampleInput/Illumination/input4").inputStream().bufferedReader()
         assertThat(illumination()).isEqualTo(expectedOutput)
     }
 }

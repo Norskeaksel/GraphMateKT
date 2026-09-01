@@ -38,7 +38,7 @@ class Torn2piecesTest {
     @Test
     fun torn2piecesd() {
         val expectedOutput = "no route found"
-        _reader = File("src/test/SampleInput/Torn2pieces/inputSpeed").inputStream().bufferedReader()
+        _reader = File("src/test/SampleInput/Torn2pieces/input4").inputStream().bufferedReader()
         assertThat(torn2pieces()).isEqualTo(expectedOutput)
     }
 }
