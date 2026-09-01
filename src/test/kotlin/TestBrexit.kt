@@ -42,7 +42,7 @@ class BrexitTest {
     @Test
     fun brexitd() {
         val expectedOutput = """leave"""
-        _reader = File("src/test/SampleInput/Brexit/input4").inputStream().bufferedReader()
+        _reader = File("src/test/SampleInput/Brexit/inputSpeed").inputStream().bufferedReader()
         assertThat(brexit()).isEqualTo(expectedOutput)
     }
 

@@ -42,7 +42,7 @@ class NowayTest {
     @Test
     fun nowayd() {
         val expectedOutput = 361294640L
-        _reader = File("src/test/SampleInput/Noway/input4").inputStream().bufferedReader()
+        _reader = File("src/test/SampleInput/Noway/inputSpeed").inputStream().bufferedReader()
         assertThat(noway()).isEqualTo(expectedOutput)
     }
 }

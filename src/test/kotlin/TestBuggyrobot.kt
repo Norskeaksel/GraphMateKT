@@ -43,7 +43,7 @@ class BuggyrobotTest {
     @Test
     fun buggyrobotd() {
         val expectedOutput = """0"""
-        _reader = File("src/test/SampleInput/Buggyrobot/input4").inputStream().bufferedReader()
+        _reader = File("src/test/SampleInput/Buggyrobot/inputSpeed").inputStream().bufferedReader()
         assertThat(buggyrobot()).isEqualTo(expectedOutput)
     }
 

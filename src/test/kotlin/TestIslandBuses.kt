@@ -53,7 +53,7 @@ buses needed: 2
             islandBuses()
         }
         val time3 = measureTimeMillis {
-            _reader = File("src/test/SampleInput/IslandBuses/input4").inputStream().bufferedReader()
+            _reader = File("src/test/SampleInput/IslandBuses/inputSpeed").inputStream().bufferedReader()
             islandBuses()
         }
 

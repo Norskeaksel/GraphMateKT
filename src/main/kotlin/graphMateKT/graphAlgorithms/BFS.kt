@@ -6,7 +6,7 @@ import graphMateKT.graphClasses.AdjacencyList
 internal class BFS(private val graph: AdjacencyList) {
     fun bfs(
         startIds: List<Int>,
-        targetId: Int,
+        targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
