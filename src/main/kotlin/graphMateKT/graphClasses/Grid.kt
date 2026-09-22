@@ -64,7 +64,12 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(stringGrid[0].length, stringGrid.size, false, debugTimeUse) {
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
+        stringGrid[0].length,
+        stringGrid.size,
+        false,
+        debugTimeUse
+    ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
@@ -114,6 +119,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 
     override fun nodes(): List<Tile> = nodes.filterNotNull()
+
     // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
@@ -131,7 +137,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height
     private fun xy2Id(x: Int, y: Int) =
-        if (xyInRange(x, y)) (x + y * width).let { if (indexHasNode(it)) it else null } else null
+        if (xyInRange(x, y)) (x + y * width).let { if (gridHasId(it)) it else null } else null
 
     /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
      *
@@ -139,7 +145,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) }
-    private fun indexHasNode(index: Int) = nodes.getOrNull(index) != null
+    private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
     }
@@ -235,6 +241,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
     fun connectGrid(isBidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
+        adjacencyListIsFinalized = false
         nodes().forEach { t ->
             val neighbours = getNeighbours(t)
             neighbours.forEach {
@@ -245,8 +252,6 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
                 }
             }
         }
-        finalizeAdjacencyListIfNeeded()
-        adjacencyListIsFinalized = true
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
