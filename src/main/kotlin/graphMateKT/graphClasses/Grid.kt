@@ -64,7 +64,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>) : this(stringGrid[0].length, stringGrid.size) {
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(stringGrid[0].length, stringGrid.size, false, debugTimeUse) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
@@ -90,7 +90,6 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
-        adjacencyListIsFinalized = false
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
