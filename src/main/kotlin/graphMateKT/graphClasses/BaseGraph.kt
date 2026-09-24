@@ -218,9 +218,10 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
-            foundTarget?.let {
-                finalPath = getPath(foundTarget)
+            val finalNode = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
+            val foundTarget = finalNode?.let { it == target } ?: false
+            if (foundTarget) {
+                finalPath = getPath(finalNode)
             }
         }
         if (debugTimeUse) {
