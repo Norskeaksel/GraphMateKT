@@ -14,8 +14,8 @@ internal fun main() {
 internal fun promotions(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
     val (a, b, e, p) = scanner.nextIntArray(4)
-    val ancestorsGraph = IntGraph(e, p)
-    val descendantsGraph = IntGraph(e, p)
+    val ancestorsGraph = IntGraph(e)
+    val descendantsGraph = IntGraph(e)
     repeat(p) {
         val u = scanner.nextInt()
         val v = scanner.nextInt()

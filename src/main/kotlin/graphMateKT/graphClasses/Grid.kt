@@ -1,9 +1,8 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edge
-import graphMateKT.Edges
 import graphMateKT.GridComponents
 import graphMateKT.Tile
+import graphMateKT.UnboxedEdges
 import graphMateKT.graphAlgorithms.DFS
 
 /** A general graph class that represents a 2D grid structure of nodes.
@@ -53,7 +52,9 @@ import graphMateKT.graphAlgorithms.DFS
 class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(debugTimeUse) {
     private val nodes = MutableList<Tile?>(width * height) { null }
-    private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+    private var activeNodes = listOf<Tile>()
+    private var activeNodesNeedUpdating = true
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = false
 
     /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
@@ -102,25 +103,26 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyList = NestedAdjacencyList(width * height, edges)
         adjacencyListIsFinalized = true
     }
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
-        localAdjacencyList[u].add(Edge(weight, v))
+        edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false
     }
 
-    override fun addEdge(node1: Tile, node2: Tile) {
-        addEdge(node1, node2, 1.0)
+    override fun nodes(): List<Tile> {
+        if (activeNodesNeedUpdating) {
+            activeNodes = nodes.filterNotNull()
+            activeNodesNeedUpdating = false
+        }
+        return activeNodes
     }
 
-    override fun nodes(): List<Tile> = nodes.filterNotNull()
-
-    // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
             DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
@@ -132,7 +134,6 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
-    // TODO: move logic into base class
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height
@@ -168,12 +169,14 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
             System.err.println("Warning, coordinates ($x, $y) are outside the grid")
             return
         }
+        activeNodesNeedUpdating = true
         deleteNodeId(id)
     }
 
     /** Deletes all nodes in the grid that have the specified data. Deleted nodes are not considered neighbours of nodes.
      * @param data The data value to match for deletion. */
     fun deleteNodesWithData(data: Any?) {
+        activeNodesNeedUpdating = true
         nodes.indices.forEach { i ->
             if (nodes[i]?.data == data) {
                 deleteNodeId(i)
@@ -257,8 +260,27 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        connectGrid { getStraightNeighbours(it) }
+        connectGrid { t -> getStraightNeighbours(t) }
+        /*adjacencyListIsFinalized = false
+        val dx = intArrayOf(0, -1, 1, 0)
+        val dy = intArrayOf(-1, 0, 0, 1)
+        repeat(height) { y ->
+            repeat(width) { x ->
+                val u = x + y * width
+                nodes[u] ?: return@repeat
+                repeat(4) {
+                    val nx = x + dx[it]
+                    val ny = y + dy[it]
+                    if (!xyInRange(nx, ny)) return@repeat
+                    val v = nx + ny * width
+                    nodes[v] ?: return@repeat
+                    edges.addEdge(u, v)
+                    edgesCount++
+                }
+            }
+        }*/
     }
+
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/
     override fun print() {

@@ -22,7 +22,7 @@ internal fun birthday(): String {
             input.add(a to b)
         }
         repeat(c) { i ->
-            val g = IntGraph(p, c * 2)
+            val g = IntGraph(p)
             repeat(c) { j ->
                 if (i != j) {
                     val (a, b) = input[j]

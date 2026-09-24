@@ -20,7 +20,7 @@ internal fun bigtruck(): String {
     val n = readInt()
     val items = listOf(0) + readString().split(" ").map { it.toInt() }
     val m = readInt()
-    val ig = IntGraph(n + 1, m * 2)
+    val ig = IntGraph(n + 1)
     repeat(m) {
         val (a, b, d) = readInts(3)
         ig.addEdge(a, b, d - ITEM_BOOST * items[b])

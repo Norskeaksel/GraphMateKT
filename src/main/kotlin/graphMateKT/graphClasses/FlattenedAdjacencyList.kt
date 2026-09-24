@@ -1,33 +1,54 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edge
-import graphMateKT.Edges
+import graphMateKT.UnboxedEdges
 
-internal class FlattenedAdjacencyList(
-    private val flattenedAdjacencyList: IntArray,
-    private val starts: IntArray,
-    private val ends: IntArray,
-    private val flattenedWeights: DoubleArray,
-) : AdjacencyList {
+internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
+    val nrOfEdges = edges.size
+    val starts: IntArray = IntArray(nrOfNodes)
+    val ends: IntArray = IntArray(nrOfNodes)
+    val flattenedNeighbours = IntArray(nrOfEdges)
+    val flattenedWeights = DoubleArray(nrOfEdges)
+
+    init {
+        val nrOfEdgesFrom = IntArray(nrOfNodes)
+        edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }
+
+        var sum = 0
+        repeat(nrOfNodes) { i ->
+            starts[i] = sum
+            sum += nrOfEdgesFrom[i]
+            ends[i] = sum
+        }
+        repeat(nrOfEdges) { i ->
+            edges.run {
+                val u = from[i]
+                val v = to[i]
+                val offset = --nrOfEdgesFrom[u]
+                val idx = starts[u] + offset
+                flattenedNeighbours[idx] = v
+                flattenedWeights[idx] = weights[i]
+            }
+        }
+    }
 
     override fun nodes() = IntArray(size) { it }
     override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
-        return IntArray(end - start) { flattenedAdjacencyList[start + it] }
+        return IntArray(end - start) { flattenedNeighbours[start + it] }
     }
 
-    override fun edges(node: Int): Edges {
+    override fun weights(node: Int): DoubleArray {
         val start = starts[node]
         val end = ends[node]
-        return MutableList(end - start) { Edge(flattenedWeights[start + it], flattenedAdjacencyList[start + it]) }
+        return DoubleArray(end - start) { flattenedWeights[start + it] }
     }
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
-            action(flattenedAdjacencyList[i])
+            action(flattenedNeighbours[i])
         }
     }
 
@@ -35,36 +56,12 @@ internal class FlattenedAdjacencyList(
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
-            action(flattenedWeights[i], flattenedAdjacencyList[i])
+            action(flattenedWeights[i], flattenedNeighbours[i])
         }
     }
 
-    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(
-        flattenedAdjacencyList.copyOf(),
-        starts.copyOf(),
-        ends.copyOf(),
-        flattenedWeights.copyOf(),
-    )
+    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.deepCopy())
 
-    override val size get() = starts.size
-    override fun reversed(): AdjacencyList {
-        val revStarts = IntArray(size)
-        val revEnds = IntArray(size)
-        flattenedAdjacencyList.forEach { revEnds[it]++ }
-        for (i in 1 until size) revStarts[i] = revStarts[i - 1] + revEnds[i - 1]
-        for (i in 0 until size) revEnds[i] += revStarts[i]
-
-        val revAdjacencyList = IntArray(flattenedAdjacencyList.size)
-        val revWeights = DoubleArray(flattenedWeights.size)
-        val next = revStarts.copyOf()
-        repeat(size) { u ->
-            for (idx in starts[u] until ends[u]) {
-                val v = flattenedAdjacencyList[idx]
-                val at = next[v]++
-                revAdjacencyList[at] = u
-                revWeights[at] = flattenedWeights[idx]
-            }
-        }
-        return FlattenedAdjacencyList(revAdjacencyList, revStarts, revEnds, revWeights)
-    }
+    override val size get() = nrOfNodes
+    override fun reversed(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.reversed())
 }

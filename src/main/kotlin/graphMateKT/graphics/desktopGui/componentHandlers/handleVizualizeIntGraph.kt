@@ -24,7 +24,7 @@ internal fun handleVizualizeIntGraph(
     require(inputLines.all { it.split(" ").size != 1 }) { "IntGraphs cannot add a singular node. The nodes have already been defined to be from 0 to ${n - 1}." }
     val edgeMultiplier = if (!isBidirectional) 1 else 2
     require(inputLines.size * edgeMultiplier <= m) { "Can't add a ${m + 1}th edge, becaues it exceedes nrOfEdges=$m." }
-    val intGraph = IntGraph(n, m * edgeMultiplier)
+    val intGraph = IntGraph(n)
     val tempGraph = buildGraph(inputLines, isBidirectional)
     val connections = mutableSetOf<Pair<Int, Int>>()
     tempGraph.nodes().forEach { node ->

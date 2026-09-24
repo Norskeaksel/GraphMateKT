@@ -19,7 +19,7 @@ internal fun forestfruits(inputStream: InputStream): Long {
     if (c < k && k <= m) {
         return -1L
     }
-    val graph = IntGraph(v + 1, e * 2)
+    val graph = IntGraph(v + 1)
     repeat(e) {
         graph.connect(scanner.nextInt(), scanner.nextInt(), scanner.nextInt())
     }
