@@ -96,6 +96,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
+        activeNodesNeedUpdating = true
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
