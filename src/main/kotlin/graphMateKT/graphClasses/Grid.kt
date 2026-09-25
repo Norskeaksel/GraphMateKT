@@ -261,27 +261,8 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        connectGrid { t -> getStraightNeighbours(t) }
-        /*adjacencyListIsFinalized = false
-        val dx = intArrayOf(0, -1, 1, 0)
-        val dy = intArrayOf(-1, 0, 0, 1)
-        repeat(height) { y ->
-            repeat(width) { x ->
-                val u = x + y * width
-                nodes[u] ?: return@repeat
-                repeat(4) {
-                    val nx = x + dx[it]
-                    val ny = y + dy[it]
-                    if (!xyInRange(nx, ny)) return@repeat
-                    val v = nx + ny * width
-                    nodes[v] ?: return@repeat
-                    edges.addEdge(u, v)
-                    edgesCount++
-                }
-            }
-        }*/
+        connectGrid { getStraightNeighbours(it) }
     }
-
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/
     override fun print() {

@@ -12,7 +12,6 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
     init {
         val nrOfEdgesFrom = IntArray(nrOfNodes)
         edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }
-
         var sum = 0
         repeat(nrOfNodes) { i ->
             starts[i] = sum
@@ -35,13 +34,13 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
     override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
-        return IntArray(end - start) { flattenedNeighbours[start + it] }
+        return flattenedNeighbours.copyOfRange(start, end)
     }
 
     override fun weights(node: Int): DoubleArray {
         val start = starts[node]
         val end = ends[node]
-        return DoubleArray(end - start) { flattenedWeights[start + it] }
+        return flattenedWeights.copyOfRange(start, end)
     }
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {

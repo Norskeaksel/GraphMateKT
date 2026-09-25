@@ -39,7 +39,6 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        //localAdjacencyList.add(mutableListOf())
         adjacencyListIsFinalized = false
     }
 

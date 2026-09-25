@@ -52,7 +52,8 @@ class TestGraphSpeed {
     }
 
     @Test
-    fun testGridBfsSpeed() {
+    fun testGridBfsSpeedDefaultConnect() {
+        debug("Connect Grid de")
         repeat(5) {
             measureTimeMillis {
                 val graph = Grid(1000, 1000)
