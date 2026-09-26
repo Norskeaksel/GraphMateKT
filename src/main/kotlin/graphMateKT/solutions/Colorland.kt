@@ -21,7 +21,7 @@ private fun addEdgesFromPreviousColorToCurrent(graph: IntGraph, previous: IntArr
 internal fun colorland(inputStream: InputStream): Int {
     val scanner = InputReader(inputStream)
     val n = scanner.nextInt()
-    val graph = IntGraph(n + 1, n * 7)
+    val graph = IntGraph(n + 1)
     val previous = IntArray(6)
     repeat(n) {
         val color = scanner.nextString()

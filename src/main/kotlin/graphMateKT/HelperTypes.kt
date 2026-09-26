@@ -11,6 +11,97 @@ typealias IntComponents = List<List<Int>>
 /** List of list of Tile nodes */
 typealias GridComponents = List<List<Tile>>
 
+private const val INITIAL_CAPACITY = 10
+
+internal class IntArrayList {
+    private var intArray: IntArray = IntArray(INITIAL_CAPACITY)
+    var size: Int = 0
+        private set
+
+    fun add(value: Int) {
+        if (size >= intArray.size) {
+            expandArray()
+        }
+        intArray[size] = value
+        size++
+    }
+
+    operator fun get(i: Int) = intArray[i]
+    fun intArray(): IntArray {
+        if(intArray.size > size) {
+            intArray = intArray.copyOf(size)
+        }
+        return intArray
+    }
+
+    private fun expandArray() {
+        intArray = intArray.copyOf(intArray.size * 2)
+    }
+}
+
+internal class DoubleArrayList {
+    private var doubleArray: DoubleArray = DoubleArray(INITIAL_CAPACITY)
+    var size: Int = 0
+        private set
+
+    fun add(value: Double) {
+        if (size >= doubleArray.size) {
+            expandArray()
+        }
+        doubleArray[size] = value
+        size++
+    }
+
+    operator fun get(i: Int) = doubleArray[i]
+    fun doubleArray(): DoubleArray {
+        if(doubleArray.size > size) {
+            doubleArray = doubleArray.copyOf(size)
+        }
+        return doubleArray
+    }
+    private fun expandArray() {
+        doubleArray = doubleArray.copyOf(doubleArray.size * 2)
+    }
+}
+
+internal class UnboxedEdges {
+    val from = IntArrayList()
+    val to = IntArrayList()
+    val weights = DoubleArrayList()
+    var maxId: Int = 0
+        private set
+    var size = 0
+        private set
+
+    fun addEdge(u: Int, v: Int, weight: Double) {
+        from.add(u)
+        to.add(v)
+        weights.add(weight)
+        maxId = maxOf(u, v, maxId)
+        size++
+    }
+
+    fun addEdge(u: Int, v: Int) {
+        addEdge(u, v, 1.0)
+    }
+
+    fun deepCopy(): UnboxedEdges {
+        val copy = UnboxedEdges()
+        for (i in 0 until size) {
+            copy.addEdge(from[i], to[i], weights[i])
+        }
+        return copy
+    }
+
+    fun reversed(): UnboxedEdges {
+        val reversed = UnboxedEdges()
+        for (i in 0 until size) {
+            reversed.addEdge(to[i], from[i], weights[i])
+        }
+        return reversed
+    }
+}
+
 /** Represents a node in the Grid graph with x and y coordinates and optional data, which can be considered the node value
  *
  * @property x The x-coordinate of the tile.

@@ -14,6 +14,97 @@ typealias IntComponents = List<List<Int>>
 /** List of list of Tile nodes */
 typealias GridComponents = List<List<Tile>>
 
+private const val INITIAL_CAPACITY = 10
+
+internal class IntArrayList {
+    private var intArray: IntArray = IntArray(INITIAL_CAPACITY)
+    var size: Int = 0
+        private set
+
+    fun add(value: Int) {
+        if (size >= intArray.size) {
+            expandArray()
+        }
+        intArray[size] = value
+        size++
+    }
+
+    operator fun get(i: Int) = intArray[i]
+    fun intArray(): IntArray {
+        if(intArray.size > size) {
+            intArray = intArray.copyOf(size)
+        }
+        return intArray
+    }
+
+    private fun expandArray() {
+        intArray = intArray.copyOf(intArray.size * 2)
+    }
+}
+
+internal class DoubleArrayList {
+    private var doubleArray: DoubleArray = DoubleArray(INITIAL_CAPACITY)
+    var size: Int = 0
+        private set
+
+    fun add(value: Double) {
+        if (size >= doubleArray.size) {
+            expandArray()
+        }
+        doubleArray[size] = value
+        size++
+    }
+
+    operator fun get(i: Int) = doubleArray[i]
+    fun doubleArray(): DoubleArray {
+        if(doubleArray.size > size) {
+            doubleArray = doubleArray.copyOf(size)
+        }
+        return doubleArray
+    }
+    private fun expandArray() {
+        doubleArray = doubleArray.copyOf(doubleArray.size * 2)
+    }
+}
+
+internal class UnboxedEdges {
+    val from = IntArrayList()
+    val to = IntArrayList()
+    val weights = DoubleArrayList()
+    var maxId: Int = 0
+        private set
+    var size = 0
+        private set
+
+    fun addEdge(u: Int, v: Int, weight: Double) {
+        from.add(u)
+        to.add(v)
+        weights.add(weight)
+        maxId = maxOf(u, v, maxId)
+        size++
+    }
+
+    fun addEdge(u: Int, v: Int) {
+        addEdge(u, v, 1.0)
+    }
+
+    fun deepCopy(): UnboxedEdges {
+        val copy = UnboxedEdges()
+        for (i in 0 until size) {
+            copy.addEdge(from[i], to[i], weights[i])
+        }
+        return copy
+    }
+
+    fun reversed(): UnboxedEdges {
+        val reversed = UnboxedEdges()
+        for (i in 0 until size) {
+            reversed.addEdge(to[i], from[i], weights[i])
+        }
+        return reversed
+    }
+}
+
 /** Represents a node in the Grid graph with x and y coordinates and optional data, which can be considered the node value
  *
  * @property x The x-coordinate of the tile.
@@ -48,7 +139,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     internal lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
 
-    // TODO include list of deleted nodes and edges
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -61,18 +151,12 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param node The node to add */
     abstract fun addNode(node: T)
 
-    /** Adds an unweighted edge between two nodes in the graph, and creates the nodes if they don't exist.
-     *
-     * @param node1 The starting node of the edge.
-     * @param node2 The ending node of the edge. */
-    abstract fun addEdge(node1: T, node2: T)
-
     /** Adds an edge between two nodes in the graph, and creates the nodes if they don't exist.
      *
      * @param node1 The starting node of the edge.
      * @param node2 The ending node of the edge.
-     * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
-    abstract fun addEdge(node1: T, node2: T, weight: Double)
+     * @param weight The weight of the edge, for example used to calculate distances with Dijkstra. Defaults to 1.0. */
+    abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
@@ -190,8 +274,17 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
     fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.edges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
-            ?: error("Node $t not found in graph")
+        node2Id(t)?.let {
+            val neighbours = adjacencyList.neighbours(it)
+            val weights = adjacencyList.weights(it)
+            val edges = mutableListOf<Pair<Double, T>>()
+            neighbours.indices.forEach {
+                val w = weights[it]
+                val v = id2Node(neighbours[it]) ?: error("Node with ID ${neighbours[it]} not found in graph")
+                edges.add(w to v)
+            }
+            edges
+        } ?: error("Node '$t' not found in graph")
     }
 
     /** Retrieves a list the neighboring nodes of the specified node.
@@ -249,9 +342,10 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
-            foundTarget?.let {
-                finalPath = getPath(foundTarget)
+            val finalNode = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
+            val foundTarget = finalNode?.let { it == target } ?: false
+            if (foundTarget) {
+                finalPath = getPath(finalNode)
             }
         }
         if (debugTimeUse) {
@@ -544,7 +638,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private var nrOfNodes = 0
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val localAdjacencyList = mutableListOf<Edges>()
+    private val edges = UnboxedEdges()//mutableListOf<Edges>()
     private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
@@ -553,25 +647,20 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
 
     override fun addNode(node: Any) {
         if (node2id.containsKey(node)) {
-            //System.err.println("Warning: The node already exists, it can't be added again")
+            //debug("Warning: The node already exists, it can't be added again")
             return
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        localAdjacencyList.add(mutableListOf())
         adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
         val id1 = getOrAddNodeId(node1)
         val id2 = getOrAddNodeId(node2)
-        localAdjacencyList[id1].add(weight to id2)
+        edges.addEdge(id1, id2, weight)
         edgesCount++
         adjacencyListIsFinalized = false
-    }
-
-    override fun addEdge(node1: Any, node2: Any) {
-        addEdge(node1, node2, 1.0)
     }
 
     override fun node2Id(node: Any): Int? = node2id[node]
@@ -579,7 +668,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun nodes(): List<Any> = id2Node.values.toList()
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyList = FlattenedAdjacencyList(nrOfNodes, edges)
         adjacencyListIsFinalized = true
     }
 }
@@ -590,7 +679,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
  * However, it's more performant, because it does not need to maintain an internal mapping between the nodes and their
  * indexes in the adjacency list. The obvious drawback being it only supports integer nodes.
- * It also requires the number of nodes and edges to be defined at initialization.
+ * It also requires the number of nodes to be defined at initialization.
  *
  * <i>Example usage:</i>
  *
@@ -604,15 +693,12 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
  *
- * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.
- * @param nrOfEdges The number of edges in the graph. This cannot be altered later. */
-class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: Boolean = false) :
+ * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.*/
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(debugTimeUse) {
 
     private val nodes = IntArray(size) { it }
-    private val from = IntArray(nrOfEdges)
-    private val to = IntArray(nrOfEdges)
-    private val weights = DoubleArray(nrOfEdges) { 1.0 }
+    private val edges = UnboxedEdges()
     private val nrOfEdgesFrom = IntArray(size)
     private var adjacencyListIsFinalized = false
 
@@ -623,21 +709,24 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         val ends = IntArray(size)
         val flattenedAdjacencyList = IntArray(edgesCount)
         val flattenWeights = DoubleArray(edgesCount)
+        val nrOfEdgesCopy = nrOfEdgesFrom.copyOf()
         var sum = 0
         repeat(size) { i ->
             starts[i] = sum
-            sum += nrOfEdgesFrom[i]
+            sum += nrOfEdgesCopy[i]
             ends[i] = sum
         }
         repeat(edgesCount) { i ->
-            val u = from[i]
-            val v = to[i]
-            val offset = --nrOfEdgesFrom[u]
-            val idx = starts[u] + offset
-            flattenedAdjacencyList[idx] = v
-            flattenWeights[idx] = weights[i]
+            edges.run {
+                val u = from[i]
+                val v = to[i]
+                val offset = --nrOfEdgesCopy[u]
+                val idx = starts[u] + offset
+                flattenedAdjacencyList[idx] = v
+                flattenWeights[idx] = weights[i]
+            }
         }
-        adjacencyList = FlattenedAdjacencyList(flattenedAdjacencyList, starts, ends, flattenWeights)
+        adjacencyList = FlattenedAdjacencyList(size, edges)
         adjacencyListIsFinalized = true
     }
 
@@ -645,22 +734,10 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         error("IntGraph doesn't support addNode(), because nodes are set on initialization.")
 
     override fun addEdge(node1: Int, node2: Int, weight: Double) {
-        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
-        from[edgesCount] = node1
-        to[edgesCount] = node2
-        weights[edgesCount] = weight
-        nrOfEdgesFrom[node1]++
-        edgesCount++
         adjacencyListIsFinalized = false
-    }
-
-    override fun addEdge(node1: Int, node2: Int) {
-        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
-        from[edgesCount] = node1
-        to[edgesCount] = node2
-        nrOfEdgesFrom[node1]++
+        edges.addEdge(node1, node2, weight)
         edgesCount++
-        adjacencyListIsFinalized = false
+        nrOfEdgesFrom[node1]++
     }
 
     override fun id2Node(id: Int) = id
@@ -727,7 +804,9 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
 class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(debugTimeUse) {
     private val nodes = MutableList<Tile?>(width * height) { null }
-    private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+    private var activeNodes = listOf<Tile>()
+    private var activeNodesNeedUpdating = true
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = false
 
     /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
@@ -738,7 +817,12 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>) : this(stringGrid[0].length, stringGrid.size) {
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
+        stringGrid[0].length,
+        stringGrid.size,
+        false,
+        debugTimeUse
+    ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
@@ -764,7 +848,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
-        adjacencyListIsFinalized = false
+        activeNodesNeedUpdating = true
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
@@ -772,24 +856,26 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyList = NestedAdjacencyList(width * height, edges)
         adjacencyListIsFinalized = true
     }
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
-        localAdjacencyList[u].add(Edge(weight, v))
+        edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false
     }
 
-    override fun addEdge(node1: Tile, node2: Tile) {
-        addEdge(node1, node2, 1.0)
+    override fun nodes(): List<Tile> {
+        if (activeNodesNeedUpdating) {
+            activeNodes = nodes.filterNotNull()
+            activeNodesNeedUpdating = false
+        }
+        return activeNodes
     }
 
-    override fun nodes(): List<Tile> = nodes.filterNotNull()
-    // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
             DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
@@ -801,12 +887,11 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
-    // TODO: move logic into base class
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height
     private fun xy2Id(x: Int, y: Int) =
-        if (xyInRange(x, y)) (x + y * width).let { if (indexHasNode(it)) it else null } else null
+        if (xyInRange(x, y)) (x + y * width).let { if (gridHasId(it)) it else null } else null
 
     /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
      *
@@ -814,7 +899,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) }
-    private fun indexHasNode(index: Int) = nodes.getOrNull(index) != null
+    private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
     }
@@ -837,12 +922,14 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
             System.err.println("Warning, coordinates ($x, $y) are outside the grid")
             return
         }
+        activeNodesNeedUpdating = true
         deleteNodeId(id)
     }
 
     /** Deletes all nodes in the grid that have the specified data. Deleted nodes are not considered neighbours of nodes.
      * @param data The data value to match for deletion. */
     fun deleteNodesWithData(data: Any?) {
+        activeNodesNeedUpdating = true
         nodes.indices.forEach { i ->
             if (nodes[i]?.data == data) {
                 deleteNodeId(i)
@@ -910,6 +997,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
     fun connectGrid(isBidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
+        adjacencyListIsFinalized = false
         nodes().forEach { t ->
             val neighbours = getNeighbours(t)
             neighbours.forEach {
@@ -920,8 +1008,6 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
                 }
             }
         }
-        finalizeAdjacencyListIfNeeded()
-        adjacencyListIsFinalized = true
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
@@ -942,11 +1028,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     }
 }
 
-
 internal interface AdjacencyList {
     fun nodes(): IntArray
     fun neighbours(node: Int): IntArray
-    fun edges(node: Int): Edges
+    fun weights(node: Int): DoubleArray
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
     fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
     fun deepCopy(): AdjacencyList
@@ -956,31 +1041,52 @@ internal interface AdjacencyList {
 
 
 
-internal class FlattenedAdjacencyList(
-    private val flattenedAdjacencyList: IntArray,
-    private val starts: IntArray,
-    private val ends: IntArray,
-    private val flattenedWeights: DoubleArray,
-) : AdjacencyList {
+internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
+    val nrOfEdges = edges.size
+    val starts: IntArray = IntArray(nrOfNodes)
+    val ends: IntArray = IntArray(nrOfNodes)
+    val flattenedNeighbours = IntArray(nrOfEdges)
+    val flattenedWeights = DoubleArray(nrOfEdges)
+
+    init {
+        val nrOfEdgesFrom = IntArray(nrOfNodes)
+        edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }
+        var sum = 0
+        repeat(nrOfNodes) { i ->
+            starts[i] = sum
+            sum += nrOfEdgesFrom[i]
+            ends[i] = sum
+        }
+        repeat(nrOfEdges) { i ->
+            edges.run {
+                val u = from[i]
+                val v = to[i]
+                val offset = --nrOfEdgesFrom[u]
+                val idx = starts[u] + offset
+                flattenedNeighbours[idx] = v
+                flattenedWeights[idx] = weights[i]
+            }
+        }
+    }
 
     override fun nodes() = IntArray(size) { it }
     override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
-        return IntArray(end - start) { flattenedAdjacencyList[start + it] }
+        return flattenedNeighbours.copyOfRange(start, end)
     }
 
-    override fun edges(node: Int): Edges {
+    override fun weights(node: Int): DoubleArray {
         val start = starts[node]
         val end = ends[node]
-        return MutableList(end - start) { Edge(flattenedWeights[start + it], flattenedAdjacencyList[start + it]) }
+        return flattenedWeights.copyOfRange(start, end)
     }
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
-            action(flattenedAdjacencyList[i])
+            action(flattenedNeighbours[i])
         }
     }
 
@@ -988,73 +1094,53 @@ internal class FlattenedAdjacencyList(
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
-            action(flattenedWeights[i], flattenedAdjacencyList[i])
+            action(flattenedWeights[i], flattenedNeighbours[i])
         }
     }
 
-    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(
-        flattenedAdjacencyList.copyOf(),
-        starts.copyOf(),
-        ends.copyOf(),
-        flattenedWeights.copyOf(),
-    )
+    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.deepCopy())
 
-    override val size get() = starts.size
-    override fun reversed(): AdjacencyList {
-        val revStarts = IntArray(size)
-        val revEnds = IntArray(size)
-        flattenedAdjacencyList.forEach { revEnds[it]++ }
-        for (i in 1 until size) revStarts[i] = revStarts[i - 1] + revEnds[i - 1]
-        for (i in 0 until size) revEnds[i] += revStarts[i]
-
-        val revAdjacencyList = IntArray(flattenedAdjacencyList.size)
-        val revWeights = DoubleArray(flattenedWeights.size)
-        val next = revStarts.copyOf()
-        repeat(size) { u ->
-            for (idx in starts[u] until ends[u]) {
-                val v = flattenedAdjacencyList[idx]
-                val at = next[v]++
-                revAdjacencyList[at] = u
-                revWeights[at] = flattenedWeights[idx]
-            }
-        }
-        return FlattenedAdjacencyList(revAdjacencyList, revStarts, revEnds, revWeights)
-    }
+    override val size get() = nrOfNodes
+    override fun reversed(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.reversed())
 }
 
 
-internal class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>) : AdjacencyList {
+internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
+    private val nodes = IntArray(nrOfNodes) { it }
+    private val neighbours = Array(nrOfNodes) { IntArrayList() }
+    private val weights = Array(nrOfNodes) { DoubleArrayList() }
 
-    override fun nodes() = IntArray(adjacencyList.size) { it }
-    override fun neighbours(node: Int): IntArray = adjacencyList[node].let { neighbours ->
-        IntArray(neighbours.size) { i -> neighbours[i].second }
+    init {
+        repeat(edges.size) {
+            val u = edges.from[it]
+            val v = edges.to[it]
+            val w = edges.weights[it]
+            neighbours[u].add(v)
+            weights[u].add(w)
+        }
     }
 
-    override fun edges(node: Int): Edges = adjacencyList[node]
+    override fun nodes() = nodes
+    override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
+    override fun weights(node: Int) = weights[node].doubleArray()
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
-        adjacencyList[node].forEach { (_, v) ->
+        neighbours[node].intArray().forEach { v ->
             action(v)
         }
     }
 
     override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
-        adjacencyList[node].forEach { (w, v) ->
-            action(w, v)
+        val neighbours = neighbours[node].intArray()
+        val weights = weights[node].doubleArray()
+        neighbours.indices.forEach {
+            action(weights[it], neighbours[it])
         }
     }
 
-    override fun deepCopy() = NestedAdjacencyList(adjacencyList.map { it.toMutableList() }.toMutableList())
-    override val size get() = adjacencyList.size
-    override fun reversed(): AdjacencyList {
-        val reversedAdjacencyList = MutableList<Edges>(adjacencyList.size) { mutableListOf() }
-        adjacencyList.forEachIndexed { u, edges ->
-            edges.forEach { (w, v) ->
-                reversedAdjacencyList[v].add(Edge(w, u))
-            }
-        }
-        return NestedAdjacencyList(reversedAdjacencyList)
-    }
+    override fun deepCopy() = NestedAdjacencyList(nrOfNodes, edges.deepCopy())
+    override val size get() = nrOfNodes
+    override fun reversed() = NestedAdjacencyList(nrOfNodes, edges.reversed())
 }
 
 

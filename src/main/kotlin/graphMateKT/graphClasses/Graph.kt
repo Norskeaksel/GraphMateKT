@@ -1,6 +1,6 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edges
+import graphMateKT.UnboxedEdges
 
 /** A general graph class that represents nodes of any datatype.
  *
@@ -25,7 +25,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private var nrOfNodes = 0
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val localAdjacencyList = mutableListOf<Edges>()
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
@@ -34,25 +34,20 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
 
     override fun addNode(node: Any) {
         if (node2id.containsKey(node)) {
-            //System.err.println("Warning: The node already exists, it can't be added again")
+            //debug("Warning: The node already exists, it can't be added again")
             return
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        localAdjacencyList.add(mutableListOf())
         adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
         val id1 = getOrAddNodeId(node1)
         val id2 = getOrAddNodeId(node2)
-        localAdjacencyList[id1].add(weight to id2)
+        edges.addEdge(id1, id2, weight)
         edgesCount++
         adjacencyListIsFinalized = false
-    }
-
-    override fun addEdge(node1: Any, node2: Any) {
-        addEdge(node1, node2, 1.0)
     }
 
     override fun node2Id(node: Any): Int? = node2id[node]
@@ -60,7 +55,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun nodes(): List<Any> = id2Node.values.toList()
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyList = FlattenedAdjacencyList(nrOfNodes, edges)
         adjacencyListIsFinalized = true
     }
 }

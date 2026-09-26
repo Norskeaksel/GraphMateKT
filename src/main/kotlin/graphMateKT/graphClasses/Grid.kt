@@ -1,9 +1,8 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edge
-import graphMateKT.Edges
 import graphMateKT.GridComponents
 import graphMateKT.Tile
+import graphMateKT.UnboxedEdges
 import graphMateKT.graphAlgorithms.DFS
 
 /** A general graph class that represents a 2D grid structure of nodes.
@@ -52,8 +51,11 @@ import graphMateKT.graphAlgorithms.DFS
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
 class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(debugTimeUse) {
-    private val nodes = MutableList<Tile?>(width * height) { null }
-    private val localAdjacencyList = MutableList<Edges>(width * height) { mutableListOf() }
+    private val gridSize = width * height
+    private val nodes = MutableList<Tile?>(gridSize) { null }
+    private var activeNodes = listOf<Tile>()
+    private var activeNodesNeedUpdating = true
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = false
 
     /** Construct the grid from a list of strings, where each string represents a row in the grid, and each character, a node.
@@ -64,7 +66,12 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>) : this(stringGrid[0].length, stringGrid.size) {
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
+        stringGrid[0].length,
+        stringGrid.size,
+        false,
+        debugTimeUse
+    ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
         stringGrid.forEachIndexed { y, line ->
@@ -90,32 +97,34 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node
-        adjacencyListIsFinalized = false
+        activeNodesNeedUpdating = true
     }
 
     override fun node2Id(node: Tile) = node.x + node.y * width
 
-    override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
+    override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(localAdjacencyList)
+        adjacencyList = FlattenedAdjacencyList(gridSize, edges)
         adjacencyListIsFinalized = true
     }
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
-        localAdjacencyList[u].add(Edge(weight, v))
+        edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false
     }
 
-    override fun addEdge(node1: Tile, node2: Tile) {
-        addEdge(node1, node2, 1.0)
+    override fun nodes(): List<Tile> {
+        if (activeNodesNeedUpdating) {
+            activeNodes = nodes.filterNotNull()
+            activeNodesNeedUpdating = false
+        }
+        return activeNodes
     }
 
-    override fun nodes(): List<Tile> = nodes.filterNotNull()
-    // TODO: move logic into base class
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded().run {
             DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
@@ -127,12 +136,11 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         finalizeAdjacencyListIfNeeded().run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
             .map { component -> component.mapNotNull { id2Node(it) } }
 
-    // TODO: move logic into base class
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
     private fun xyInRange(x: Int, y: Int) = x in 0 until width && y in 0 until height
     private fun xy2Id(x: Int, y: Int) =
-        if (xyInRange(x, y)) (x + y * width).let { if (indexHasNode(it)) it else null } else null
+        if (xyInRange(x, y)) (x + y * width).let { if (gridHasId(it)) it else null } else null
 
     /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
      *
@@ -140,7 +148,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) }
-    private fun indexHasNode(index: Int) = nodes.getOrNull(index) != null
+    private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
     }
@@ -163,12 +171,14 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
             System.err.println("Warning, coordinates ($x, $y) are outside the grid")
             return
         }
+        activeNodesNeedUpdating = true
         deleteNodeId(id)
     }
 
     /** Deletes all nodes in the grid that have the specified data. Deleted nodes are not considered neighbours of nodes.
      * @param data The data value to match for deletion. */
     fun deleteNodesWithData(data: Any?) {
+        activeNodesNeedUpdating = true
         nodes.indices.forEach { i ->
             if (nodes[i]?.data == data) {
                 deleteNodeId(i)
@@ -236,6 +246,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
     fun connectGrid(isBidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
+        adjacencyListIsFinalized = false
         nodes().forEach { t ->
             val neighbours = getNeighbours(t)
             neighbours.forEach {
@@ -246,8 +257,6 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
                 }
             }
         }
-        finalizeAdjacencyListIfNeeded()
-        adjacencyListIsFinalized = true
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,

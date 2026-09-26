@@ -1,38 +1,43 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edge
-import graphMateKT.Edges
+import graphMateKT.DoubleArrayList
+import graphMateKT.IntArrayList
+import graphMateKT.UnboxedEdges
 
-internal class NestedAdjacencyList(private val adjacencyList: MutableList<Edges>) : AdjacencyList {
+internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
+    private val nodes = IntArray(nrOfNodes) { it }
+    private val neighbours = Array(nrOfNodes) { IntArrayList() }
+    private val weights = Array(nrOfNodes) { DoubleArrayList() }
 
-    override fun nodes() = IntArray(adjacencyList.size) { it }
-    override fun neighbours(node: Int): IntArray = adjacencyList[node].let { neighbours ->
-        IntArray(neighbours.size) { i -> neighbours[i].second }
+    init {
+        repeat(edges.size) {
+            val u = edges.from[it]
+            val v = edges.to[it]
+            val w = edges.weights[it]
+            neighbours[u].add(v)
+            weights[u].add(w)
+        }
     }
 
-    override fun edges(node: Int): Edges = adjacencyList[node]
+    override fun nodes() = nodes
+    override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
+    override fun weights(node: Int) = weights[node].doubleArray()
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
-        adjacencyList[node].forEach { (_, v) ->
+        neighbours[node].intArray().forEach { v ->
             action(v)
         }
     }
 
     override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
-        adjacencyList[node].forEach { (w, v) ->
-            action(w, v)
+        val neighbours = neighbours[node].intArray()
+        val weights = weights[node].doubleArray()
+        neighbours.indices.forEach {
+            action(weights[it], neighbours[it])
         }
     }
 
-    override fun deepCopy() = NestedAdjacencyList(adjacencyList.map { it.toMutableList() }.toMutableList())
-    override val size get() = adjacencyList.size
-    override fun reversed(): AdjacencyList {
-        val reversedAdjacencyList = MutableList<Edges>(adjacencyList.size) { mutableListOf() }
-        adjacencyList.forEachIndexed { u, edges ->
-            edges.forEach { (w, v) ->
-                reversedAdjacencyList[v].add(Edge(w, u))
-            }
-        }
-        return NestedAdjacencyList(reversedAdjacencyList)
-    }
+    override fun deepCopy() = NestedAdjacencyList(nrOfNodes, edges.deepCopy())
+    override val size get() = nrOfNodes
+    override fun reversed() = NestedAdjacencyList(nrOfNodes, edges.reversed())
 }

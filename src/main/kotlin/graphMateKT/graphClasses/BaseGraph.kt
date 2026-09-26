@@ -15,7 +15,6 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     internal lateinit var adjacencyList: AdjacencyList
     protected var edgesCount = 0
 
-    // TODO include list of deleted nodes and edges
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
     private var allDistances: Array<DoubleArray>? = null
@@ -28,18 +27,12 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param node The node to add */
     abstract fun addNode(node: T)
 
-    /** Adds an unweighted edge between two nodes in the graph, and creates the nodes if they don't exist.
-     *
-     * @param node1 The starting node of the edge.
-     * @param node2 The ending node of the edge. */
-    abstract fun addEdge(node1: T, node2: T)
-
     /** Adds an edge between two nodes in the graph, and creates the nodes if they don't exist.
      *
      * @param node1 The starting node of the edge.
      * @param node2 The ending node of the edge.
-     * @param weight The weight of the edge, for example used to calculate distances with dijkstra. */
-    abstract fun addEdge(node1: T, node2: T, weight: Double)
+     * @param weight The weight of the edge, for example used to calculate distances with Dijkstra. Defaults to 1.0. */
+    abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
@@ -157,8 +150,17 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
     fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
-        node2Id(t)?.let { adjacencyList.edges(it) }?.map { Pair(it.first, id2Node(it.second)!!) }
-            ?: error("Node $t not found in graph")
+        node2Id(t)?.let {
+            val neighbours = adjacencyList.neighbours(it)
+            val weights = adjacencyList.weights(it)
+            val edges = mutableListOf<Pair<Double, T>>()
+            neighbours.indices.forEach {
+                val w = weights[it]
+                val v = id2Node(neighbours[it]) ?: error("Node with ID ${neighbours[it]} not found in graph")
+                edges.add(w to v)
+            }
+            edges
+        } ?: error("Node '$t' not found in graph")
     }
 
     /** Retrieves a list the neighboring nodes of the specified node.
@@ -216,9 +218,10 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            val foundTarget = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
-            foundTarget?.let {
-                finalPath = getPath(foundTarget)
+            val finalNode = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
+            val foundTarget = finalNode?.let { it == target } ?: false
+            if (foundTarget) {
+                finalPath = getPath(finalNode)
             }
         }
         if (debugTimeUse) {
