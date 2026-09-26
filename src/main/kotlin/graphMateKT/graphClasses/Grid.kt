@@ -51,7 +51,8 @@ import graphMateKT.graphAlgorithms.DFS
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
 class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(debugTimeUse) {
-    private val nodes = MutableList<Tile?>(width * height) { null }
+    private val gridSize = width * height
+    private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
     private var activeNodesNeedUpdating = true
     private val edges = UnboxedEdges()
@@ -101,10 +102,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     override fun node2Id(node: Tile) = node.x + node.y * width
 
-    override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
+    override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(width * height, edges)
+        adjacencyList = FlattenedAdjacencyList(gridSize, edges)
         adjacencyListIsFinalized = true
     }
 

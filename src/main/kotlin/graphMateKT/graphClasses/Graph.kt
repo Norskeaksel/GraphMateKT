@@ -25,7 +25,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private var nrOfNodes = 0
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val edges = UnboxedEdges()//mutableListOf<Edges>()
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
