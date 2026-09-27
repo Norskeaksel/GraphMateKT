@@ -3,10 +3,7 @@ package graphMateKT.solutions
 import fastInputReader.InputReader
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Graph
-import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
-import java.lang.Math.pow
-import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -42,7 +39,7 @@ internal fun arcticNetwork(inputStream: InputStream): String {
         }
         val (_, mst) = graph.minimumSpanningTree()
         val edges = mst.edges().sortedBy { it.third }
-        // mst.visualizeGraph()
+        // mst.visualizeGraph(true)
         val requiredD = edges[p - 2 - (s - 1).coerceAtLeast(0)].third
         ans.appendLine(String.format("%.2f", requiredD))
     }
