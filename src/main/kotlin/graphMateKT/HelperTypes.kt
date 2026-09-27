@@ -61,8 +61,6 @@ internal class UnboxedEdges {
     val from = IntArrayList()
     val to = IntArrayList()
     val weights = DoubleArrayList()
-    var maxId: Int = 0
-        private set
     var size = 0
         private set
 
@@ -70,7 +68,6 @@ internal class UnboxedEdges {
         from.add(u)
         to.add(v)
         weights.add(weight)
-        maxId = maxOf(u, v, maxId)
         size++
     }
 
