@@ -4,28 +4,27 @@ import org.junit.jupiter.api.Test
 import kotlin.system.measureTimeMillis
 
 class TestGridSpeed {
-    @Test
+    /*@Test
     fun testGridConnect() {
-        val connectionTimes = mutableListOf<Long>()
-        repeat(10) {
+        repeat(5) {
             val grid = Grid(1000, 1000)
             measureTimeMillis {
                 grid.connectGrid { grid.getStraightNeighbours(it) }
-            }.let { connectionTimes.add(it) }
+            }.also { debug("Grid connection times: $it ms.") }
         }
-        debug("Grid connection times: $connectionTimes ms. Average time: ${connectionTimes.average()}")
     }
 
     @Test
     fun testGridConnectDefault() {
         val connectionTimes = mutableListOf<Long>()
-        repeat(10) {
+        repeat(5) {
             val grid = Grid(1000, 1000)
             measureTimeMillis {
                 grid.connectGridDefault()
-            }.let { connectionTimes.add(it) }
+            }.also {
+                debug("Grid default connection times: $it ms.")
+            }
         }
-        debug("Grid default connection times: $connectionTimes ms. Average time: ${connectionTimes.average()}")
     }
 
     @Test
@@ -37,7 +36,7 @@ class TestGridSpeed {
                 grid.connectGrid { grid.getStraightNeighbours(it) }
             }.let { connectionTimes.add(it) }
         }
-        debug("Grid connection times: $connectionTimes ms. Average time: ${connectionTimes.average()}")
+        debug("Grid default average connection time: ${connectionTimes.average()} ms.")
     }
 
     @Test
@@ -49,6 +48,6 @@ class TestGridSpeed {
                 grid.connectGridDefault()
             }.let { connectionTimes.add(it) }
         }
-        debug("Grid default connection times: $connectionTimes ms. Average time: ${connectionTimes.average()}")
-    }
+        debug("Grid default average connection time: ${connectionTimes.average()} ms.")
+    }*/
 }

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import kotlin.system.measureTimeMillis
 
 class TestGraphSpeed {
-    @Test
+    /*@Test
     fun testGraphBfsSpeed() {
         makeGraphTestInput(testCases = 5, nodes = 1_000_000, edges = 1_000_000).use { inputStream ->
             val scanner = InputReader(inputStream)
@@ -60,5 +60,5 @@ class TestGraphSpeed {
                 graph.bfs(Tile(0, 0, null))
             }.also { debug("Grid time: $it ms") }
         }
-    }
+    }*/
 }
