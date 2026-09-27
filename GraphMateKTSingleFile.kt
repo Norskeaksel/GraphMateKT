@@ -23,7 +23,7 @@ internal class IntArrayList {
 
     fun add(value: Int) {
         if (size >= intArray.size) {
-            expandArray()
+            intArray = intArray.copyOf(intArray.size * 2)
         }
         intArray[size] = value
         size++
@@ -31,14 +31,10 @@ internal class IntArrayList {
 
     operator fun get(i: Int) = intArray[i]
     fun intArray(): IntArray {
-        if(intArray.size > size) {
+        if (intArray.size > size) {
             intArray = intArray.copyOf(size)
         }
         return intArray
-    }
-
-    private fun expandArray() {
-        intArray = intArray.copyOf(intArray.size * 2)
     }
 }
 
@@ -49,7 +45,7 @@ internal class DoubleArrayList {
 
     fun add(value: Double) {
         if (size >= doubleArray.size) {
-            expandArray()
+            doubleArray = doubleArray.copyOf(doubleArray.size * 2)
         }
         doubleArray[size] = value
         size++
@@ -57,13 +53,10 @@ internal class DoubleArrayList {
 
     operator fun get(i: Int) = doubleArray[i]
     fun doubleArray(): DoubleArray {
-        if(doubleArray.size > size) {
+        if (doubleArray.size > size) {
             doubleArray = doubleArray.copyOf(size)
         }
         return doubleArray
-    }
-    private fun expandArray() {
-        doubleArray = doubleArray.copyOf(doubleArray.size * 2)
     }
 }
 
@@ -638,7 +631,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private var nrOfNodes = 0
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val edges = UnboxedEdges()//mutableListOf<Edges>()
+    private val edges = UnboxedEdges()
     private var adjacencyListIsFinalized = true
 
     private fun getOrAddNodeId(node: Any): Int {
@@ -803,7 +796,8 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
 class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
     BaseGraph<Tile>(debugTimeUse) {
-    private val nodes = MutableList<Tile?>(width * height) { null }
+    private val gridSize = width * height
+    private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
     private var activeNodesNeedUpdating = true
     private val edges = UnboxedEdges()
@@ -853,10 +847,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     override fun node2Id(node: Tile) = node.x + node.y * width
 
-    override fun id2Node(id: Int) = if (id in 0 until width * height) nodes[id] else null
+    override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = NestedAdjacencyList(width * height, edges)
+        adjacencyList = FlattenedAdjacencyList(gridSize, edges)
         adjacencyListIsFinalized = true
     }
 
@@ -1034,8 +1028,13 @@ internal interface AdjacencyList {
     fun weights(node: Int): DoubleArray
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
     fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
-    fun deepCopy(): AdjacencyList
-    fun reversed(): AdjacencyList
+    fun deepCopy(): AdjacencyList {
+        throw NotImplementedError("deepCopy() not implemented for ${this::class.simpleName}")
+    }
+    fun reversed(): AdjacencyList {
+        throw NotImplementedError("reversed() not implemented for ${this::class.simpleName}")
+    }
+
     val size: Int
 }
 
@@ -1358,7 +1357,7 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
         }
     }
 
-    return Pair(totalWeight, connections)
+    return totalWeight to connections
 }
 
 

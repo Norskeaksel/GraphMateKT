@@ -20,7 +20,7 @@ internal class IntArrayList {
 
     fun add(value: Int) {
         if (size >= intArray.size) {
-            expandArray()
+            intArray = intArray.copyOf(intArray.size * 2)
         }
         intArray[size] = value
         size++
@@ -28,14 +28,10 @@ internal class IntArrayList {
 
     operator fun get(i: Int) = intArray[i]
     fun intArray(): IntArray {
-        if(intArray.size > size) {
+        if (intArray.size > size) {
             intArray = intArray.copyOf(size)
         }
         return intArray
-    }
-
-    private fun expandArray() {
-        intArray = intArray.copyOf(intArray.size * 2)
     }
 }
 
@@ -46,7 +42,7 @@ internal class DoubleArrayList {
 
     fun add(value: Double) {
         if (size >= doubleArray.size) {
-            expandArray()
+            doubleArray = doubleArray.copyOf(doubleArray.size * 2)
         }
         doubleArray[size] = value
         size++
@@ -54,13 +50,10 @@ internal class DoubleArrayList {
 
     operator fun get(i: Int) = doubleArray[i]
     fun doubleArray(): DoubleArray {
-        if(doubleArray.size > size) {
+        if (doubleArray.size > size) {
             doubleArray = doubleArray.copyOf(size)
         }
         return doubleArray
-    }
-    private fun expandArray() {
-        doubleArray = doubleArray.copyOf(doubleArray.size * 2)
     }
 }
 
