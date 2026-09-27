@@ -15,3 +15,4 @@ cd ../../../..
 SOLUTION_PATH="$(pwd)/GraphSolutions/src/main/kotlin/MergedSolution.kt"
 echo "Saved solution to and copied the following path to the clipboard: $SOLUTION_PATH."
 printf '%s' "$SOLUTION_PATH" | { clip.exe || xclip -sel clip; } 2>/dev/null
+./scripts/generate-single-file.sh

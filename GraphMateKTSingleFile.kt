@@ -78,6 +78,8 @@ internal class UnboxedEdges {
         addEdge(u, v, 1.0)
     }
 
+    fun boxedEdges() = List(size) { i -> Triple(from[i], to[i], weights[i]) }
+
     fun deepCopy(): UnboxedEdges {
         val copy = UnboxedEdges()
         for (i in 0 until size) {
@@ -137,6 +139,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** @return a list of the nodes in the graph. */
     abstract fun nodes(): List<T>
 
+
     /** Adds the given node to the graph
      * @param node The node to add */
     abstract fun addNode(node: T)
@@ -148,6 +151,11 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param weight The weight of the edge, for example used to calculate distances with Dijkstra. Defaults to 1.0. */
     abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
+    /** @return a list of the Edges in the graph, where the edges are triples with: fromNode, toNode, weight */
+    fun edges() = finalizeAdjacencyListIfNeeded().run {
+        adjacencyList.edges().map { Triple(id2Node(it.first)!!, id2Node(it.second)!!, it.third) }
+    }
+
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
     protected abstract fun finalizeAdjacencyListIfNeeded()
@@ -157,7 +165,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         addEdge(node1, node2, weight.toDouble())
     }
 
-    // CORE GRAPH OPERATIONS
+// CORE GRAPH OPERATIONS
     /** Connects two nodes in the graph, by calling addEdge(node1,node2) and addEdge(node2, node1)
      *
      * @param node1 The first node to connect.
@@ -183,7 +191,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         addEdge(node2, node1, weight)
     }
 
-    // GRAPH INFORMATION
+// GRAPH INFORMATION
     /** @return The total number of nodes in the graph. */
     fun size() = nodes().size
 
@@ -305,7 +313,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         } ?: error("Node '$t' not found in graph")
     }
 
-    // SEARCH ALGORITHMS
+// SEARCH ALGORITHMS
 
     /** Performs a Breadth-First Search, which finds the shortest path from the starting node to all other nodes,
      * assuming the graph is unweighted (all edges have a weight of 1.0)
@@ -332,10 +340,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            val finalNode = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
-            val foundTarget = finalNode?.let { it == target } ?: false
-            if (foundTarget) {
-                finalPath = getPath(finalNode)
+            searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }?.also { finalNode ->
+                if (finalNode == target)
+                    finalPath = getPath(finalNode)
             }
         }
         if (debugTimeUse) {
@@ -445,23 +452,21 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         it[node2Id(u)!!][node2Id(v)!!]
     } ?: error("FloydWarshall must be run sucsessfully before calling distanceFromUtoV")
 
-    // ADDITIONAL ALGORITHMS
+// ADDITIONAL ALGORITHMS
     /** Computes the Minimum Spanning Tree (MST) of the graph using Prim's algorithm.
      *
      * If the graph is unweighted, it is first converted to a weighted graph with default edge weights.
      *
-     * @return A pair containing the total weight of the MST and the graph representing the MST.
+     * @return A pair containing the total weight of the MST and a graph whose edges represents the MST.
      * @throws IllegalStateException If the graph is empty or not fully connected. */
     fun minimumSpanningTree(): Pair<Double, Graph> {
         finalizeAdjacencyListIfNeeded()
         val timeStart = System.currentTimeMillis()
         val (totalWeight, mst) = prims(adjacencyList).run {
-            first to second.let { adjacencyList ->
+            first to second.let { connections ->
                 val mstGraph = Graph()
-                adjacencyList.forEachIndexed { id, edges ->
-                    edges.forEach { (w, v) ->
-                        mstGraph.connect(id2Node(id)!!, id2Node(v)!!, w)
-                    }
+                connections.edges().forEach { (u, v, w) ->
+                    mstGraph.addEdge(u, v, w)
                 }
                 mstGraph
             }
@@ -629,7 +634,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
     private val edges = UnboxedEdges()
-    private var adjacencyListIsFinalized = true
+    private var adjacencyListIsFinalized = false
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -1021,6 +1026,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
 internal interface AdjacencyList {
     fun nodes(): IntArray
+    fun edges(): List<Triple<Int, Int, Double>>
     fun neighbours(node: Int): IntArray
     fun weights(node: Int): DoubleArray
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
@@ -1060,6 +1066,7 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
     }
 
     override fun nodes() = IntArray(size) { it }
+    override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]
@@ -1111,6 +1118,7 @@ internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges
     }
 
     override fun nodes() = nodes
+    override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
     override fun weights(node: Int) = weights[node].doubleArray()
 
@@ -1317,38 +1325,36 @@ internal fun nrOfPaths(graph: AdjacencyList, start: Int, target: Int, mod: Long)
 }
 
 
-internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
+internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
     if (graph.size == 0) error("The graph is empty. Cannot do minimumSpanningTree")
 
     val visited = BooleanArray(graph.size)
-    val connections = MutableList<Edges>(graph.size) { mutableListOf() }
-    val pq = PriorityQueue<Triple<Double, Int, Int>> { a, b -> a.first.compareTo(b.first) }
+    val connections = UnboxedEdges()
+    val pq = PriorityQueue<Triple<Int, Int, Double>> { a, b -> a.third.compareTo(b.third) }
     var totalWeight = 0.0
 
     visited[0] = true
     graph.forEachEdge(0) { weight, to ->
-        pq.add(Triple(weight, 0, to))
+        pq.add(Triple(0, to, weight))
     }
     var c = 0
     while (c < graph.size - 1) {
         if (pq.isEmpty()) error("The graph is not fully connected. Cannot do minimumSpanningTree")
-        val (w, u, v) = pq.poll()
+        val (u, v, w) = pq.poll()
         if (visited[v]) continue
         visited[v] = true
         c++
         totalWeight += w
 
-        connections[u].add(Edge(w, v))
-        connections[v].add(Edge(w, u))
-
+        connections.addEdge(u, v, w)
         graph.forEachEdge(v) { weight, next ->
             if (!visited[next]) {
-                pq.add(Triple(weight, v, next))
+                pq.add(Triple(v, next, weight))
             }
         }
     }
 
-    return totalWeight to connections
+    return totalWeight to FlattenedAdjacencyList(graph.size, connections)
 }
 
 
