@@ -2,7 +2,7 @@ package graphMateKT.graphics.desktopGui
 
 internal object GUIConstants {
     const val width = 1024.0
-    const val height = 768.0
+    const val height = 724.0
     const val GUI_FONT_SIZE = 24.0
 
     const val GRAPH_INPUT = """0 Bob 10.0  // An edge from 0 to Bob with weight 10.0
@@ -20,7 +20,7 @@ Eve           // An isolated node with no edges
 #.#..#..
 .#.....1"""
 
-    const val INT_GRAPH_INPUT = """6 7 // Make the IntGraph have 6 nodes and 7 edges_
+    const val INT_GRAPH_INPUT = """6 // Make the IntGraph have 6 nodes
 0 2 3.0  // An edge from 0 to 2 with weight 3.0
 0 3 10.0 // An edge from 0 to 3 with weight 10.0
 3 1      // An edge from 3 to 1 with default weight 1.0
@@ -29,7 +29,7 @@ Eve           // An isolated node with no edges
 2 4 2.0
 4 2 5.0"""
 
-    const val ALGORITHM_INFO = "Select an algorithm to vizualize it's graph traversal.\n\n"
+    const val ALGORITHM_INFO = "Select an algorithm to visualize it's graph traversal.\n\n"
     const val START_NODE_INFO =
         "You can select the starting and target node for search algorithms (BFS, DFS, Dijkstra).\n\n"
     const val TARGET_NODE_INFO =

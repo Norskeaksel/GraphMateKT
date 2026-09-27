@@ -20,7 +20,7 @@ internal fun dominos(inputStream: InputStream): String {
     repeat(c) {
         val n = scanner.nextInt()
         val m = scanner.nextInt()
-        val graph = IntGraph(n, m, true)
+        val graph = IntGraph(n, true)
         repeat(m) {
             val u = scanner.nextInt()
             val v = scanner.nextInt()

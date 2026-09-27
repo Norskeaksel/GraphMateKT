@@ -36,5 +36,5 @@ internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
         }
     }
 
-    return Pair(totalWeight, connections)
+    return totalWeight to connections
 }

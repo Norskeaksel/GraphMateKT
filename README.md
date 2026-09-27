@@ -11,8 +11,7 @@ The library contains the general `Graph` class, which can be used to create grap
 class, which is performance optimized for integer nodes, and the `Grid` class, where each node has x and y coordinates
 in addition to containing any data type. All the classes inherit from the abstract
 [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
-class, which defines
-the basic functionality of the graphs.
+class, which defines the basic functionality of the graphs.
 
 ## Documentation
 
@@ -141,10 +140,10 @@ internal fun main() {
 
 
   /* --- Example IntGraph Definition ---
-       * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consist of nodes from 0 to size-1.
+       * An IntGraph needs to be initialized with a fixed size. It will consist of nodes from 0 to size-1.
   */
   val n = graph.size()
-  val intGraph = IntGraph(n, graph.nrOfEdges())
+  val intGraph = IntGraph(n)
   // Add the same edges as the above Graph
   graph.nodes().forEach { fromNode ->
     graph.edges(fromNode).forEach { edge ->
@@ -177,7 +176,7 @@ internal fun main() {
 The IntGraph class behaves a lot like the Graph class when used with integers like the example above. However,
 it's more performant, because it does not need to maintain an internal mapping between the nodes and their indexes in
 the adjacency list. The obvious drawback being it only supports integer nodes, and that it must be initialized with a
-fixed number of nodes (`size`) and edges (`nrOfEdges`).
+fixed number of nodes (`size`).
 [Example usage.](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
 ## The Grid class

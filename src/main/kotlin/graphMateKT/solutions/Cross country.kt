@@ -13,7 +13,7 @@ internal fun main() {
 /** Solves https://open.kattis.com/problems/crosscountry?tab=metadata */
 internal fun crossCountry(): Int {
     val (n, s, t) = readInts(3)
-    val graph = IntGraph(n, n * n)
+    val graph = IntGraph(n)
     repeat(n) { i ->
         val nodes = readDoubles(n)
         nodes.forEachIndexed { j, d ->

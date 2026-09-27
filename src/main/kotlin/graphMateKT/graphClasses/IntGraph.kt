@@ -1,6 +1,7 @@
 package graphMateKT.graphClasses
 
 import graphMateKT.IntComponents
+import graphMateKT.UnboxedEdges
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.DFS
 import kotlin.system.measureTimeMillis
@@ -10,7 +11,7 @@ import kotlin.system.measureTimeMillis
  * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
  * However, it's more performant, because it does not need to maintain an internal mapping between the nodes and their
  * indexes in the adjacency list. The obvious drawback being it only supports integer nodes.
- * It also requires the number of nodes and edges to be defined at initialization.
+ * It also requires the number of nodes to be defined at initialization.
  *
  * <i>Example usage:</i>
  *
@@ -24,15 +25,12 @@ import kotlin.system.measureTimeMillis
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
  *
- * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.
- * @param nrOfEdges The number of edges in the graph. This cannot be altered later. */
-class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: Boolean = false) :
+ * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.*/
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(debugTimeUse) {
 
     private val nodes = IntArray(size) { it }
-    private val from = IntArray(nrOfEdges)
-    private val to = IntArray(nrOfEdges)
-    private val weights = DoubleArray(nrOfEdges) { 1.0 }
+    private val edges = UnboxedEdges()
     private val nrOfEdgesFrom = IntArray(size)
     private var adjacencyListIsFinalized = false
 
@@ -43,21 +41,24 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         val ends = IntArray(size)
         val flattenedAdjacencyList = IntArray(edgesCount)
         val flattenWeights = DoubleArray(edgesCount)
+        val nrOfEdgesCopy = nrOfEdgesFrom.copyOf()
         var sum = 0
         repeat(size) { i ->
             starts[i] = sum
-            sum += nrOfEdgesFrom[i]
+            sum += nrOfEdgesCopy[i]
             ends[i] = sum
         }
         repeat(edgesCount) { i ->
-            val u = from[i]
-            val v = to[i]
-            val offset = --nrOfEdgesFrom[u]
-            val idx = starts[u] + offset
-            flattenedAdjacencyList[idx] = v
-            flattenWeights[idx] = weights[i]
+            edges.run {
+                val u = from[i]
+                val v = to[i]
+                val offset = --nrOfEdgesCopy[u]
+                val idx = starts[u] + offset
+                flattenedAdjacencyList[idx] = v
+                flattenWeights[idx] = weights[i]
+            }
         }
-        adjacencyList = FlattenedAdjacencyList(flattenedAdjacencyList, starts, ends, flattenWeights)
+        adjacencyList = FlattenedAdjacencyList(size, edges)
         adjacencyListIsFinalized = true
     }
 
@@ -65,22 +66,10 @@ class IntGraph(private val size: Int, private val nrOfEdges: Int, debugTimeUse: 
         error("IntGraph doesn't support addNode(), because nodes are set on initialization.")
 
     override fun addEdge(node1: Int, node2: Int, weight: Double) {
-        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
-        from[edgesCount] = node1
-        to[edgesCount] = node2
-        weights[edgesCount] = weight
-        nrOfEdgesFrom[node1]++
-        edgesCount++
         adjacencyListIsFinalized = false
-    }
-
-    override fun addEdge(node1: Int, node2: Int) {
-        require(edgesCount < nrOfEdges) { "Can't add a ${edgesCount + 1}th edge, becaues it exceedes nrOfEdges=${nrOfEdges()}" }
-        from[edgesCount] = node1
-        to[edgesCount] = node2
-        nrOfEdgesFrom[node1]++
+        edges.addEdge(node1, node2, weight)
         edgesCount++
-        adjacencyListIsFinalized = false
+        nrOfEdgesFrom[node1]++
     }
 
     override fun id2Node(id: Int) = id

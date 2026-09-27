@@ -15,7 +15,7 @@ internal fun ticketcompleted(inputStream: InputStream): Double {
     val scanner = InputReader(inputStream)
     val n = scanner.nextInt()
     val m = scanner.nextInt()
-    val graph = IntGraph(n + 1, m * 2)
+    val graph = IntGraph(n + 1)
     repeat(m) {
         val u = scanner.nextInt()
         val v = scanner.nextInt()

@@ -49,7 +49,7 @@ internal fun main() {
          * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consist of nodes from 0 to size-1.
     */
     val n = graph.size()
-    val intGraph = IntGraph(n, graph.nrOfEdges())
+    val intGraph = IntGraph(n)
     // Add the same edges as the above Graph
     graph.nodes().forEach { fromNode ->
         graph.edges(fromNode).forEach { edge ->

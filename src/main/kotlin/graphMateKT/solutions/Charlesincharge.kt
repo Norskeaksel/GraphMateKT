@@ -1,52 +1,48 @@
 package graphMateKT.solutions
 
-import graphMateKT.Edge
-import graphMateKT.Edges
+import graphMateKT.UnboxedEdges
 import graphMateKT.graphAlgorithms.Dijkstra
 import graphMateKT.graphClasses.NestedAdjacencyList
 import graphMateKT.readInts
 
-internal fun  main() {
+internal fun main() {
     val ans = charlesincharge()
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/charlesincharge */
-internal fun  charlesincharge(): String {
+internal fun charlesincharge(): String {
     val (n, m, x) = readInts(3)
-    val g: MutableList<Edges> = MutableList(n + 1) { mutableListOf() }
+    val g = UnboxedEdges()
     repeat(m) {
         val (u, v, w) = readInts(3)
-        val edgeUV: Edge = w.toDouble() to v
-        val edgeVU: Edge = w.toDouble() to u
-        g[u].add(edgeUV)
-        g[v].add(edgeVU)
+        g.addEdge(u, v, w.toDouble())
+        g.addEdge(v, u, w.toDouble())
     }
-    val dijkstra = Dijkstra(NestedAdjacencyList(g))
+    val dijkstra = Dijkstra(NestedAdjacencyList(n + 1, g))
     val seachResults = dijkstra.dijkstra(1)
     val shortestPath = seachResults.distances[n]
     val maxTime = shortestPath * (1 + x.toDouble() / 100)
-    return binarySearchDijkstra(g, maxTime).toString()
+    return binarySearchDijkstra(g, n, maxTime).toString()
 }
 
 private const val INF = 1e20
 private const val MAX_W = 1e9
-private fun binarySearchDijkstra(g: MutableList<Edges>, maxTime: Double): Int {
-    var lowerBound = g.minOf { it.minOfOrNull { e -> e.first } ?: MAX_W }.toInt()
-    var upperBound = g.maxOf { it.maxOfOrNull { e -> e.first } ?: MAX_W }.toInt()
+private fun binarySearchDijkstra(g: UnboxedEdges, n: Int, maxTime: Double): Int {
+    var lowerBound = (0 until g.size).minOf { g.weights[it] }.toInt()
+    var upperBound = (0 until g.size).maxOf { g.weights[it] }.toInt()
     while (upperBound - lowerBound >= 1) {
         val mid = (lowerBound + upperBound) / 2
-        g.forEachIndexed { u, edges ->
-            edges.forEachIndexed { v, edge ->
-                if (edge.first > mid && edge.first <= MAX_W) {
-                    g[u][v] = edge.first * INF to edge.second
-                } else if (edge.first > MAX_W && edge.first / INF <= mid) {
-                    g[u][v] = edge.first / INF to edge.second
-                }
+        for (i in 0 until g.size) {
+            val w = g.weights[i]
+            if (w > mid && w <= MAX_W) {
+                g.weights.doubleArray()[i] = w * INF
+            } else if (w > MAX_W && w / INF <= mid) {
+                g.weights.doubleArray()[i] = w / INF
             }
         }
-        val shortestPath = Dijkstra(NestedAdjacencyList(g)).dijkstra(1).distances[g.size - 1]
+        val shortestPath = Dijkstra(NestedAdjacencyList(n + 1, g)).dijkstra(1).distances[n]
         if (shortestPath <= maxTime) {
             upperBound = mid
         } else {
