@@ -31,6 +31,7 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
     }
 
     override fun nodes() = IntArray(size) { it }
+    override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray {
         val start = starts[node]
         val end = ends[node]

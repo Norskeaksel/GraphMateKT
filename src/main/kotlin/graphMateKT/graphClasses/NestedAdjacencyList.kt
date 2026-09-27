@@ -20,6 +20,7 @@ internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges
     }
 
     override fun nodes() = nodes
+    override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
     override fun weights(node: Int) = weights[node].doubleArray()
 

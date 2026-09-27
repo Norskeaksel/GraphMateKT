@@ -1,5 +1,6 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.Edges
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
@@ -23,6 +24,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** @return a list of the nodes in the graph. */
     abstract fun nodes(): List<T>
 
+
     /** Adds the given node to the graph
      * @param node The node to add */
     abstract fun addNode(node: T)
@@ -34,6 +36,11 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param weight The weight of the edge, for example used to calculate distances with Dijkstra. Defaults to 1.0. */
     abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
+    /** @return a list of the Edges in the graph, where the edges are triples with: fromNode, toNode, weight */
+    fun edges() = finalizeAdjacencyListIfNeeded().run {
+        adjacencyList.edges().map { Triple(id2Node(it.first)!!, id2Node(it.second)!!, it.third) }
+    }
+
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
     protected abstract fun finalizeAdjacencyListIfNeeded()
@@ -43,7 +50,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         addEdge(node1, node2, weight.toDouble())
     }
 
-    // CORE GRAPH OPERATIONS
+// CORE GRAPH OPERATIONS
     /** Connects two nodes in the graph, by calling addEdge(node1,node2) and addEdge(node2, node1)
      *
      * @param node1 The first node to connect.
@@ -69,7 +76,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         addEdge(node2, node1, weight)
     }
 
-    // GRAPH INFORMATION
+// GRAPH INFORMATION
     /** @return The total number of nodes in the graph. */
     fun size() = nodes().size
 
@@ -191,7 +198,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         } ?: error("Node '$t' not found in graph")
     }
 
-    // SEARCH ALGORITHMS
+// SEARCH ALGORITHMS
 
     /** Performs a Breadth-First Search, which finds the shortest path from the starting node to all other nodes,
      * assuming the graph is unweighted (all edges have a weight of 1.0)
@@ -218,10 +225,9 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
             val targetId = target?.let { node2Id(it) } ?: -1
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
-            val finalNode = searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }
-            val foundTarget = finalNode?.let { it == target } ?: false
-            if (foundTarget) {
-                finalPath = getPath(finalNode)
+            searchResults?.currentVisited?.lastOrNull()?.let { id2Node(it) }?.also { finalNode ->
+                if (finalNode == target)
+                    finalPath = getPath(finalNode)
             }
         }
         if (debugTimeUse) {
@@ -331,23 +337,21 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         it[node2Id(u)!!][node2Id(v)!!]
     } ?: error("FloydWarshall must be run sucsessfully before calling distanceFromUtoV")
 
-    // ADDITIONAL ALGORITHMS
+// ADDITIONAL ALGORITHMS
     /** Computes the Minimum Spanning Tree (MST) of the graph using Prim's algorithm.
      *
      * If the graph is unweighted, it is first converted to a weighted graph with default edge weights.
      *
-     * @return A pair containing the total weight of the MST and the graph representing the MST.
+     * @return A pair containing the total weight of the MST and a graph whose edges represents the MST.
      * @throws IllegalStateException If the graph is empty or not fully connected. */
     fun minimumSpanningTree(): Pair<Double, Graph> {
         finalizeAdjacencyListIfNeeded()
         val timeStart = System.currentTimeMillis()
         val (totalWeight, mst) = prims(adjacencyList).run {
-            first to second.let { adjacencyList ->
+            first to second.let { connections ->
                 val mstGraph = Graph()
-                adjacencyList.forEachIndexed { id, edges ->
-                    edges.forEach { (w, v) ->
-                        mstGraph.connect(id2Node(id)!!, id2Node(v)!!, w)
-                    }
+                connections.edges().forEach { (u, v, w) ->
+                    mstGraph.addEdge(u, v, w)
                 }
                 mstGraph
             }

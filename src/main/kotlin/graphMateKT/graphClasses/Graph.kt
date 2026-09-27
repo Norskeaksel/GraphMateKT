@@ -1,5 +1,6 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.Edges
 import graphMateKT.UnboxedEdges
 
 /** A general graph class that represents nodes of any datatype.
@@ -26,7 +27,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
     private val edges = UnboxedEdges()
-    private var adjacencyListIsFinalized = true
+    private var adjacencyListIsFinalized = false
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }

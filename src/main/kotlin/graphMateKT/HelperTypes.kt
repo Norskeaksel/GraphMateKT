@@ -75,6 +75,8 @@ internal class UnboxedEdges {
         addEdge(u, v, 1.0)
     }
 
+    fun boxedEdges() = List(size) { i -> Triple(from[i], to[i], weights[i]) }
+
     fun deepCopy(): UnboxedEdges {
         val copy = UnboxedEdges()
         for (i in 0 until size) {

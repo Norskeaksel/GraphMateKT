@@ -1,40 +1,38 @@
 package graphMateKT.graphAlgorithms
 
-import graphMateKT.Edge
-import graphMateKT.Edges
+import graphMateKT.UnboxedEdges
 import graphMateKT.graphClasses.AdjacencyList
+import graphMateKT.graphClasses.FlattenedAdjacencyList
 import java.util.*
 
-internal fun prims(graph: AdjacencyList): Pair<Double, MutableList<Edges>> {
+internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
     if (graph.size == 0) error("The graph is empty. Cannot do minimumSpanningTree")
 
     val visited = BooleanArray(graph.size)
-    val connections = MutableList<Edges>(graph.size) { mutableListOf() }
-    val pq = PriorityQueue<Triple<Double, Int, Int>> { a, b -> a.first.compareTo(b.first) }
+    val connections = UnboxedEdges()
+    val pq = PriorityQueue<Triple<Int, Int, Double>> { a, b -> a.third.compareTo(b.third) }
     var totalWeight = 0.0
 
     visited[0] = true
     graph.forEachEdge(0) { weight, to ->
-        pq.add(Triple(weight, 0, to))
+        pq.add(Triple(0, to, weight))
     }
     var c = 0
     while (c < graph.size - 1) {
         if (pq.isEmpty()) error("The graph is not fully connected. Cannot do minimumSpanningTree")
-        val (w, u, v) = pq.poll()
+        val (u, v, w) = pq.poll()
         if (visited[v]) continue
         visited[v] = true
         c++
         totalWeight += w
 
-        connections[u].add(Edge(w, v))
-        connections[v].add(Edge(w, u))
-
+        connections.addEdge(u, v, w)
         graph.forEachEdge(v) { weight, next ->
             if (!visited[next]) {
-                pq.add(Triple(weight, v, next))
+                pq.add(Triple(v, next, weight))
             }
         }
     }
 
-    return totalWeight to connections
+    return totalWeight to FlattenedAdjacencyList(graph.size, connections)
 }

@@ -2,6 +2,7 @@ package graphMateKT.graphClasses
 
 internal interface AdjacencyList {
     fun nodes(): IntArray
+    fun edges(): List<Triple<Int, Int, Double>>
     fun neighbours(node: Int): IntArray
     fun weights(node: Int): DoubleArray
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
