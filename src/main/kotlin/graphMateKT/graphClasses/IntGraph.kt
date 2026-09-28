@@ -58,7 +58,7 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
                 flattenWeights[idx] = weights[i]
             }
         }
-        adjacencyList = FlattenedAdjacencyList(size, edges)
+        adjacencyList = AdjacencyListFlattened(size, edges)
         adjacencyListIsFinalized = true
     }
 

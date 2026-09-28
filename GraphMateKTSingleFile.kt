@@ -661,7 +661,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun nodes(): List<Any> = id2Node.values.toList()
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = FlattenedAdjacencyList(nrOfNodes, edges)
+        adjacencyList = AdjacencyListFlattened(nrOfNodes, edges)
         adjacencyListIsFinalized = true
     }
 }
@@ -719,7 +719,7 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
                 flattenWeights[idx] = weights[i]
             }
         }
-        adjacencyList = FlattenedAdjacencyList(size, edges)
+        adjacencyList = AdjacencyListFlattened(size, edges)
         adjacencyListIsFinalized = true
     }
 
@@ -850,7 +850,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = FlattenedAdjacencyList(gridSize, edges)
+        adjacencyList = AdjacencyListFlattened(gridSize, edges)
         adjacencyListIsFinalized = true
     }
 
@@ -1040,7 +1040,7 @@ internal interface AdjacencyList {
 
 
 
-internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
+internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
     val nrOfEdges = edges.size
     val starts: IntArray = IntArray(nrOfNodes)
     val ends: IntArray = IntArray(nrOfNodes)
@@ -1097,14 +1097,14 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
         }
     }
 
-    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.deepCopy())
+    override fun deepCopy(): AdjacencyList = AdjacencyListFlattened(nrOfNodes, edges.deepCopy())
 
     override val size get() = nrOfNodes
-    override fun reversed(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.reversed())
+    override fun reversed(): AdjacencyList = AdjacencyListFlattened(nrOfNodes, edges.reversed())
 }
 
 
-internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
+internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
     private val nodes = IntArray(nrOfNodes) { it }
     private val neighbours = Array(nrOfNodes) { IntArrayList() }
     private val weights = Array(nrOfNodes) { DoubleArrayList() }
@@ -1137,9 +1137,9 @@ internal class NestedAdjacencyList(private val nrOfNodes: Int, private val edges
         }
     }
 
-    override fun deepCopy() = NestedAdjacencyList(nrOfNodes, edges.deepCopy())
+    override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
     override val size get() = nrOfNodes
-    override fun reversed() = NestedAdjacencyList(nrOfNodes, edges.reversed())
+    override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
 }
 
 

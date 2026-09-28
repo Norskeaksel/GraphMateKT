@@ -2,7 +2,7 @@ package graphMateKT.solutions
 
 import graphMateKT.UnboxedEdges
 import graphMateKT.graphAlgorithms.Dijkstra
-import graphMateKT.graphClasses.NestedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyListNested
 import graphMateKT.readInts
 
 internal fun main() {
@@ -20,7 +20,7 @@ internal fun charlesincharge(): String {
         g.addEdge(u, v, w.toDouble())
         g.addEdge(v, u, w.toDouble())
     }
-    val dijkstra = Dijkstra(NestedAdjacencyList(n + 1, g))
+    val dijkstra = Dijkstra(AdjacencyListNested(n + 1, g))
     val seachResults = dijkstra.dijkstra(1)
     val shortestPath = seachResults.distances[n]
     val maxTime = shortestPath * (1 + x.toDouble() / 100)
@@ -42,7 +42,7 @@ private fun binarySearchDijkstra(g: UnboxedEdges, n: Int, maxTime: Double): Int 
                 g.weights.doubleArray()[i] = w / INF
             }
         }
-        val shortestPath = Dijkstra(NestedAdjacencyList(n + 1, g)).dijkstra(1).distances[n]
+        val shortestPath = Dijkstra(AdjacencyListNested(n + 1, g)).dijkstra(1).distances[n]
         if (shortestPath <= maxTime) {
             upperBound = mid
         } else {

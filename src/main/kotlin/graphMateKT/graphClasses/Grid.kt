@@ -105,7 +105,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = FlattenedAdjacencyList(gridSize, edges)
+        adjacencyList = AdjacencyListFlattened(gridSize, edges)
         adjacencyListIsFinalized = true
     }
 
