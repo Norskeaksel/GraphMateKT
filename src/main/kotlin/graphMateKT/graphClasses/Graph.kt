@@ -1,6 +1,5 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edges
 import graphMateKT.UnboxedEdges
 
 /** A general graph class that represents nodes of any datatype.
@@ -56,7 +55,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun nodes(): List<Any> = id2Node.values.toList()
     override fun finalizeAdjacencyListIfNeeded() {
         if (adjacencyListIsFinalized) return
-        adjacencyList = FlattenedAdjacencyList(nrOfNodes, edges)
+        adjacencyList = AdjacencyListFlattened(nrOfNodes, edges)
         adjacencyListIsFinalized = true
     }
 }

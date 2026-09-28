@@ -2,7 +2,7 @@ package graphMateKT.graphClasses
 
 import graphMateKT.UnboxedEdges
 
-internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
+internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdges) : AdjacencyList {
     val nrOfEdges = edges.size
     val starts: IntArray = IntArray(nrOfNodes)
     val ends: IntArray = IntArray(nrOfNodes)
@@ -60,8 +60,8 @@ internal class FlattenedAdjacencyList(val nrOfNodes: Int, val edges: UnboxedEdge
         }
     }
 
-    override fun deepCopy(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.deepCopy())
+    override fun deepCopy(): AdjacencyList = AdjacencyListFlattened(nrOfNodes, edges.deepCopy())
 
     override val size get() = nrOfNodes
-    override fun reversed(): AdjacencyList = FlattenedAdjacencyList(nrOfNodes, edges.reversed())
+    override fun reversed(): AdjacencyList = AdjacencyListFlattened(nrOfNodes, edges.reversed())
 }

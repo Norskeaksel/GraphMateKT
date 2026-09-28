@@ -2,7 +2,7 @@ package graphMateKT.graphAlgorithms
 
 import graphMateKT.UnboxedEdges
 import graphMateKT.graphClasses.AdjacencyList
-import graphMateKT.graphClasses.FlattenedAdjacencyList
+import graphMateKT.graphClasses.AdjacencyListFlattened
 import java.util.*
 
 internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
@@ -34,5 +34,5 @@ internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
         }
     }
 
-    return totalWeight to FlattenedAdjacencyList(graph.size, connections)
+    return totalWeight to AdjacencyListFlattened(graph.size, connections)
 }
