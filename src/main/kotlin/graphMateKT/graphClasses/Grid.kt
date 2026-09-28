@@ -186,6 +186,14 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         }
     }
 
+    private fun getStraightNeighbourIds(id: Int): List<Int> {
+        val up = (id - width).let { if (it >= 0 && nodes[it] != null) it else null }
+        val left = (id - 1).let { if (it % width != width - 1 && nodes[it] != null) it else null }
+        val right = (id + 1).let { if (it % width != 0 && nodes[it] != null) it else null }
+        val down = (id + width).let { if (it < gridSize && nodes[it] != null) it else null }
+        return listOfNotNull(up, left, right, down)
+    }
+
     /** Retrieves the straight (orthogonal) neighbors of the given tile.
      *
      * The neighbors are the tiles directly above, to the left, to the right and below the given tile, in that order,
@@ -194,6 +202,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param t The tile for which to retrieve the straight neighbors.
      * @return A list of straight neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getStraightNeighbours(t: Tile) =
+        //getStraightNeighbourIds(t.idGivenWidth(width)).map { nodes[it]!! } TODO debug why this don't work
         listOfNotNull(
             xy2Node(t.x, t.y - 1),
             xy2Node(t.x - 1, t.y),
