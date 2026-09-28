@@ -4,6 +4,7 @@ import fastInputReader.InputReader
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Graph
 import java.io.InputStream
+import java.util.Locale
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -41,7 +42,7 @@ internal fun arcticNetwork(inputStream: InputStream): String {
         val edges = mst.edges().sortedBy { it.third }
         // mst.visualizeGraph(true)
         val requiredD = edges[p - 2 - (s - 1).coerceAtLeast(0)].third
-        ans.appendLine(String.format("%.2f", requiredD))
+        ans.appendLine(String.format(Locale.US, "%.2f", requiredD))
     }
     return ans.toString()
 }

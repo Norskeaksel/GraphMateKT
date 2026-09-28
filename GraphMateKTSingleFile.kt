@@ -749,6 +749,9 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
         }
         return scc
     }
+    fun connectWeightlessIntGraph(getNeighboours: (Int) -> List<Int>){
+
+    }
 }
 
 
