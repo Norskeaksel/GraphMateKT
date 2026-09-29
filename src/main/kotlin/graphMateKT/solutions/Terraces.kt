@@ -25,7 +25,7 @@ internal fun terraces(inputStream: InputStream): Int {
             grid.addNode(Tile(x, y, height))
         }
     }
-    grid.connectGrid { t ->
+    grid.connectWithRule { t ->
         grid.getStraightNeighbours(t).filter { it.data == t.data }
     }
     val plateaus = mutableListOf<List<Tile>>()

@@ -19,6 +19,7 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
         }
     }
 
+    override val isDynamic = false
     override fun nodes() = nodes
     override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
@@ -40,5 +41,6 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
 
     override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
     override val size get() = nrOfNodes
+
     override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
 }

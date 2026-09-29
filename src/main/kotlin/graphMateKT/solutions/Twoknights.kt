@@ -31,7 +31,7 @@ ZXCVBNM<>?
         val y = index / width
         grid.addNode(Tile(x, y, pair))
     }
-    grid.connectGrid { t ->
+    grid.connectWithRule { t ->
         val (x, y) = t.x to t.y
         val possibleMoves = listOf(
             (x + 2 to y + 1), (x + 2 to y - 1), (x - 2 to y + 1), (x - 2 to y - 1),

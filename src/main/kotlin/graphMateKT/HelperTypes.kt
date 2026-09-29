@@ -1,9 +1,7 @@
 package graphMateKT
 
 /** Edge has a weight w to a destination node v */
-typealias Edge = Pair<Double, Int>
-/** Mutable list of edges */
-typealias Edges = MutableList<Edge>
+internal typealias Edge = Pair<Double, Int>
 /** List of list of nodes */
 typealias Components = List<List<Any>>
 /** List of list of integer nodes */

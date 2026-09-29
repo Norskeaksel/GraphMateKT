@@ -24,7 +24,7 @@ internal fun watersheds(): String {
                 grid.addNode(Tile(x, y, data))
             }
         }
-        grid.connectGrid(true) { t ->
+        grid.connectWithRule { t ->
             val drainage = grid.getStraightNeighbours(t).filter {
                 (it.data as Int) < (t.data as Int)
             }

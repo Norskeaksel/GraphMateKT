@@ -1,5 +1,6 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.UnboxedEdges
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
@@ -10,10 +11,13 @@ import graphMateKT.graphAlgorithms.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
+abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTimeUse: Boolean = false) {
     // PROPERTIES AND INITIALIZATION
-    internal lateinit var adjacencyList: AdjacencyList
+    internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
+    internal val edges = UnboxedEdges()
+    protected var adjacencyListIsFinalized = false
     protected var edgesCount = 0
+    protected var nrOfNodes = initialNrOfNodes
 
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
@@ -36,13 +40,27 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
     /** @return a list of the Edges in the graph, where the edges are triples with: fromNode, toNode, weight */
-    fun edges() = finalizeAdjacencyListIfNeeded().run {
+    fun edges() = finalizeAdjacencyListIfNeeded(true).run {
         adjacencyList.edges().map { Triple(id2Node(it.first)!!, id2Node(it.second)!!, it.third) }
     }
 
     protected abstract fun node2Id(node: T): Int?
     protected abstract fun id2Node(id: Int): T?
-    protected abstract fun finalizeAdjacencyListIfNeeded()
+    protected fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
+        if (adjacencyListIsFinalized && (!fullGraphIsNeeded || !adjacencyList.isDynamic))
+            return
+        if (adjacencyList.isDynamic) {
+            nodes().forEach { u ->
+                val uId = node2Id(u)!!
+                adjacencyList.forEachNeighbour(uId) { vId ->
+                    edges.addEdge(uId, vId)
+                }
+            }
+        }
+        adjacencyList = AdjacencyListFlattened(nrOfNodes, edges)
+        adjacencyListIsFinalized = true
+    }
+
 
     /** Overloaded function that calls addEdge with weight converted to a double. */
     fun addEdge(node1: T, node2: T, weight: Int) {
@@ -155,7 +173,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param t The node whose edges are to be retrieved.
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded().run {
+    fun edges(t: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded(true).run {
         node2Id(t)?.let {
             val neighbours = adjacencyList.neighbours(it)
             val weights = adjacencyList.weights(it)
@@ -176,7 +194,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param t The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded().run {
+    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
         node2Id(t)?.let { adjacencyList.neighbours(it) }
             ?.map { id2Node(it)!! }
             ?: error("Node '$t' not found in graph")
@@ -189,7 +207,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param t The node whose neighbours we want to process
      * @param action The function to be called on each neighbour
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded().run {
+    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
         node2Id(t)?.let { u ->
             adjacencyList.forEachNeighbour(u) { v ->
                 id2Node(v)?.let(action)
@@ -218,7 +236,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) ?: error("Node '$node' not found in graph") }
             val targetId = target?.let { node2Id(it) } ?: -1
@@ -252,7 +270,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * previously visited nodes will not be visited again.
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun dfs(startNode: T, reset: Boolean = true) {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")
             if (reset) searchResults = null
@@ -282,7 +300,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
      * @throws IllegalStateException If the starting node is not found in the graph. */
     fun shortestPaths(startNode: T, target: T? = null) {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             if (edgesCount == 0) {
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
@@ -310,7 +328,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun allPairsShortestPaths() {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             if (edgesCount == 0) {
                 System.err.println("Warning: The graph has no edges, making pathfinding infeasible.")
@@ -344,7 +362,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A pair containing the total weight of the MST and a graph whose edges represents the MST.
      * @throws IllegalStateException If the graph is empty or not fully connected. */
     fun minimumSpanningTree(): Pair<Double, Graph> {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(true)
         val timeStart = System.currentTimeMillis()
         val (totalWeight, mst) = prims(adjacencyList).run {
             first to second.let { connections ->
@@ -369,7 +387,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return A list of nodes in topological order if the graph was a DAG.
      * Otherwise, returns a list of nodes in undefined order */
     open fun topologicalSort(): List<T> {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(true)
         val topologicalSorting: List<T>
         val time = measureTimeMillis {
             topologicalSorting = DFS(adjacencyList).topologicalSort().map { id2Node(it)!! }
@@ -390,7 +408,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      *
      * @return A list of strongly connected components, where each component is a list of nodes. */
     open fun stronglyConnectedComponents(): List<List<T>> {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(true)
         val scc: List<List<T>>
         val time = measureTimeMillis {
             val sccIds = DFS(adjacencyList).stronglyConnectedComponents()
@@ -413,7 +431,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      * @return The number of distinct paths from the starting node to the target node.
      * @throws IllegalStateException If either the starting node or the target node is not found in the graph. */
     fun nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE): Long {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(false)
         val nrOfPaths: Long
         val time = measureTimeMillis {
             val startId = node2Id(startNode) ?: error("Node '$startNode' not found in graph")

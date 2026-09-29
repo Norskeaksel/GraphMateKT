@@ -22,7 +22,7 @@ internal fun noway(): Long {
             }
         }
     }
-    g.connectGrid { t ->
+    g.connectWithRule { t ->
         g.getStraightNeighbours(t).filter { it.x >= t.x && it.y >= t.y }
     }
     val start = Tile(0,0)

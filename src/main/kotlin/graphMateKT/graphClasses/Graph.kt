@@ -21,12 +21,9 @@ import graphMateKT.UnboxedEdges
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
-    private var nrOfNodes = 0
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val edges = UnboxedEdges()
-    private var adjacencyListIsFinalized = false
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -34,7 +31,6 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
 
     override fun addNode(node: Any) {
         if (node2id.containsKey(node)) {
-            //debug("Warning: The node already exists, it can't be added again")
             return
         }
         node2id[node] = nrOfNodes
@@ -53,9 +49,4 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
     override fun node2Id(node: Any): Int? = node2id[node]
     override fun id2Node(id: Int): Any? = id2Node[id]
     override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun finalizeAdjacencyListIfNeeded() {
-        if (adjacencyListIsFinalized) return
-        adjacencyList = AdjacencyListFlattened(nrOfNodes, edges)
-        adjacencyListIsFinalized = true
-    }
 }

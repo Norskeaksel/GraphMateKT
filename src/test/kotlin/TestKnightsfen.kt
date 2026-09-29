@@ -1,4 +1,4 @@
-import graphMateKT.solutions.knightsfen
+/* import graphMateKT.solutions.knightsfen
         
 
 import org.assertj.core.api.Assertions.assertThat
@@ -9,7 +9,7 @@ import kotlin.system.measureTimeMillis
 
 class KnightsfenTest {
 
-    /* @Test
+    @Test
     fun knightsfena() {
         val expectedOutput = """Unsolvable in less than 11 move(s).
 Solvable in 7 move(s).
@@ -29,5 +29,5 @@ Solvable in 7 move(s).
             }
             debug("knightsfen time use: $time ms")
         }
-    }*/
-}
+    }
+}*/
