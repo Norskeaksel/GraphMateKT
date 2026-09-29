@@ -19,17 +19,17 @@ internal fun islandBuses(): String {
         val islandGrid = Grid(mapList).apply {
             deleteNodesWithData('.')
             deleteNodesWithData('B')
-            connectGridDefault()
+            this.connectGridDefault()
         }
         val bridgesGrid = Grid(mapList).apply {
             deleteNodesWithData('.')
             deleteNodesWithData('X')
             deleteNodesWithData('#')
-            connectGridDefault()
+            this.connectGridDefault()
         }
         val busesGrid = Grid(mapList).apply {
             deleteNodesWithData('.')
-            connectGrid {
+            connectWithRule {
                 when (it.data) {
                     '#' -> getStraightNeighbours(it).filter { it.data != 'B' }
                     'B' -> getStraightNeighbours(it).filter { it.data != '#' }

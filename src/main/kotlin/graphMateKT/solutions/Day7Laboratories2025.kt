@@ -15,7 +15,7 @@ internal fun Day7Laboratories2025(input: List<String>): Long {
     val g = Grid(input)
     val sink = Tile(0,0, '^')
     g.addNode(sink)
-    g.connectGrid { t ->
+    g.connectWithRule { t ->
         if (t.data == '^')
             emptyList()
         else {

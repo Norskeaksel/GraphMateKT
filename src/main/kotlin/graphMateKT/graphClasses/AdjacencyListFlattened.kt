@@ -8,7 +8,7 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
     val ends: IntArray = IntArray(nrOfNodes)
     val flattenedNeighbours = IntArray(nrOfEdges)
     val flattenedWeights = DoubleArray(nrOfEdges)
-
+    override val isDynamic = false
     init {
         val nrOfEdgesFrom = IntArray(nrOfNodes)
         edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }

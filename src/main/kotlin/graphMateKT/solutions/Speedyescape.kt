@@ -8,7 +8,7 @@ import graphMateKT.readInts
 import java.util.*
 
 
-/*internal fun main() {
+/*internal fun main() { TODO fix this file
     val ans = speedyescape()
     if (ans == -1.0)
         println("IMPOSSIBLE")

@@ -20,7 +20,7 @@ internal fun grid(): Int {
         lines.add(line)
     }
     val grid = Grid(lines)
-    grid.connectGrid { t ->
+    grid.connectWithRule { t ->
         val nr = t.data as Char - '0'
         val neighbours = listOfNotNull(
             grid.xy2Node(t.x + nr, t.y),

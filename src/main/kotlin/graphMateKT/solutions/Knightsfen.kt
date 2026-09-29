@@ -5,7 +5,7 @@ import graphMateKT.graphAlgorithms.BFS
 import graphMateKT.graphClasses.AdjacencyList
 import java.io.InputStream
 
-internal fun main() {
+/* internal fun main() {
     val ans = knightsfen(System.`in`)
     println(ans)
     System.out.flush()
@@ -58,4 +58,4 @@ internal fun knightsfen(inputStream: InputStream): String {
         bfs.bfs(listOf(1))
     }
     return ""
-}
+}*/

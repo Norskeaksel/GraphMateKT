@@ -936,6 +936,20 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         }
     }
 
+    private fun getStraightNeighbourIds(id: Int): IntArray {
+        val x = id % width
+        val y = id / width
+        val neighbours = IntArray(4)
+        var c = 0
+        // @formatter:off
+        if (y > 0)          nodes[id - width]?.let { neighbours[c++] = id - width }
+        if (x > 0)          nodes[id - 1]?.let     { neighbours[c++] = id - 1 }
+        if (x < width - 1)  nodes[id + 1]?.let     { neighbours[c++] = id + 1 }
+        if (y < height - 1) nodes[id + width]?.let { neighbours[c++] = id + width }
+        // @formatter:on
+        return if (c == 4) neighbours else neighbours.copyOf(c)
+    }
+
     /** Retrieves the straight (orthogonal) neighbors of the given tile.
      *
      * The neighbors are the tiles directly above, to the left, to the right and below the given tile, in that order,
@@ -975,6 +989,17 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @return A list of all neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getAllNeighbours(t: Tile) = getStraightNeighbours(t) + getDiagonalNeighbours(t)
 
+    private fun getNeighbourIds(getNeighbours: (t: Tile) -> List<Tile>): (id: Int) -> IntArray {
+        return { id ->
+            val neighbours = getNeighbours(nodes[id]!!)
+            val neighbourIds = IntArray(neighbours.size)
+            neighbours.forEachIndexed { i, node ->
+                neighbourIds[i] = node2Id(node)
+            }
+            neighbourIds
+        }
+    }
+
     /** Connects all nodes in the grid with their neighbors, using a user-defined function to determine the neighbors.
      *
      * This function iterates through all nodes in the grid and connects each node to its neighbors as determined
@@ -995,24 +1020,18 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * Defaults to false because many connection pattens are inherently unidirectional, and we want to avoid duplicate edges.
      * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
      */
-    fun connectGrid(isBidirectional: Boolean = false, getNeighbours: (t: Tile) -> List<Tile>) {
-        adjacencyListIsFinalized = false
-        nodes().forEach { t ->
-            val neighbours = getNeighbours(t)
-            neighbours.forEach {
-                if (isBidirectional) {
-                    connect(t, it)
-                } else {
-                    addEdge(t, it)
-                }
-            }
-        }
+    fun connectGrid(getNeighbours: (t: Tile) -> List<Tile>) {
+        adjacencyList = AdjacecnyListDynamic(gridSize, getNeighbourIds(getNeighbours))
+        adjacencyListIsFinalized =
+            true // TODO: Make compatible with addEdge and graph functions by making dynamic edges static if needed
     }
 
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        connectGrid { getStraightNeighbours(it) }
+        // connectGraph { getStraightNeighbours(it) }
+        adjacencyList = AdjacecnyListDynamic(gridSize, ::getStraightNeighbourIds)
+        adjacencyListIsFinalized = true
     }
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/
@@ -1028,35 +1047,19 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 }
 
 internal interface AdjacencyList {
+    private class IncompatibleAlgorithm(message: String) : Exception(message)
+
+    val size: Int
+    val isDynamic: Boolean
     fun forEachNeighbour(node: Int, action: (Int) -> Unit)
     fun forEachEdge(node: Int, action: (Double, Int) -> Unit)
-    val size: Int
-
-    fun nodes(): IntArray {
-        throw NotImplementedError("nodes() not implemented for ${this::class.simpleName}")
-    }
-
-    fun edges(): List<Triple<Int, Int, Double>> {
-        throw NotImplementedError("edges() not implemented for ${this::class.simpleName}")
-    }
-
-    fun neighbours(node: Int): IntArray {
-        throw NotImplementedError("neighbours() not implemented for ${this::class.simpleName}")
-    }
-
-    fun weights(node: Int): DoubleArray {
-        throw NotImplementedError("weights() not implemented for ${this::class.simpleName}")
-    }
-
-
-    fun deepCopy(): AdjacencyList {
-        throw NotImplementedError("deepCopy() not implemented for ${this::class.simpleName}")
-    }
-
-    fun reversed(): AdjacencyList {
-        throw NotImplementedError("reversed() not implemented for ${this::class.simpleName}")
-    }
-}package graphMateKT.graphClasses
+    fun nodes(): IntArray
+    fun edges(): List<Triple<Int, Int, Double>>
+    fun neighbours(node: Int): IntArray
+    fun weights(node: Int): DoubleArray
+    fun deepCopy(): AdjacencyList
+    fun reversed(): AdjacencyList
+}
 
 
 internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
@@ -1074,6 +1077,7 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
         }
     }
 
+    override val isDynamic = false
     override fun nodes() = nodes
     override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
@@ -1095,6 +1099,7 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
 
     override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
     override val size get() = nrOfNodes
+
     override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
 }
 
@@ -1105,7 +1110,7 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
     val ends: IntArray = IntArray(nrOfNodes)
     val flattenedNeighbours = IntArray(nrOfEdges)
     val flattenedWeights = DoubleArray(nrOfEdges)
-
+    override val isDynamic = false
     init {
         val nrOfEdgesFrom = IntArray(nrOfNodes)
         edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }

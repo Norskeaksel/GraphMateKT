@@ -45,8 +45,8 @@ internal fun  buggyrobot(): String {
     grid.deleteNodesWithData('#')
     // debug("Grid making took $gridMakeingTime ms")
     val connectTime = measureTimeMillis {
-        grid.connectGrid { t ->
-            if (t.data == 'G') return@connectGrid emptyList<Tile>()
+        grid.connectWithRule { t ->
+            if (t.data == 'G') return@connectWithRule emptyList<Tile>()
             val neighbours = grid.getStraightNeighbours(t)
             val commandNr = t.x / width
             if (commandNr >= commands.length)

@@ -2,9 +2,9 @@
 
 cd "$(dirname "$0")/.."
 cd src/main/kotlin/graphMateKT
-cat solutions/ArcticNetwork.kt HelperTypes.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
-graphClasses/Grid.kt graphClasses/AdjacencyList.kt graphClasses/FlattenedAdjacencyList.kt graphClasses/NestedAdjacencyList.kt \
-graphAlgorithms/BFS.kt graphAlgorithms/DFS.kt graphAlgorithms/Dijkstra.kt graphAlgorithms/FloydWarshall.kt \
+cat solutions/RobotsOnAGrid.kt HelperTypes.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
+graphClasses/Grid.kt graphClasses/AdjacencyList.kt graphClasses/AdjacencyListFlattened.kt graphClasses/AdjacencyListNested.kt \
+graphClasses/AdjacecnyListDynamic.kt graphAlgorithms/BFS.kt graphAlgorithms/DFS.kt graphAlgorithms/Dijkstra.kt graphAlgorithms/FloydWarshall.kt \
 graphAlgorithms/GraphSearchResults.kt graphAlgorithms/NrOfPaths.kt \
 graphAlgorithms/Prims.kt AdvancedRead.kt ../fastInputReader/InputReader.kt | \
 sed '/^package/d' | sed '/import graphClasses\.\*/d' | sed '/^import graphMateKT/d' \
