@@ -39,7 +39,7 @@ $dokka.location:fastInputReader/InputReader/nextStringMatrix/#kotlin.Int#kotlin.
 $dokka.location:fastInputReader/InputReader/nextStringMatrix1/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/next-string-matrix1.html
 $dokka.location:graphMateKT.graphClasses////PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/index.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html
-$dokka.location:graphMateKT.graphClasses/BaseGraph/BaseGraph/#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/-base-graph.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/BaseGraph/#kotlin.Int#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/-base-graph.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/addEdge/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/add-edge.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/addEdge/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/add-edge.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/addNode/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/add-node.html
@@ -49,6 +49,7 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/bfs/#kotlin.collections.List[
 $dokka.location:graphMateKT.graphClasses/BaseGraph/connect/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/connect.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/connect/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/connect.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/connect/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/connect.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/connectWithRule/#kotlin.Function1[TypeParam(bounds=[kotlin.Any]),kotlin.collections.List[TypeParam(bounds=[kotlin.Any])]]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/connect-with-rule.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/currentVisitedNodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/current-visited-nodes.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/depth/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/depth.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/dfs/#TypeParam(bounds=[kotlin.Any])#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/dfs.html
@@ -86,7 +87,6 @@ $dokka.location:graphMateKT.graphClasses/Grid/Grid/#kotlin.Int#kotlin.Int#kotlin
 $dokka.location:graphMateKT.graphClasses/Grid/Grid/#kotlin.collections.List[kotlin.String]#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/-grid.html
 $dokka.location:graphMateKT.graphClasses/Grid/addEdge/#graphMateKT.Tile#graphMateKT.Tile#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/add-edge.html
 $dokka.location:graphMateKT.graphClasses/Grid/addNode/#graphMateKT.Tile/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/add-node.html
-$dokka.location:graphMateKT.graphClasses/Grid/connectGrid/#kotlin.Boolean#kotlin.Function1[graphMateKT.Tile,kotlin.collections.List[graphMateKT.Tile]]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/connect-grid.html
 $dokka.location:graphMateKT.graphClasses/Grid/connectGridDefault/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/connect-grid-default.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodeAtXY/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-node-at-x-y.html
 $dokka.location:graphMateKT.graphClasses/Grid/deleteNodesWithData/#kotlin.Any?/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/delete-nodes-with-data.html
@@ -129,8 +129,6 @@ $dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/forEachNeighbour/#
 $dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/size/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/size.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
-$dokka.location:graphMateKT/Edge///PointingToDeclaration/graphmatekt/graphMateKT/-edge/index.html
-$dokka.location:graphMateKT/Edges///PointingToDeclaration/graphmatekt/graphMateKT/-edges/index.html
 $dokka.location:graphMateKT/GridComponents///PointingToDeclaration/graphmatekt/graphMateKT/-grid-components/index.html
 $dokka.location:graphMateKT/IntComponents///PointingToDeclaration/graphmatekt/graphMateKT/-int-components/index.html
 $dokka.location:graphMateKT/Tile///PointingToDeclaration/graphmatekt/graphMateKT/-tile/index.html
