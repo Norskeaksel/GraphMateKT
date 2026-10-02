@@ -1,9 +1,7 @@
 package graphMateKT.solutions
 
 import fastInputReader.InputReader
-import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
-import graphMateKT.graphics.gridGraphics.visualizeGrid
 import java.io.InputStream
 
 internal fun main() {
@@ -31,7 +29,7 @@ internal fun signalJamInTheGrid(inputStream: InputStream): Int {
         val w = if (u.dataIsDigit()) u.data as Char - '0' else 0
         grid.getStraightNeighbours(u).forEach { v ->
             grid.addEdge(u, v, w)
-            grid.addEdge(u, grid.xy2Node(v.x + m + 1, v.y) ?: return@forEach, 1)
+            grid.addEdge(u, grid.xy2NodeOrNull(v.x + m + 1, v.y) ?: return@forEach, 1)
         }
     }
     grid.shortestPaths(start, end)

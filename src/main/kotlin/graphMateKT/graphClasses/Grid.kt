@@ -140,7 +140,15 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param x The x-coordinate of the node.
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
-    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
+    fun xy2NodeOrNull(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
+
+    /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
+     *
+     * @param x The x-coordinate of the node.
+     * @param y The y-coordinate of the node.
+     * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location.
+     * @throws IllegalStateException if no node is found at coordinates (x, y) */
+    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) } ?: error("No node found at coordinates ($x, $y)")
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
@@ -199,10 +207,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @return A list of straight neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getStraightNeighbours(t: Tile) =
         listOfNotNull(
-            xy2Node(t.x, t.y - 1),
-            xy2Node(t.x - 1, t.y),
-            xy2Node(t.x + 1, t.y),
-            xy2Node(t.x, t.y + 1),
+            xy2NodeOrNull(t.x, t.y - 1),
+            xy2NodeOrNull(t.x - 1, t.y),
+            xy2NodeOrNull(t.x + 1, t.y),
+            xy2NodeOrNull(t.x, t.y + 1),
         )
 
     /** Retrieves the diagonal neighbors of the given tile.
@@ -213,10 +221,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param t The tile for which to retrieve the diagonal neighbors.
      * @return A list of diagonal neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getDiagonalNeighbours(t: Tile) = listOfNotNull(
-        xy2Node(t.x - 1, t.y - 1),
-        xy2Node(t.x + 1, t.y - 1),
-        xy2Node(t.x - 1, t.y + 1),
-        xy2Node(t.x + 1, t.y + 1),
+        xy2NodeOrNull(t.x - 1, t.y - 1),
+        xy2NodeOrNull(t.x + 1, t.y - 1),
+        xy2NodeOrNull(t.x - 1, t.y + 1),
+        xy2NodeOrNull(t.x + 1, t.y + 1),
     )
 
     /** Retrieves all neighbors (both straight and diagonal) of the given tile.

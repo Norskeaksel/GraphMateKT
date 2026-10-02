@@ -39,8 +39,8 @@ internal fun honeyheist(): String {
 
     grid.print()
     grid.connectWithRule { t ->
-        val downLeft = grid.xy2Node(t.x - 1, t.y + 1)
-        val upRight = grid.xy2Node(t.x + 1, t.y - 1)
+        val downLeft = grid.xy2NodeOrNull(t.x - 1, t.y + 1)
+        val upRight = grid.xy2NodeOrNull(t.x + 1, t.y - 1)
         grid.getAllNeighbours(t).filter { it != downLeft && it != upRight && it.data!=null }
     }
     // println("14 edges: ${grid.getEdges(grid.getNodes().first { it.data == 14 }).map { grid.id2Node(it.second)!!.data }}")

@@ -101,6 +101,7 @@ $dokka.location:graphMateKT.graphClasses/Grid/stronglyConnectedComponents/#/Poin
 $dokka.location:graphMateKT.graphClasses/Grid/topologicalSort/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/topological-sort.html
 $dokka.location:graphMateKT.graphClasses/Grid/width/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/width.html
 $dokka.location:graphMateKT.graphClasses/Grid/xy2Node/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/xy2-node.html
+$dokka.location:graphMateKT.graphClasses/Grid/xy2NodeOrNull/#kotlin.Int#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/xy2-node-or-null.html
 $dokka.location:graphMateKT.graphClasses/IntGraph///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/index.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/IntGraph/#kotlin.Int#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/-int-graph.html
 $dokka.location:graphMateKT.graphClasses/IntGraph/addEdge/#kotlin.Int#kotlin.Int#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-int-graph/add-edge.html
@@ -117,16 +118,11 @@ $dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/grap
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGridComponents/kotlin.collections.List[kotlin.collections.List[graphMateKT.Tile]]#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid-components.html
 $dokka.location:graphMateKT.solutions////PointingToDeclaration/graphmatekt/graphMateKT.solutions/index.html
-$dokka.location:graphMateKT.solutions//board2BitCode/#kotlin.collections.List[kotlin.String]/PointingToDeclaration/graphmatekt/graphMateKT.solutions/board2-bit-code.html
+$dokka.location:graphMateKT.solutions//board2Id/#kotlin.collections.List[kotlin.String]/PointingToDeclaration/graphmatekt/graphMateKT.solutions/board2-id.html
 $dokka.location:graphMateKT.solutions//dim/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/dim.html
+$dokka.location:graphMateKT.solutions//id2Board/#kotlin.Int/PointingToDeclaration/graphmatekt/graphMateKT.solutions/id2-board.html
 $dokka.location:graphMateKT.solutions//maxDepth/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/max-depth.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList///PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/index.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/KnightGridAdjacencyList/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/-knight-grid-adjacency-list.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/dx/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/dx.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/dy/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/dy.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/forEachEdge/#kotlin.Int#kotlin.Function2[kotlin.Double,kotlin.Int,kotlin.Unit]/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/for-each-edge.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/forEachNeighbour/#kotlin.Int#kotlin.Function1[kotlin.Int,kotlin.Unit]/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/for-each-neighbour.html
-$dokka.location:graphMateKT.solutions/KnightGridAdjacencyList/size/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/-knight-grid-adjacency-list/size.html
+$dokka.location:graphMateKT.solutions//nrOfPermutations/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions/nr-of-permutations.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/GridComponents///PointingToDeclaration/graphmatekt/graphMateKT/-grid-components/index.html

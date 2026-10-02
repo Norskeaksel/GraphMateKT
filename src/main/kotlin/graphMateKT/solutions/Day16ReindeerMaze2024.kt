@@ -30,10 +30,10 @@ internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {
             grid.addEdge(u, v, 1000)
         }
         val v = when {
-            u.x < dim -> grid.xy2Node(u.x + 1, u.y)
-            u.x < dim * 2 -> grid.xy2Node(u.x, u.y - 1)
-            u.x < dim * 3 -> grid.xy2Node(u.x - 1, u.y)
-            else -> grid.xy2Node(u.x, u.y + 1)
+            u.x < dim -> grid.xy2NodeOrNull(u.x + 1, u.y)
+            u.x < dim * 2 -> grid.xy2NodeOrNull(u.x, u.y - 1)
+            u.x < dim * 3 -> grid.xy2NodeOrNull(u.x - 1, u.y)
+            else -> grid.xy2NodeOrNull(u.x, u.y + 1)
         } ?: return@forEach
         grid.addEdge(u, v)
     }
