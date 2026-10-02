@@ -46,7 +46,9 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
         adjacencyListIsFinalized = false
     }
 
-    override fun node2Id(node: Any): Int? = node2id[node]
-    override fun id2Node(id: Int): Any? = id2Node[id]
+    override fun node2IdOrNull(node: Any): Int? = node2id[node]
+    override fun node2Id(node: Any): Int = node2id[node] ?: error("Node '$node' not found in graph")
+    override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
+    override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
     override fun nodes(): List<Any> = id2Node.values.toList()
 }
