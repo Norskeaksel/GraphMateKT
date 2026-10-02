@@ -97,9 +97,11 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         activeNodesNeedUpdating = true
     }
 
+    override fun node2IdOrNull(node: Tile): Int? = xy2Id(node.x, node.y)
     override fun node2Id(node: Tile) = node.x + node.y * width
+    override fun id2NodeOrNull(id: Int) = nodes.getOrNull(id)
+    override fun id2Node(id: Int): Tile = nodes.getOrNull(id) ?: error("Node with ID $id not found in grid")
 
-    override fun id2Node(id: Int) = if (id in 0 until gridSize) nodes[id] else null
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
         val u = node2Id(node1)
         val v = node2Id(node2)
@@ -118,14 +120,14 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
 
     override fun topologicalSort() =
         finalizeAdjacencyListIfNeeded(true).run {
-            DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it)!! }.also {
+            DFS(adjacencyList).topologicalSort(deleted()).map { id2Node(it) }.also {
                 finalPath = it
             }
         }
 
     override fun stronglyConnectedComponents(): GridComponents =
         finalizeAdjacencyListIfNeeded(true).run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
-            .map { component -> component.mapNotNull { id2Node(it) } }
+            .map { component -> component.mapNotNull { id2NodeOrNull(it) } }
 
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }
 
@@ -138,7 +140,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param x The x-coordinate of the node.
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
-    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) }
+    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
@@ -177,18 +179,15 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
         }
     }
 
-    private fun getStraightNeighbourIds(id: Int): IntArray {
+    private fun forEachStraightNeighbourId(id: Int, action: (Int) -> Unit) {
         val x = id % width
         val y = id / width
-        val neighbours = IntArray(4)
-        var c = 0
         // @formatter:off
-        if (y > 0)          nodes[id - width]?.let { neighbours[c++] = id - width }
-        if (x > 0)          nodes[id - 1]?.let     { neighbours[c++] = id - 1 }
-        if (x < width - 1)  nodes[id + 1]?.let     { neighbours[c++] = id + 1 }
-        if (y < height - 1) nodes[id + width]?.let { neighbours[c++] = id + width }
+        if (y > 0)          nodes[id - width]?.let { action(id - width) }
+        if (x > 0)          nodes[id - 1]?.let     { action(id - 1) }
+        if (x < width - 1)  nodes[id + 1]?.let     { action(id + 1) }
+        if (y < height - 1) nodes[id + width]?.let { action(id + width) }
         // @formatter:on
-        return if (c == 4) neighbours else neighbours.copyOf(c)
     }
 
     /** Retrieves the straight (orthogonal) neighbors of the given tile.
@@ -230,46 +229,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @return A list of all neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getAllNeighbours(t: Tile) = getStraightNeighbours(t) + getDiagonalNeighbours(t)
 
-    private fun getNeighbourIds(getNeighbours: (t: Tile) -> List<Tile>): (id: Int) -> IntArray {
-        return { id ->
-            val neighbours = getNeighbours(nodes[id]!!)
-            val neighbourIds = IntArray(neighbours.size)
-            neighbours.forEachIndexed { i, node ->
-                neighbourIds[i] = node2Id(node)
-            }
-            neighbourIds
-        }
-    }
-
-    /** Connects all nodes in the grid with their neighbors, using a user-defined function to determine the neighbors.
-     *
-     * This function iterates through all nodes in the grid and connects each node to its neighbors as determined
-     * by the `getNeighbours` function. The connections can be either unidirectional or bidirectional, based on the
-     * `isBidirectional` parameter.
-     *
-     * <i>Example usage:<i>
-     * ```
-     * val grid = Grid(100,100, true)
-     * grid.connectGrid { t ->
-     *     grid.getStraightNeighbours(t) + grid.getDiagonalNeighbours(t)
-     * }
-     * grid.bfs(Tile(50,50))
-     * grid.visualizeGrid()
-     * ```
-     *
-     * Defaults to false because many connection pattens are inherently unidirectional, and we want to avoid duplicate edges.
-     * @param getNeighbours A function that takes a `Tile` as input and returns a list of neighboring `Tile` objects to connect to.
-     */
-    fun connectWithRule(getNeighbours: (t: Tile) -> List<Tile>) {
-        adjacencyList = AdjacecnyListDynamic(gridSize, getNeighbourIds(getNeighbours))
-        adjacencyListIsFinalized = true
-    }
-
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        // connectGraph { getStraightNeighbours(it) }
-        adjacencyList = AdjacecnyListDynamic(gridSize, ::getStraightNeighbourIds)
+        adjacencyList = AdjacecnyListDynamic(gridSize, ::forEachStraightNeighbourId)
         adjacencyListIsFinalized = true
     }
 

@@ -44,7 +44,9 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
         nrOfEdgesFrom[node1]++
     }
 
+    override fun id2NodeOrNull(id: Int) = id
     override fun id2Node(id: Int) = id
+    override fun node2IdOrNull(node: Int) = node
     override fun node2Id(node: Int) = node
     override fun nodes() = nodes.toList()
     override fun stronglyConnectedComponents(): IntComponents {
