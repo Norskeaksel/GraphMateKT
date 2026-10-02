@@ -53,7 +53,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
 
     /** Connects all nodes in the graph dynamically/lazily with their neighbors.
      *
-     * This function takes a user-defined function to determine the neighbors of a node in the grid. Search algorithms,
+     * This function takes a user-defined function to determine the neighbors of a node in the graph. Search algorithms,
      * (bfs or dfs) can then use these definitions to search without requiring the full graph to be pre connected.
      * If another function is run, all nodes in the graph will be iterated through and be connected to their neighbors,
      * as defined * by the `getNeighbours` function. (If possible)

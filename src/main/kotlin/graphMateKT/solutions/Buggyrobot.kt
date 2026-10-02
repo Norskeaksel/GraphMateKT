@@ -53,13 +53,13 @@ internal fun  buggyrobot(): String {
                 neighbours
             else {
                 val nextGridTile = when (val command = commands[commandNr]) {
-                    'U' -> grid.xy2Node(t.x + width, t.y - 1)
-                    'D' -> grid.xy2Node(t.x + width, t.y + 1)
-                    'L' -> grid.xy2Node(t.x + width - 1, t.y)
-                    'R' -> grid.xy2Node(t.x + width + 1, t.y)
+                    'U' -> grid.xy2NodeOrNull(t.x + width, t.y - 1)
+                    'D' -> grid.xy2NodeOrNull(t.x + width, t.y + 1)
+                    'L' -> grid.xy2NodeOrNull(t.x + width - 1, t.y)
+                    'R' -> grid.xy2NodeOrNull(t.x + width + 1, t.y)
                     else -> error("Invalid command: $command")
                 }
-                neighbours + if (nextGridTile == null) listOfNotNull(grid.xy2Node(t.x + width, t.y)) else listOf(
+                neighbours + if (nextGridTile == null) listOfNotNull(grid.xy2NodeOrNull(t.x + width, t.y)) else listOf(
                     nextGridTile
                 )
             }

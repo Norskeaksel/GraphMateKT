@@ -12,7 +12,8 @@ internal fun day18aRAMRun2024(input: List<String>, gridSize: Int, lineCount: Int
         grid.deleteNodeAtXY(x, y)
     }
     grid.connectGridDefault()
-    val goal = grid.xy2Node(gridSize - 1, gridSize - 1)!!
+    val goal = grid.xy2Node(gridSize - 1, gridSize - 1)
+
     grid.bfs(Tile(0,0), goal)
     val ans = grid.distanceTo(goal).toInt()
     // grid.visualizeSearch()

@@ -37,7 +37,7 @@ ZXCVBNM<>?
             (x + 2 to y + 1), (x + 2 to y - 1), (x - 2 to y + 1), (x - 2 to y - 1),
             (x + 1 to y + 2), (x + 1 to y - 2), (x - 1 to y + 2), (x - 1 to y - 2)
         )
-        possibleMoves.mapNotNull { (xx, yy) -> grid.xy2Node(xx, yy) }
+        possibleMoves.mapNotNull { (xx, yy) -> grid.xy2NodeOrNull(xx, yy) }
     }
     var ans = ""
     while (true) {
