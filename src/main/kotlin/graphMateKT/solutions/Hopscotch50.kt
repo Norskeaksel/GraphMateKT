@@ -43,7 +43,7 @@ internal fun hopscotch50(inputStream: InputStream): Int {
     }
     var min = Double.MAX_VALUE
     startNodes.forEach { u ->
-        grid.dijkstra(u)
+        grid.shortestPaths(u)
         endNodes.forEach { v ->
             val currentMin = grid.distanceTo(v)
             if (currentMin < min) {

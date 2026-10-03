@@ -15,7 +15,7 @@ internal fun main(){
             val (u,v,w) = readInts(3)
             g.addEdge(u,v,w.toDouble())
         }
-        g.dijkstra(s)
+        g.shortestPaths(s)
         repeat(q){
             val goal = readInt()
             if(g.distanceTo(goal) == Double.POSITIVE_INFINITY)

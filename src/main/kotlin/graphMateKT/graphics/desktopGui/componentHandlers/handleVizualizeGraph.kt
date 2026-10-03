@@ -22,7 +22,7 @@ internal fun handleVizualizeGraph(
     when (algorithmSelector.value) {
         Algorithms.BFS -> graph.bfs(start, target)
         Algorithms.DFS -> graph.dfs(start)
-        Algorithms.Dijkstra -> graph.dijkstra(start, target)
+        Algorithms.Dijkstra -> graph.shortestPaths(start, target)
         Algorithms.StronglyConnectedComponents -> graph.stronglyConnectedComponents().run {
             visualizeComponents()
             return

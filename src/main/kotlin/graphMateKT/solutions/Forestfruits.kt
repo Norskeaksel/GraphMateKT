@@ -24,7 +24,7 @@ internal fun forestfruits(inputStream: InputStream): Long {
         graph.connect(scanner.nextInt(), scanner.nextInt(), scanner.nextInt())
     }
     val fruitPoints = scanner.nextIntArray(c)
-    graph.dijkstra(1)
+    graph.shortestPaths(1)
     val fruitPointsSorted = fruitPoints.sortedBy { graph.distanceTo(it) }
     val lastlyNeededFruitIdx = min(k - 1, m - 1)
     if (lastlyNeededFruitIdx >= fruitPointsSorted.size) {

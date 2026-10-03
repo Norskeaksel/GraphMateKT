@@ -20,7 +20,7 @@ internal fun slowleak(): String {
         val (i, j, k) = readInts(3)
         g.connect(i, j, k.toDouble())
     }
-    g.floydWarshall()
+    g.allPairsShortestPaths()
     val compressedGraphNodes = repairStations + listOf(start, goal)
     val compressedGraph = Graph()
     compressedGraphNodes.forEach { node ->
@@ -35,7 +35,7 @@ internal fun slowleak(): String {
                 compressedGraph.connect(u, v, w)
         }
     }
-    compressedGraph.dijkstra(start)
+    compressedGraph.shortestPaths(start)
     val finalDistance = compressedGraph.distanceTo(goal)
     return if (finalDistance == Double.POSITIVE_INFINITY)
         "stuck"

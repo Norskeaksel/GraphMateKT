@@ -34,7 +34,7 @@ internal fun signalJamInTheGrid(inputStream: InputStream): Int {
             grid.addEdge(u, grid.xy2Node(v.x + m + 1, v.y) ?: return@forEach, 1)
         }
     }
-    grid.dijkstra(start, end)
+    grid.shortestPaths(start, end)
     //grid.visualizeGrid()
     return if(grid.foundTarget()) grid.distanceTo(end).coerceAtMost(grid.distanceTo(firstEnd)).toInt() else -1
 }
