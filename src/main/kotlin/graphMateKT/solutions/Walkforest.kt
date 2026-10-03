@@ -24,7 +24,7 @@ internal fun walkforest(): String {
             val (a, b, l) = readInts(3)
             g.connect(a, b, l)
         }
-        g.dijkstra(2, 1)
+        g.shortestPaths(2, 1)
         val dag = makeDAG(g)
         //g.visualize(true)
         //dag.visualize()

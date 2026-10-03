@@ -1,6 +1,5 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.Edges
 import graphMateKT.debug
 import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
@@ -264,7 +263,7 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
         }
     }
 
-    /** Performs Dijkstra's algorithm, which finds the shortest path from the starting node to all other nodes. It
+    /** Performs Dijkstra's algorithm to find the shortest path from the starting node to all other nodes. It
      *  stores results that can be retrieved with the following functions:
      *
      * - `depth()`
@@ -278,11 +277,11 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
      *
      * If the graph is unweighted or has no weighted connections, a warning is issued, and BFS is executed instead.
      *
-     * @param startNode The starting node for Dijkstra's algorithm.
+     * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
-     * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
-    fun dijkstra(startNode: T, target: T? = null) {
+     * @throws IllegalStateException If the starting node is not found in the graph. */
+    fun shortestPaths(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             if (edgesCount == 0) {
@@ -303,14 +302,14 @@ abstract class BaseGraph<T : Any>(protected val debugTimeUse: Boolean = false) {
     /** Executes the Floyd-Warshall algorithm on the graph to compute the shortest paths between all pairs of nodes.
      *
      * This function calculates the shortest path distances for every pair of nodes in the graph and stores the results
-     * in the `allDistances` property. The algorithm works for both weighted and unweighted graphs, but it assumes that
+     * in the `allDistances` property. The algorithm works with some negative weights, but it assumes that
      * the graph does not contain negative weight cycles.
      *
-     * The results can be retrieved using the `distanceFromUtoV(u: T, v: T)` function, which provides the shortest distance
-     * between any two nodes.
+     * The results can be retrieved using the `distanceFromUtoV(u: T, v: T)` function, which provides the shortest
+     * distance between any two nodes.
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
-    fun floydWarshall() {
+    fun allPairsShortestPaths() {
         finalizeAdjacencyListIfNeeded()
         val time = measureTimeMillis {
             if (edgesCount == 0) {

@@ -38,7 +38,7 @@ internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {
         grid.addEdge(u, v)
     }
     val start = grid.nodes().first { it.data == 'S' }
-    grid.dijkstra(start)
+    grid.shortestPaths(start)
     val goal = grid.nodes().filter { it.data as Char == 'E' }.minBy { grid.distanceTo(it) }
     val finalPath = grid.getPath(goal)!!
     // grid.visualizeGrid(finalPath = finalPath, screenWidthMultiplier = 2.0, startPaused = true)
@@ -50,7 +50,7 @@ internal fun Day16ReindeerMaze2024Part2(grid: Grid, optimalDistance: Double): In
     val goals = grid.nodes().filter { it.data as Char == 'E' }
     val nodesInAnOptimalPath = mutableSetOf<Tile>()
     ProgressBar.wrap(grid.nodes(), "Part 2").forEach { t ->
-        grid.dijkstra(t)
+        grid.shortestPaths(t)
         if (distanceFromStartToNode[t]!! + goals.minOf { grid.distanceTo(it) } == optimalDistance) {
             nodesInAnOptimalPath.add(Tile(t.x % dim, t.y))
         }

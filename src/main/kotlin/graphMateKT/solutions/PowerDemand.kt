@@ -2,7 +2,6 @@ package graphMateKT.solutions
 
 import fastInputReader.InputReader
 import graphMateKT.graphClasses.Graph
-import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
 
 internal fun main() {
@@ -72,7 +71,7 @@ internal fun powerDemand(inputStream: InputStream): Int {
         }
     }
     graph.printConnections()
-    graph.dijkstra(initialState, goalState)
+    graph.shortestPaths(initialState, goalState)
     // graph.visualizeGraph()
     return graph.distanceTo(goalState).toInt()
 }

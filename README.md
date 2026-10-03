@@ -72,11 +72,11 @@ Once the graph is built, you may use the following graph algorithms:
 - **Depth-First Search (DFS)**:
     - `dfs(startNode: T, reset: Boolean = true)`
 
-- **Dijkstra's Algorithm**:
-    - `dijkstra(startNode: T, target: T? = null)`
+- **Shortest Paths (Dijkstra)**:
+    - `shortestPaths(startNode: T, target: T? = null)`
 
-- **Floyd-Warshall Algorithm**:
-    - `floydWarshall()`
+- **All Pairs Shortest Paths (Floyd-Warshall)**:
+    - `allPairsShortestPaths()`
 
 - **Topological Sort**:
     - `topologicalSort()`
@@ -84,7 +84,7 @@ Once the graph is built, you may use the following graph algorithms:
 - **Strongly Connected Components (SCC)**:
     - `stronglyConnectedComponents()`
 
-- **Prims (MST)**:
+- **Minimum Spanning Tree (Prims)**:
     - `minimumSpanningTree()`
 - **NrOfPaths**:
     - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
