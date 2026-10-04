@@ -113,7 +113,7 @@ internal fun main() {
 
   val startNode = 0
   val targetNode = 3
-  graph.dijkstra(startNode)
+  graph.shortestPaths(startNode)
   val nodes: List<Int> =
     graph.nodes().map { it as Int } // Nodes are of type Any and must therefore be cast to Int
   println("Shortest paths from source node $startNode:")
@@ -152,7 +152,7 @@ internal fun main() {
       intGraph.addEdge(fromNode as Int, toNode, weight)
     }
   }
-  intGraph.dijkstra(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
+  intGraph.shortestPaths(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
   val intNodes: List<Int> = intGraph.nodes()
   println("Shortest paths from source node $startNode:")
   intNodes.forEach { node ->
