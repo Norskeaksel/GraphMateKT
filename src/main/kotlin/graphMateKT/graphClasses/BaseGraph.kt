@@ -270,13 +270,13 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
-    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
+    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
+            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults, maxDepth)
             searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                 if (finalNode == target)
                     finalPath = getPath(finalNode)
@@ -290,8 +290,8 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
      * an optional target, instead of a list of starting nodes and an optional list of targets
      * @returnRuns bfs(listOf(startNode), target, reset) */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) =
-        bfs(listOf(startNode), target, reset)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) =
+        bfs(listOf(startNode), target, reset, maxDepth)
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
