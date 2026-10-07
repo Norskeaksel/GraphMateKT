@@ -12,6 +12,7 @@ import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Duration
 
@@ -74,11 +75,17 @@ internal class BidirectionalGraphGraphics : Application() {
             timeline.keyFrames.add(keyFrame)
         }
 
-        timeline.play()
+        if (closeOnEnd) {
+            timeline.setOnFinished { stage.close() }
+        }
 
-        graphVisualization.setOnKeyPressed { event ->
+        if (!startPaused) {
+            timeline.play()
+        }
+        graphVisualization.addEventFilter(KeyEvent.KEY_PRESSED) { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
+                event.consume()
             }
         }
     }

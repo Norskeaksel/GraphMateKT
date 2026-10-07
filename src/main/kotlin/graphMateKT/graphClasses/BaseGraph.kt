@@ -50,13 +50,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     protected abstract fun id2Node(id: Int): T
 
 
-
-    /** Connects all nodes in the graph dynamically/lazily with their neighbors.
-     *
-     * This function takes a user-defined function to determine the neighbors of a node in the graph. Search algorithms,
-     * (bfs or dfs) can then use these definitions to search without requiring the full graph to be pre connected.
-     * If another function is run, all nodes in the graph will be iterated through and be connected to their neighbors,
-     * as defined * by the `getNeighbours` function. (If possible)
+    /** Adds edges for each node in the graph to their neighbors as defined by the given function.
      *
      * <i>Example usage (if invoked from a grid):<i>
      * ```
@@ -70,7 +64,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * @param getNeighbours A user defined function that takes a `Node` as input and returns a list of neighboring `Nodes`
      */
-    fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
+    open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
         adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
         adjacencyListIsFinalized = true
     }
@@ -157,8 +151,9 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun visitedNodes() = searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
-        ?: emptyList()
+    fun visitedNodes() =
+        searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
+            ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
      * (DFS, BFS, Dijkstra)
@@ -226,12 +221,12 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * WARNING: should be replaced by the forEachNeighbour function if performance is critical, to avoid copying overhead.
      *
-     * @param t The node whose neighbors are to be retrieved.
+     * @param u The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
+    fun neighbours(u: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
         val neighbours = mutableListOf<T>()
-        adjacencyList.forEachNeighbour(node2Id(t)) { v ->
+        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
             id2NodeOrNull(v)?.let { neighbours.add(it) }
         }
         neighbours
@@ -241,11 +236,11 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * More performant then retrieving a copied list of nodes and calling forEach on them
      *
-     * @param t The node whose neighbours we want to process
+     * @param u The node whose neighbours we want to process
      * @param action The function to be called on each neighbour
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
-        adjacencyList.forEachNeighbour(node2Id(t)) { v ->
+    fun forEachNeighbour(u: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
+        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
             id2NodeOrNull(v)?.let(action)
         }
     }
@@ -531,17 +526,12 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
         System.err.println("$it ---> ${edges(it)}")
     }
 
-    /** Returns a string representation of the graph, showing which nodes each node is connected to. */
-    override fun toString(): String {
-        return buildString {
-            nodes().forEach { node ->
-                val edges = edges(node)
-                val edgeString = edges.joinToString { it.second.toString() }
-                append("$node ----> [$edgeString]\n")
-            }
+    /** Prints which nodes each node is connected to. */
+    fun printConnections() = buildString {
+        nodes().forEach { node ->
+            val edges = edges(node)
+            val edgeString = edges.joinToString { it.second.toString() }
+            append("$node ----> [$edgeString]\n")
         }
     }
-
-    /** Prints which nodes each node is connected to. */
-    fun printConnections() = System.err.println(toString())
 }

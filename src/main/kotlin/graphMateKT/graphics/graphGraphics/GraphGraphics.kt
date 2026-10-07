@@ -12,6 +12,7 @@ import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Duration
 
@@ -42,7 +43,7 @@ internal class GraphGraphics : Application() {
         val container = SmartGraphDemoContainer(graphView)
         val graphVisualization = Scene(container)
         stage.apply {
-            title = BidirectionalGraphGraphics.screenTitle
+            title = screenTitle
             scene = graphVisualization
             width = GUIConstants.width
             height = GUIConstants.height
@@ -75,12 +76,18 @@ internal class GraphGraphics : Application() {
             timeline.keyFrames.add(keyFrame)
         }
 
+        if (closeOnEnd) {
+            timeline.setOnFinished { stage.close() }
+        }
+
         if (!startPaused) {
             timeline.play()
         }
-        graphVisualization.setOnKeyPressed { event ->
+
+        graphVisualization.addEventFilter(KeyEvent.KEY_PRESSED) { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
+                event.consume()
             }
         }
     }

@@ -163,13 +163,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     protected abstract fun id2Node(id: Int): T
 
 
-
-    /** Connects all nodes in the graph dynamically/lazily with their neighbors.
-     *
-     * This function takes a user-defined function to determine the neighbors of a node in the grid. Search algorithms,
-     * (bfs or dfs) can then use these definitions to search without requiring the full graph to be pre connected.
-     * If another function is run, all nodes in the graph will be iterated through and be connected to their neighbors,
-     * as defined * by the `getNeighbours` function. (If possible)
+    /** Adds edges for each node in the graph to their neighbors as defined by the given function.
      *
      * <i>Example usage (if invoked from a grid):<i>
      * ```
@@ -183,7 +177,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * @param getNeighbours A user defined function that takes a `Node` as input and returns a list of neighboring `Nodes`
      */
-    fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
+    open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
         adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
         adjacencyListIsFinalized = true
     }
@@ -270,8 +264,9 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun visitedNodes() = searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
-        ?: emptyList()
+    fun visitedNodes() =
+        searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
+            ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
      * (DFS, BFS, Dijkstra)
@@ -339,12 +334,12 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * WARNING: should be replaced by the forEachNeighbour function if performance is critical, to avoid copying overhead.
      *
-     * @param t The node whose neighbors are to be retrieved.
+     * @param u The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun neighbours(t: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
+    fun neighbours(u: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
         val neighbours = mutableListOf<T>()
-        adjacencyList.forEachNeighbour(node2Id(t)) { v ->
+        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
             id2NodeOrNull(v)?.let { neighbours.add(it) }
         }
         neighbours
@@ -354,11 +349,11 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      *
      * More performant then retrieving a copied list of nodes and calling forEach on them
      *
-     * @param t The node whose neighbours we want to process
+     * @param u The node whose neighbours we want to process
      * @param action The function to be called on each neighbour
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun forEachNeighbour(t: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
-        adjacencyList.forEachNeighbour(node2Id(t)) { v ->
+    fun forEachNeighbour(u: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
+        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
             id2NodeOrNull(v)?.let(action)
         }
     }
@@ -383,13 +378,13 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
-    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true) {
+    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults)
+            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults, maxDepth)
             searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                 if (finalNode == target)
                     finalPath = getPath(finalNode)
@@ -403,8 +398,8 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
      * an optional target, instead of a list of starting nodes and an optional list of targets
      * @returnRuns bfs(listOf(startNode), target, reset) */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true) =
-        bfs(listOf(startNode), target, reset)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) =
+        bfs(listOf(startNode), target, reset, maxDepth)
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
@@ -644,19 +639,14 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
         System.err.println("$it ---> ${edges(it)}")
     }
 
-    /** Returns a string representation of the graph, showing which nodes each node is connected to. */
-    override fun toString(): String {
-        return buildString {
-            nodes().forEach { node ->
-                val edges = edges(node)
-                val edgeString = edges.joinToString { it.second.toString() }
-                append("$node ----> [$edgeString]\n")
-            }
+    /** Prints which nodes each node is connected to. */
+    fun printConnections() = buildString {
+        nodes().forEach { node ->
+            val edges = edges(node)
+            val edgeString = edges.joinToString { it.second.toString() }
+            append("$node ----> [$edgeString]\n")
         }
     }
-
-    /** Prints which nodes each node is connected to. */
-    fun printConnections() = System.err.println(toString())
 }
 
 
@@ -702,6 +692,14 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
         edges.addEdge(id1, id2, weight)
         edgesCount++
         adjacencyListIsFinalized = false
+    }
+
+    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
+        nodes().forEach { u ->
+            getNeighbours(u).forEach { v ->
+                addEdge(u, v)
+            }
+        }
     }
 
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
@@ -905,7 +903,15 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param x The x-coordinate of the node.
      * @param y The y-coordinate of the node.
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
-    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
+    fun xy2NodeOrNull(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
+
+    /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
+     *
+     * @param x The x-coordinate of the node.
+     * @param y The y-coordinate of the node.
+     * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location.
+     * @throws IllegalStateException if no node is found at coordinates (x, y) */
+    fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) } ?: error("No node found at coordinates ($x, $y)")
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
         nodes[id] = null
@@ -964,10 +970,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @return A list of straight neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getStraightNeighbours(t: Tile) =
         listOfNotNull(
-            xy2Node(t.x, t.y - 1),
-            xy2Node(t.x - 1, t.y),
-            xy2Node(t.x + 1, t.y),
-            xy2Node(t.x, t.y + 1),
+            xy2NodeOrNull(t.x, t.y - 1),
+            xy2NodeOrNull(t.x - 1, t.y),
+            xy2NodeOrNull(t.x + 1, t.y),
+            xy2NodeOrNull(t.x, t.y + 1),
         )
 
     /** Retrieves the diagonal neighbors of the given tile.
@@ -978,10 +984,10 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * @param t The tile for which to retrieve the diagonal neighbors.
      * @return A list of diagonal neighbors of the given tile, or an empty list if no neighbors exist. */
     fun getDiagonalNeighbours(t: Tile) = listOfNotNull(
-        xy2Node(t.x - 1, t.y - 1),
-        xy2Node(t.x + 1, t.y - 1),
-        xy2Node(t.x - 1, t.y + 1),
-        xy2Node(t.x + 1, t.y + 1),
+        xy2NodeOrNull(t.x - 1, t.y - 1),
+        xy2NodeOrNull(t.x + 1, t.y - 1),
+        xy2NodeOrNull(t.x - 1, t.y + 1),
+        xy2NodeOrNull(t.x + 1, t.y + 1),
     )
 
     /** Retrieves all neighbors (both straight and diagonal) of the given tile.
@@ -1142,6 +1148,7 @@ internal class BFS(private val graph: AdjacencyList) {
         startIds: List<Int>,
         targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
+        maxDepth: Int = Int.MAX_VALUE,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
@@ -1158,6 +1165,9 @@ internal class BFS(private val graph: AdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
+            if (currentDistance > maxDepth) {
+                return r
+            }
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
                 if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {

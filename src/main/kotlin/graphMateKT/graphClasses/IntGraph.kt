@@ -29,8 +29,8 @@ import kotlin.system.measureTimeMillis
 class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
     BaseGraph<Int>(size, debugTimeUse) {
 
-    private val nodes = IntArray(size) { it }
-    private val nrOfEdgesFrom = IntArray(size)
+    private val nodes by lazy { IntArray(size) { it } }
+    private val nrOfEdgesFrom by lazy { IntArray(size) }
 
     /** IntGraph doesn't support addNode(), because nodes are set on initialization.
      * @throws IllegalStateException if called.*/

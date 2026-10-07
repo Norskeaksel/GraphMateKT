@@ -46,6 +46,14 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
         adjacencyListIsFinalized = false
     }
 
+    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
+        nodes().forEach { u ->
+            getNeighbours(u).forEach { v ->
+                addEdge(u, v)
+            }
+        }
+    }
+
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
     override fun node2Id(node: Any): Int = node2id[node] ?: error("Node '$node' not found in graph")
     override fun id2NodeOrNull(id: Int): Any? = id2Node[id]

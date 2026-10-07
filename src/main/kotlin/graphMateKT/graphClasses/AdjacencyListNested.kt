@@ -5,7 +5,7 @@ import graphMateKT.IntArrayList
 import graphMateKT.UnboxedEdges
 
 internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
-    private val nodes = IntArray(nrOfNodes) { it }
+    private val nodes by lazy { IntArray(nrOfNodes) { it } }
     private val neighbours = Array(nrOfNodes) { IntArrayList() }
     private val weights = Array(nrOfNodes) { DoubleArrayList() }
 
