@@ -25,8 +25,8 @@ internal class BFS(private val graph: AdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
-            if (currentDistance > maxDepth) {
-                return r
+            if (currentDistance >= maxDepth) {
+                continue
             }
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
@@ -34,6 +34,50 @@ internal class BFS(private val graph: AdjacencyList) {
                     r.parents[v] = currentId
                     r.depth = newDistance.toInt().coerceAtLeast(r.depth)
                     r.distances[v] = newDistance
+                    if (v == targetId) {
+                        r.currentVisited.add(v)
+                        r.foundTarget = true
+                    }
+                    queue.add(v)
+                }
+            }
+        }
+        r.processedOrder = r.currentVisited
+        return r
+    }
+
+    fun bfsSparse(
+        startIds: List<Int>,
+        targetId: Int = -1,
+        previousSearchResult: GraphSearchResults? = null,
+        maxDepth: Int = Int.MAX_VALUE,
+    ): GraphSearchResults {
+        val r = previousSearchResult ?: GraphSearchResults(graph.size)
+        r.currentVisited.clear()
+        val queue = ArrayDeque<Int>()
+        startIds.forEach {
+            queue.add(it)
+            r.distancesSparse[it] = 0.0
+        }
+        while (queue.isNotEmpty() && !r.foundTarget) {
+            val currentId = queue.removeFirst()
+            if (currentId in r.visitedSparse)
+                continue
+            r.currentVisited.add(currentId)
+            r.visitedSparse.add(currentId)
+
+            val currentDistance = r.distancesSparse[currentId]!!
+            if (currentDistance >= maxDepth) {
+                continue
+            }
+            graph.forEachNeighbour(currentId) { v ->
+                val newDistance = currentDistance + 1
+                if (v == targetId ||
+                    (v !in r.distancesSparse && newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY))
+                ) {
+                    r.parentsSparse[v] = currentId
+                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                    r.distancesSparse[v] = newDistance
                     if (v == targetId) {
                         r.currentVisited.add(v)
                         r.foundTarget = true

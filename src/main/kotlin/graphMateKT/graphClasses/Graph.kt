@@ -21,7 +21,7 @@ import graphMateKT.UnboxedEdges
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
+class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, isSparse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
 
@@ -46,16 +46,12 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
         adjacencyListIsFinalized = false
     }
 
-    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
-        nodes().forEach { u ->
-            getNeighbours(u).forEach { v ->
-                addEdge(u, v)
-            }
-        }
+    override fun node2IdOrNull(node: Any): Int? = node2id[node]
+    override fun node2Id(node: Any): Int = node2id[node] ?: (++nrOfNodes).also {
+        node2id[node] = it
+        id2Node[it] = node
     }
 
-    override fun node2IdOrNull(node: Any): Int? = node2id[node]
-    override fun node2Id(node: Any): Int = node2id[node] ?: error("Node '$node' not found in graph")
     override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
     override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
     override fun nodes(): List<Any> = id2Node.values.toList()

@@ -124,7 +124,11 @@ internal data class TrieNode(val children: MutableMap<Char, TrieNode> = mutableM
 
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTimeUse: Boolean = false) {
+abstract class BaseGraph<T : Any>(
+    initialNrOfNodes: Int,
+    protected val debugTimeUse: Boolean,
+    private val isSparse: Boolean
+) {
     // PROPERTIES AND INITIALIZATION
     internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
     internal val edges = UnboxedEdges()
@@ -264,8 +268,15 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun visitedNodes() =
-        searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
+    fun visitedNodes(): List<T> =
+        searchResults?.run {
+            if (isSparse) distancesSparse.keys.map { id2Node(it) }
+            else buildList(visited.size) {
+                for (i in visited.indices)
+                    if (visited[i])
+                        add(id2Node(i))
+            }
+        }
             ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
@@ -290,17 +301,25 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @throws IllegalStateException If neither BFS nor Dijkstra has been executed yet. */
     fun distanceTo(node: T): Double {
         val id = node2Id(node)
-        searchResults?.let {
-            return it.distances[id]
+        searchResults?.run {
+            return if (isSparse)
+                distancesSparse[id] ?: Double.POSITIVE_INFINITY
+            else
+                distances[id]
         }
-        error("Haven't computed distance to '$node' because neither BFS nor Dijkstra  has been run yet.")
+        error("Haven't computed distance to '$node'.")
     }
 
     /** Retrieves the maximum distance from the starting node to any other node of the most recent search operation (BFS, Dijkstra).
      *
      * If no search has been performed or a node cannot be reached, the function returns `Double.MAX_VALUE`.
      * @return The maximum distance to any node. */
-    fun maxDistance() = searchResults?.distances?.maxOrNull() ?: Double.MAX_VALUE
+    fun maxDistance() = searchResults?.run {
+        if (isSparse)
+            distancesSparse.values.maxOrNull()
+        else
+            distances.maxOrNull()
+    } ?: Double.MAX_VALUE
 
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, Dijkstra).
      *
@@ -377,6 +396,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
+     * @param maxDepth TODO: Add description for maxDepth parameter
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) {
         finalizeAdjacencyListIfNeeded(false)
@@ -384,7 +404,12 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
             val startNodeIds = startNodes.map { node -> node2Id(node) }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults, maxDepth)
+            searchResults = BFS(adjacencyList).run {
+                if (isSparse)
+                    bfsSparse(startNodeIds, targetId, searchResults, maxDepth)
+                else
+                    bfs(startNodeIds, targetId, searchResults, maxDepth)
+            }
             searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                 if (finalNode == target)
                     finalPath = getPath(finalNode)
@@ -400,6 +425,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @returnRuns bfs(listOf(startNode), target, reset) */
     fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) =
         bfs(listOf(startNode), target, reset, maxDepth)
+
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:
@@ -669,7 +695,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
+class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, isSparse) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
 
@@ -694,16 +720,12 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
         adjacencyListIsFinalized = false
     }
 
-    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
-        nodes().forEach { u ->
-            getNeighbours(u).forEach { v ->
-                addEdge(u, v)
-            }
-        }
+    override fun node2IdOrNull(node: Any): Int? = node2id[node]
+    override fun node2Id(node: Any): Int = node2id[node] ?: (++nrOfNodes).also {
+        node2id[node] = it
+        id2Node[it] = node
     }
 
-    override fun node2IdOrNull(node: Any): Int? = node2id[node]
-    override fun node2Id(node: Any): Int = node2id[node] ?: error("Node '$node' not found in graph")
     override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
     override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
     override fun nodes(): List<Any> = id2Node.values.toList()
@@ -730,11 +752,11 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
  * ```
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.*/
-class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
-    BaseGraph<Int>(size, debugTimeUse) {
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false, private val isSparse: Boolean = false) :
+    BaseGraph<Int>(size, debugTimeUse, isSparse) {
 
-    private val nodes = IntArray(size) { it }
-    private val nrOfEdgesFrom = IntArray(size)
+    private val nodes by lazy { IntArray(size) { it } }
+    private val nrOfEdgesFrom by lazy { IntArray(size) }
 
     /** IntGraph doesn't support addNode(), because nodes are set on initialization.
      * @throws IllegalStateException if called.*/
@@ -811,8 +833,8 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
-class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
-    BaseGraph<Tile>(width * height, debugTimeUse) {
+class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
+    BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
@@ -826,11 +848,12 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
         stringGrid[0].length,
         stringGrid.size,
         false,
-        debugTimeUse
+        debugTimeUse,
+        isSparse
     ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
@@ -1036,7 +1059,7 @@ internal interface AdjacencyList {
 
 
 internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
-    private val nodes = IntArray(nrOfNodes) { it }
+    private val nodes by lazy { IntArray(nrOfNodes) { it } }
     private val neighbours = Array(nrOfNodes) { IntArrayList() }
     private val weights = Array(nrOfNodes) { DoubleArrayList() }
 
@@ -1165,8 +1188,8 @@ internal class BFS(private val graph: AdjacencyList) {
             r.currentVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
-            if (currentDistance > maxDepth) {
-                return r
+            if (currentDistance >= maxDepth) {
+                continue
             }
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
@@ -1174,6 +1197,50 @@ internal class BFS(private val graph: AdjacencyList) {
                     r.parents[v] = currentId
                     r.depth = newDistance.toInt().coerceAtLeast(r.depth)
                     r.distances[v] = newDistance
+                    if (v == targetId) {
+                        r.currentVisited.add(v)
+                        r.foundTarget = true
+                    }
+                    queue.add(v)
+                }
+            }
+        }
+        r.processedOrder = r.currentVisited
+        return r
+    }
+
+    fun bfsSparse(
+        startIds: List<Int>,
+        targetId: Int = -1,
+        previousSearchResult: GraphSearchResults? = null,
+        maxDepth: Int = Int.MAX_VALUE,
+    ): GraphSearchResults {
+        val r = previousSearchResult ?: GraphSearchResults(graph.size)
+        r.currentVisited.clear()
+        val queue = ArrayDeque<Int>()
+        startIds.forEach {
+            queue.add(it)
+            r.distancesSparse[it] = 0.0
+        }
+        while (queue.isNotEmpty() && !r.foundTarget) {
+            val currentId = queue.removeFirst()
+            if (currentId in r.visitedSparse)
+                continue
+            r.currentVisited.add(currentId)
+            r.visitedSparse.add(currentId)
+
+            val currentDistance = r.distancesSparse[currentId]!!
+            if (currentDistance >= maxDepth) {
+                continue
+            }
+            graph.forEachNeighbour(currentId) { v ->
+                val newDistance = currentDistance + 1
+                if (v == targetId ||
+                    (v !in r.distancesSparse && newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY))
+                ) {
+                    r.parentsSparse[v] = currentId
+                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                    r.distancesSparse[v] = newDistance
                     if (v == targetId) {
                         r.currentVisited.add(v)
                         r.foundTarget = true
@@ -1301,10 +1368,13 @@ internal class FloydWarshall(val graph: AdjacencyList) {
 }
 
 internal data class GraphSearchResults(private val graphSize: Int) {
-    val visited = BooleanArray(graphSize)
-    val distances = DoubleArray(graphSize) { Double.POSITIVE_INFINITY }
-    val parents: IntArray = IntArray(graphSize) { -1 }
+    val visited by lazy { BooleanArray(graphSize) }
+    val distances by lazy { DoubleArray(graphSize) { Double.POSITIVE_INFINITY } }
+    val parents by lazy { IntArray(graphSize) { -1 } }
     var depth: Int = 0
+    val visitedSparse = mutableSetOf<Int>()
+    val distancesSparse = mutableMapOf<Int, Double>()
+    val parentsSparse = mutableMapOf<Int, Int>()
     var currentVisited = mutableListOf<Int>()
     var processedOrder = mutableListOf<Int>()
     var foundTarget = false

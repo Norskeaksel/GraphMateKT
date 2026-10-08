@@ -11,7 +11,11 @@ import graphMateKT.graphAlgorithms.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
-abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTimeUse: Boolean = false) {
+abstract class BaseGraph<T : Any>(
+    initialNrOfNodes: Int,
+    protected val debugTimeUse: Boolean,
+    private val isSparse: Boolean
+) {
     // PROPERTIES AND INITIALIZATION
     internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
     internal val edges = UnboxedEdges()
@@ -151,8 +155,15 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
     /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
      *
      * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
-    fun visitedNodes() =
-        searchResults?.run { visited.indices.mapNotNull { if (visited[it]) id2NodeOrNull(it) else null } }
+    fun visitedNodes(): List<T> =
+        searchResults?.run {
+            if (isSparse) distancesSparse.keys.map { id2Node(it) }
+            else buildList(visited.size) {
+                for (i in visited.indices)
+                    if (visited[i])
+                        add(id2Node(i))
+            }
+        }
             ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
@@ -177,17 +188,25 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @throws IllegalStateException If neither BFS nor Dijkstra has been executed yet. */
     fun distanceTo(node: T): Double {
         val id = node2Id(node)
-        searchResults?.let {
-            return it.distances[id]
+        searchResults?.run {
+            return if (isSparse)
+                distancesSparse[id] ?: Double.POSITIVE_INFINITY
+            else
+                distances[id]
         }
-        error("Haven't computed distance to '$node' because neither BFS nor Dijkstra  has been run yet.")
+        error("Haven't computed distance to '$node'.")
     }
 
     /** Retrieves the maximum distance from the starting node to any other node of the most recent search operation (BFS, Dijkstra).
      *
      * If no search has been performed or a node cannot be reached, the function returns `Double.MAX_VALUE`.
      * @return The maximum distance to any node. */
-    fun maxDistance() = searchResults?.distances?.maxOrNull() ?: Double.MAX_VALUE
+    fun maxDistance() = searchResults?.run {
+        if (isSparse)
+            distancesSparse.values.maxOrNull()
+        else
+            distances.maxOrNull()
+    } ?: Double.MAX_VALUE
 
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, Dijkstra).
      *
@@ -264,6 +283,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
+     * @param maxDepth TODO: Add description for maxDepth parameter
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) {
         finalizeAdjacencyListIfNeeded(false)
@@ -271,7 +291,12 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
             val startNodeIds = startNodes.map { node -> node2Id(node) }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             if (reset) searchResults = null
-            searchResults = BFS(adjacencyList).bfs(startNodeIds, targetId, searchResults, maxDepth)
+            searchResults = BFS(adjacencyList).run {
+                if (isSparse)
+                    bfsSparse(startNodeIds, targetId, searchResults, maxDepth)
+                else
+                    bfs(startNodeIds, targetId, searchResults, maxDepth)
+            }
             searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                 if (finalNode == target)
                     finalPath = getPath(finalNode)
@@ -287,6 +312,7 @@ abstract class BaseGraph<T : Any>(initialNrOfNodes: Int, protected val debugTime
      * @returnRuns bfs(listOf(startNode), target, reset) */
     fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) =
         bfs(listOf(startNode), target, reset, maxDepth)
+
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
      * It stores results that can be retrieved with the following functions:

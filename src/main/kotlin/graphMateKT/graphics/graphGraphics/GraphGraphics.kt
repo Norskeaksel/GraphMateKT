@@ -105,14 +105,19 @@ internal class GraphGraphics : Application() {
 
 private fun BaseGraph<Any>.convertToVisualizationGraph(): DigraphEdgeList<Any, Any> {
     val g = DigraphEdgeList<Any, Any>()
-    nodes().forEach { node ->
-        g.insertVertex(node)
+    val insertedVertices = HashSet<Any>()
+    fun ensureVertex(node: Any) {
+        if (insertedVertices.add(node)) {
+            g.insertVertex(node)
+        }
     }
     val zeroWidthSpace = '\u200B'
     var edgeCounter = 0
     nodes().forEach { node ->
         val edges = edges(node).ifEmpty { neighbours(node).map { 1.0 to it } }
         edges.forEach { edge ->
+            ensureVertex(node)
+            ensureVertex(edge.second)
             val uniqueWeightLabel = edge.first.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
             g.insertEdge(node, edge.second, uniqueWeightLabel)
         }

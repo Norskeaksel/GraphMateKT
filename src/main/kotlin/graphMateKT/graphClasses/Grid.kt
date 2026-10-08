@@ -48,8 +48,8 @@ import graphMateKT.graphAlgorithms.DFS
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
-class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
-    BaseGraph<Tile>(width * height, debugTimeUse) {
+class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
+    BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
@@ -63,11 +63,12 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      *
      * @param stringGrid A list of strings representing the grid
      * */
-    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
         stringGrid[0].length,
         stringGrid.size,
         false,
-        debugTimeUse
+        debugTimeUse,
+        isSparse
     ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }

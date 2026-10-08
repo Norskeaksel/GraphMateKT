@@ -103,8 +103,11 @@ internal class BidirectionalGraphGraphics : Application() {
 
 private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any> {
     val g = GraphEdgeList<Any, Any>()
-    nodes().forEach { node ->
-        g.insertVertex(node)
+    val insertedVertices = HashSet<Any>()
+    fun ensureVertex(node: Any) {
+        if (insertedVertices.add(node)) {
+            g.insertVertex(node)
+        }
     }
     val zeroWidthSpace = '\u200B'
     var edgeCounter = 0
@@ -115,6 +118,8 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any
             val uv = u to v
             val vu = v to u
             if (uv !in addedEdges && vu !in addedEdges) {
+                ensureVertex(u)
+                ensureVertex(v)
                 val uniqueWeightLabel = w.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
                 g.insertEdge(u, v, uniqueWeightLabel)
                 addedEdges.add(uv)
