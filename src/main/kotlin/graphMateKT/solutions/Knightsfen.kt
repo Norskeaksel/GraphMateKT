@@ -7,6 +7,8 @@ import java.io.InputStream
 private val dx = intArrayOf(-2, -1, 1, 2, -2, -1, 1, 2)
 private val dy = intArrayOf(-1, -2, -2, -1, 1, 2, 2, 1)
 private val targetBoard = listOf("11111", "01111", "00 11", "00001", "00000")
+
+/** Solves https://open.kattis.com/problems/knightsfen */
 internal fun main() {
     val ans = knightsfen(System.`in`)
     println(ans)

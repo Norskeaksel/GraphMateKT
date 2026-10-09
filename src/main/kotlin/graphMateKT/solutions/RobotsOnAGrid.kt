@@ -5,13 +5,13 @@ import graphMateKT.graphClasses.Grid
 import java.io.InputStream
 
 internal fun main() {
-    val ans = RobotsOnAGrid(System.`in`)
+    val ans = robotsOnAGrid(System.`in`)
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/RobotsOnAGrid. Note: This solution gets TLE without an AI rewrite */
-internal fun RobotsOnAGrid(inputStream: InputStream): String {
+internal fun robotsOnAGrid(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
     val n = scanner.nextInt()
     val lines = mutableListOf<String>()

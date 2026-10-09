@@ -12,7 +12,7 @@ internal fun main() {
 
 private data class Node(val charSet:Set<Char>, val column: Int)
 
-/** Solves https://open.kattis.com/problems/Graduation */
+/** Solves https://open.kattis.com/problems/skolavslutningen */
 internal fun graduation(inputStream: InputStream): Int {
     val scanner = InputReader(inputStream)
     val (n, m, _) = scanner.nextIntArray(3)
