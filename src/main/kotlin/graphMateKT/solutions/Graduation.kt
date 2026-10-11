@@ -10,7 +10,7 @@ internal fun main() {
     System.out.flush()
 }
 
-private data class Node(val charSet:Set<Char>, val column: Int)
+private data class GraduationNode(val charSet:Set<Char>, val column: Int)
 
 /** Solves https://open.kattis.com/problems/skolavslutningen */
 internal fun graduation(inputStream: InputStream): Int {
@@ -23,13 +23,13 @@ internal fun graduation(inputStream: InputStream): Int {
         for (y in 0 until n) {
             charSet.add(lines[y][x])
         }
-        graph.addNode(Node(charSet, x))
+        graph.addNode(GraduationNode(charSet, x))
     }
     val nodes = graph.nodes()
     for (x in 0 until m) {
-        val node = nodes[x] as Node
+        val node = nodes[x] as GraduationNode
         for (j in 0  until m) {
-            val possibleNeighbour = nodes[j] as Node
+            val possibleNeighbour = nodes[j] as GraduationNode
             if(j!=x && node.charSet.any { it in possibleNeighbour.charSet}) {
                 graph.addEdge(node, possibleNeighbour)
             }

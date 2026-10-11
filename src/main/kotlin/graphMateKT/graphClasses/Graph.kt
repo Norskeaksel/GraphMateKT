@@ -35,7 +35,6 @@ class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGrap
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
