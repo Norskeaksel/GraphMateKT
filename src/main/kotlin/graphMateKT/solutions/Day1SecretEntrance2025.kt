@@ -15,8 +15,7 @@ internal fun main() {
 private data class Node(val index: Int, val value: Int)
 private data class Node2(val index: Int, val value: Int, val targetValue: Int)
 
-fun nextNode(node: Any): List<Any> {
-    node as Node
+private fun nextNode(node: Node): List<Node> {
     if (node.index >= inputLines.size)
         return emptyList()
     val rotation = inputLines[node.index]
@@ -27,8 +26,7 @@ fun nextNode(node: Any): List<Any> {
     return listOf(nextNode)
 }
 
-fun nextNode2(node: Any): List<Any> {
-    node as Node2
+private fun nextNode2(node: Node2): List<Node2> {
     if (node.value == node.targetValue) {
         val nextIndex = node.index + 1
         if (nextIndex >= inputLines.size)
@@ -52,7 +50,9 @@ internal fun day1SecretEntrance2025(inputStream: InputStream): Int {
     inputLines = generateSequence { scanner.nextString() }.toList()
     val graph = Graph(isSparse = true)
     val startingNode = Node2(-1, 50, 50)
-    graph.connectWithRule(::nextNode2)
+    graph.connectWithRule {
+        nextNode2(it as Node2)
+    }
     graph.bfs(startingNode)
     return graph.visitedNodes().count { (it as Node2).value.mod(100) == 0 }
 }

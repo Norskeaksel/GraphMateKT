@@ -709,7 +709,6 @@ class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGrap
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
@@ -1107,6 +1106,7 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
     val flattenedNeighbours = IntArray(nrOfEdges)
     val flattenedWeights = DoubleArray(nrOfEdges)
     override val isDynamic = false
+
     init {
         val nrOfEdgesFrom = IntArray(nrOfNodes)
         edges.from.intArray().forEach { nrOfEdgesFrom[it]++ }
@@ -1131,18 +1131,24 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
     override fun nodes() = IntArray(size) { it }
     override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray {
+        if (node >= size)
+            return intArrayOf()
         val start = starts[node]
         val end = ends[node]
         return flattenedNeighbours.copyOfRange(start, end)
     }
 
     override fun weights(node: Int): DoubleArray {
+        if (node >= size)
+            return doubleArrayOf()
         val start = starts[node]
         val end = ends[node]
         return flattenedWeights.copyOfRange(start, end)
     }
 
     override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
+        if (node >= size)
+            return
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
@@ -1151,6 +1157,8 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
     }
 
     override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
+        if (node >= size)
+            return
         val start = starts[node]
         val end = ends[node]
         for (i in start until end) {
