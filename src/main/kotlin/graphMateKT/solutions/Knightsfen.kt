@@ -45,7 +45,7 @@ internal fun knightsfen(inputStream: InputStream): String {
     graph.connectWithRule {
         getNeighbours(it as List<String>)
     }
-    graph.bfs(listOf(targetBoard), maxDepth = 10)
+    graph.bfs(listOf(targetBoard), maxDistance = 10.0)
     repeat(n) {
         val startingBoard = mutableListOf<String>()
         repeat(5) { y ->

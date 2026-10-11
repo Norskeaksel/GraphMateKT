@@ -6,6 +6,8 @@ import org.junit.jupiter.api.AfterAll
 import java.io.File
 import org.junit.jupiter.api.Test
 import kotlin.system.measureTimeMillis
+import org.assertj.core.api.Assertions.assertThat
+
 
 class WatershedsTest {
     companion object {
@@ -16,7 +18,7 @@ class WatershedsTest {
         }
     }
 
-    /*@Test
+    @Test
     fun watershedsa() {
         val expectedOutput = """Case #1:
 a b b 
@@ -41,8 +43,8 @@ a a a
 b a a 
 b a c"""
         _reader = File("src/test/SampleInput/Watersheds/input1").inputStream().bufferedReader()
-        assertThat(watersheds()).isEqualTo(expectedOutput)  TODO: fix solution now that bidirectional is not an option
-    }*/
+        assertThat(watersheds()).isEqualTo(expectedOutput)
+    }
 
     @Test
     fun watershedSpeedTest() {

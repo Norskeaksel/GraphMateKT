@@ -24,12 +24,12 @@ internal fun watersheds(): String {
                 grid.addNode(Tile(x, y, data))
             }
         }
-        grid.connectWithRule { t ->
-            val drainage = grid.getStraightNeighbours(t).filter {
-                (it.data as Int) < (t.data as Int)
+        grid.nodes().forEach { u ->
+            val drainage = grid.getStraightNeighbours(u).filter {
+                (it.data as Int) < (u.data as Int)
             }
-            if (drainage.isEmpty()) listOf() else
-                listOf(drainage.minBy { it.data as Int })
+            val v = drainage.minByOrNull { it.data as Int }
+            v?.let { grid.connect(u, v) }
         }
         val scc = grid.stronglyConnectedComponents()
         val sccSorted = scc.sortedBy { component -> component.minOf { it.x + w * it.y } }

@@ -283,9 +283,14 @@ abstract class BaseGraph<T : Any>(
      * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
-     * @param maxDepth TODO: Add description for maxDepth parameter
+     * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
      * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
-    fun bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) {
+    fun bfs(
+        startNodes: List<T>,
+        target: T? = null,
+        reset: Boolean = true,
+        maxDistance: Double = Double.POSITIVE_INFINITY
+    ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             val startNodeIds = startNodes.map { node -> node2Id(node) }
@@ -293,9 +298,9 @@ abstract class BaseGraph<T : Any>(
             if (reset) searchResults = null
             searchResults = BFS(adjacencyList).run {
                 if (isSparse)
-                    bfsSparse(startNodeIds, targetId, searchResults, maxDepth)
+                    bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
                 else
-                    bfs(startNodeIds, targetId, searchResults, maxDepth)
+                    bfs(startNodeIds, targetId, searchResults, maxDistance)
             }
             searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                 if (finalNode == target)
@@ -308,9 +313,8 @@ abstract class BaseGraph<T : Any>(
     }
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
-     * an optional target, instead of a list of starting nodes and an optional list of targets
-     * @returnRuns bfs(listOf(startNode), target, reset) */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Int = Int.MAX_VALUE) =
+     * an optional target, instead of a list of starting nodes and an optional list of targets */
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Double = Double.POSITIVE_INFINITY) =
         bfs(listOf(startNode), target, reset, maxDepth)
 
 

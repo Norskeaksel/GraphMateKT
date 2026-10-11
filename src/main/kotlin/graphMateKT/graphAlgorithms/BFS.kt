@@ -8,7 +8,7 @@ internal class BFS(private val graph: AdjacencyList) {
         startIds: List<Int>,
         targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
-        maxDepth: Int = Int.MAX_VALUE,
+        maxDepth: Double = Double.POSITIVE_INFINITY,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
@@ -50,7 +50,7 @@ internal class BFS(private val graph: AdjacencyList) {
         startIds: List<Int>,
         targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
-        maxDepth: Int = Int.MAX_VALUE,
+        maxDepth: Double = Double.POSITIVE_INFINITY,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
