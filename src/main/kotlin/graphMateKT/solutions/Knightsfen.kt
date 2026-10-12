@@ -40,7 +40,7 @@ internal fun knightsfen(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
     val n = scanner.nextInt()
     val ans = StringBuilder()
-    val graph = Graph(isSparse = true)
+    val graph = Graph()
     graph.addNode(targetBoard)
     graph.connectWithRule {
         getNeighbours(it as List<String>)

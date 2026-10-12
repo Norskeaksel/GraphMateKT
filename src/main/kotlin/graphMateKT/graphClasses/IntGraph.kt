@@ -25,8 +25,9 @@ import kotlin.system.measureTimeMillis
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
  *
- * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.*/
-class IntGraph(private val size: Int, debugTimeUse: Boolean = false, private val isSparse: Boolean = false) :
+ * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1.
+ * @param debugTimeUse optional flag that prints the time use of run algorithms to standard error*/
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
     BaseGraph<Int>(size, debugTimeUse, isSparse) {
 
     private val nodes by lazy { IntArray(size) { it } }

@@ -14,7 +14,7 @@ import kotlin.system.measureTimeMillis
 abstract class BaseGraph<T : Any>(
     initialNrOfNodes: Int,
     protected val debugTimeUse: Boolean,
-    private val isSparse: Boolean
+    protected var isSparse: Boolean
 ) {
     // PROPERTIES AND INITIALIZATION
     internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
@@ -40,7 +40,7 @@ abstract class BaseGraph<T : Any>(
      *
      * @param node1 The starting node of the edge.
      * @param node2 The ending node of the edge.
-     * @param weight The weight of the edge, for example used to calculate distances with Dijkstra. Defaults to 1.0. */
+     * @param weight The weight of the edge, for example used to calculate distances with shortestPaths. Defaults to 1.0. */
     abstract fun addEdge(node1: T, node2: T, weight: Double = 1.0)
 
     /** @return a list of the Edges in the graph, where the edges are triples with: fromNode, toNode, weight */
@@ -54,7 +54,13 @@ abstract class BaseGraph<T : Any>(
     protected abstract fun id2Node(id: Int): T
 
 
-    /** Adds edges for each node in the graph to their neighbors as defined by the given function.
+    /** Defines a rule for how each node is connected to its neighbors.
+     *
+     * This will configure edges and nodes to be lazily/dynamically added to the graph, based on the user defined
+     * function `getNeighbours`. This is useful when the nodes or edges of the graph are not known/defined in advance,
+     * or when the graph's state space is too large or to be stored in memory effectivly. The tradeof is that seaches
+     * (bfs, dfs) will be less performent per iteration, compared to if the graph was fully defined in advance.
+     * NOTE: This will overwrite all existing edges (but not nodes) in the graph.
      *
      * <i>Example usage (if invoked from a grid):<i>
      * ```
@@ -144,17 +150,14 @@ abstract class BaseGraph<T : Any>(
     fun depth() =
         searchResults?.depth ?: error("Can't retrieve depth because neither DFS nor BFS has been run yet.")
 
-    /** Retrieves a list of all visited nodes on the order they were visited during the last search operation (DFS, BFS, Dijkstra).
-     *
-     * @return A list of visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
+    /** @return A list of visited nodes, ordered by when they were visited,
+     *  or an empty list if no search algorithm (DFS, BFS, shortestPaths) has been run yet. */
     fun currentVisitedNodes(): List<T> =
         searchResults?.currentVisited?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
-    /** Retrieves a (unordered) list of all visited nodes. Or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet.
-     *
-     * @return A list of visited nodes or an empty list if no search algorithm (DFS, BFS, Dijkstra) has been run yet. */
+    /** @return A (unordered) list of visited nodes or an empty list if no search algorithm (DFS, BFS, shortestPaths) has been run yet. */
     fun visitedNodes(): List<T> =
         searchResults?.run {
             if (isSparse) distancesSparse.keys.map { id2Node(it) }
@@ -167,25 +170,25 @@ abstract class BaseGraph<T : Any>(
             ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node path during the most recent search operation
-     * (DFS, BFS, Dijkstra)
+     * (DFS, BFS, shortestPaths)
      *
-     * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, Dijkstra) has been run yet or no path was found.
+     * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, shortestPaths) has been run yet or no path was found.
      * Note: Starting at a node, does not count as a path to that node */
     fun finalPath(): List<T>? = finalPath
 
-    /** Checks if the target node was found during the most recent search operation (BFS, Dijkstra).
+    /** Checks if the target node was found during the most recent search operation (BFS, shortestPaths).
      *
      * @return `true` if the target node was found, `false` otherwise. */
     fun foundTarget() = searchResults?.foundTarget ?: false
 
-    /** Retrieves the distance to the specified node from the starting node of the most recent search operation (BFS, Dijkstra).
+    /** Retrieves the distance to the specified node from the starting node of the most recent search operation (BFS, shortestPaths).
      *
      * If the graph is weighted, the weighted distance is returned. If the graph is unweighted, the distance
      * is calculated as the number of edges.
      *
      * @param node The target node whose distance is to be retrieved.
      * @return The distance to the specified node.
-     * @throws IllegalStateException If neither BFS nor Dijkstra has been executed yet. */
+     * @throws IllegalStateException If neither BFS nor shortestPaths has been executed yet. */
     fun distanceTo(node: T): Double {
         val id = node2Id(node)
         searchResults?.run {
@@ -197,7 +200,7 @@ abstract class BaseGraph<T : Any>(
         error("Haven't computed distance to '$node'.")
     }
 
-    /** Retrieves the maximum distance from the starting node to any other node of the most recent search operation (BFS, Dijkstra).
+    /** Retrieves the maximum distance from the starting node to any other node of the most recent search operation (BFS, shortestPaths).
      *
      * If no search has been performed or a node cannot be reached, the function returns `Double.MAX_VALUE`.
      * @return The maximum distance to any node. */
@@ -208,13 +211,13 @@ abstract class BaseGraph<T : Any>(
             distances.maxOrNull()
     } ?: Double.MAX_VALUE
 
-    /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, Dijkstra).
+    /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPaths).
      *
      * @return The node that is the farthest from the starting node.
-     * @throws IllegalStateException If no search algorithm (BFS, Dijkstra) has been executed yet. */
+     * @throws IllegalStateException If no search algorithm (dfs, bfs, shortestPaths) has been executed yet. */
     fun furthestNode(): T =
         searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() }) }
-            ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, dijkstra) has been run yet.")
+            ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, shortestPaths) has been run yet.")
 
     /** Retrieves a list of edges connected to the specified node.
      *
@@ -238,14 +241,14 @@ abstract class BaseGraph<T : Any>(
 
     /** Retrieves a list the neighboring nodes of the specified node.
      *
-     * WARNING: should be replaced by the forEachNeighbour function if performance is critical, to avoid copying overhead.
+     * NOTE: should be replaced with the forEachNeighbour function if performance is critical, to avoid copying overhead.
      *
-     * @param u The node whose neighbors are to be retrieved.
+     * @param node The node whose neighbors are to be retrieved.
      * @return A list of neighboring nodes connected to the specified node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun neighbours(u: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
+    fun neighbours(node: T): List<T> = finalizeAdjacencyListIfNeeded(false).run {
         val neighbours = mutableListOf<T>()
-        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
+        adjacencyList.forEachNeighbour(node2Id(node)) { v ->
             id2NodeOrNull(v)?.let { neighbours.add(it) }
         }
         neighbours
@@ -255,11 +258,11 @@ abstract class BaseGraph<T : Any>(
      *
      * More performant then retrieving a copied list of nodes and calling forEach on them
      *
-     * @param u The node whose neighbours we want to process
+     * @param node The node whose neighbours we want to process
      * @param action The function to be called on each neighbour
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun forEachNeighbour(u: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
-        adjacencyList.forEachNeighbour(node2Id(u)) { v ->
+    fun forEachNeighbour(node: T, action: (T) -> Unit) = finalizeAdjacencyListIfNeeded(false).run {
+        adjacencyList.forEachNeighbour(node2Id(node)) { v ->
             id2NodeOrNull(v)?.let(action)
         }
     }
@@ -284,7 +287,7 @@ abstract class BaseGraph<T : Any>(
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
-     * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
+     * @throws IllegalStateException If any of the starting nodes is not found in the graph. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
@@ -293,9 +296,12 @@ abstract class BaseGraph<T : Any>(
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
-            val startNodeIds = startNodes.map { node -> node2Id(node) }
+            val startNodeIds = startNodes.map { node ->
+                node2IdOrNull(node) ?: error("startNode '$node' not found in graph")
+            }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
-            if (reset) searchResults = null
+            if (reset)
+                searchResults = null
             searchResults = BFS(adjacencyList).run {
                 if (isSparse)
                     bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
@@ -332,7 +338,7 @@ abstract class BaseGraph<T : Any>(
     fun dfs(startNode: T, reset: Boolean = true) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
-            val startId = node2Id(startNode)
+            val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
             if (reset) searchResults = null
             searchResults = DFS(adjacencyList).dfs(startId, searchResults)
         }
@@ -362,10 +368,10 @@ abstract class BaseGraph<T : Any>(
     fun shortestPaths(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
-            if (edgesCount == 0) {
+            if (edgesCount == 0 && !adjacencyList.isDynamic) {
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
-            val startId = node2Id(startNode)
+            val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             searchResults = Dijkstra(adjacencyList).dijkstra(startId, targetId)
             target?.let {
@@ -390,7 +396,7 @@ abstract class BaseGraph<T : Any>(
     fun allPairsShortestPaths() {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
-            if (edgesCount == 0) {
+            if (edgesCount == 0 && !adjacencyList.isDynamic) {
                 System.err.println("Warning: The graph has no edges, making pathfinding infeasible.")
             } else {
                 allDistances = FloydWarshall(adjacencyList).floydWarshall()
@@ -509,11 +515,11 @@ abstract class BaseGraph<T : Any>(
      *
      * @param target The target node for which the path is to be retrieved.
      * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
-     * @throws IllegalStateException If no search algorithm (DFS, BFS, Dijkstra) has been executed yet. */
+     * @throws IllegalStateException If no search algorithm (DFS, BFS, shortestPaths) has been executed yet. */
     fun getPath(target: T): List<T>? {
         val targetId = node2IdOrNull(target)
         val pathIds = searchResults?.let { getPath(targetId, it.parents) }
-            ?: error("Can't getPath because no search has (DFS, BFS, Dijkstra) been run yet")
+            ?: error("Can't getPath because no search has (DFS, BFS, shortestPaths) been run yet")
         if (pathIds.isEmpty()) return null
         val path = pathIds.mapNotNull { id2NodeOrNull(it) }
         return path
@@ -536,7 +542,7 @@ abstract class BaseGraph<T : Any>(
     /** Clears the search results stored in the graph.
      *
      * The following functions rely on the private `searchResults` property, which is populated by running a search algorithm
-     * (DFS, BFS, or Dijkstra). These functions will throw an `IllegalStateException` if no search is run after calling this function:
+     * (DFS, BFS, or shortestPaths). These functions will throw an `IllegalStateException` if no search is run after calling this function:
      *
      * - `depth()`:
      * - `currentVisitedNodes()`:

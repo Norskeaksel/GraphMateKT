@@ -2,7 +2,6 @@ package graphMateKT.solutions
 
 import fastInputReader.InputReader
 import graphMateKT.graphClasses.Graph
-import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
 
 var inputLines = listOf<String>()
@@ -48,8 +47,9 @@ private fun nextNode2(node: Node2): List<Node2> {
 internal fun day1SecretEntrance2025(inputStream: InputStream): Int {
     val scanner = InputReader(inputStream)
     inputLines = generateSequence { scanner.nextString() }.toList()
-    val graph = Graph(isSparse = true)
+    val graph = Graph()
     val startingNode = Node2(-1, 50, 50)
+    graph.addNode(startingNode)
     graph.connectWithRule {
         nextNode2(it as Node2)
     }

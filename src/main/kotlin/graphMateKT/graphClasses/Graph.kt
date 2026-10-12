@@ -1,7 +1,5 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.UnboxedEdges
-
 /** A general graph class that represents nodes of any datatype.
  *
  * Any new node is given an ID upon creation, which is used to build an adjacency list. The class maintains internal
@@ -21,7 +19,7 @@ import graphMateKT.UnboxedEdges
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, isSparse) {
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, false) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
 
@@ -35,6 +33,7 @@ class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGrap
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
+        adjacencyListIsFinalized = false
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
@@ -54,4 +53,8 @@ class Graph(debugTimeUse: Boolean = false, isSparse: Boolean = false) : BaseGrap
     override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
     override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
     override fun nodes(): List<Any> = id2Node.values.toList()
+    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
+        isSparse = true
+        super.connectWithRule(getNeighbours)
+    }
 }
