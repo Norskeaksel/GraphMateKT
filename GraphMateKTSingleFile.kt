@@ -329,10 +329,10 @@ abstract class BaseGraph<T : Any>(
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPathsFrom).
      *
      * @return The node that is the farthest from the starting node.
-     * @throws IllegalStateException If no search algorithm (dfs, bfs, shortestPathsFrom) has been executed yet. */
+     * @throws IllegalStateException If no search algorithm (bfs, dfs, shortestPathsFrom) has been executed yet. */
     fun furthestNode(): T =
         searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() }) }
-            ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, shortestPathsFrom) has been run yet.")
+            ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
 
     /** Retrieves a list of edges connected to the specified node.
      *
@@ -1096,46 +1096,33 @@ internal interface AdjacencyList {
 }
 
 
-internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
-    // No need to make lazy because this should only be used when needed
-    private val nodes = IntArray(nrOfNodes) { it }
-    private val neighbours = Array(nrOfNodes) { IntArrayList() }
-    private val weights = Array(nrOfNodes) { DoubleArrayList() }
-
-    init {
-        repeat(edges.size) {
-            val u = edges.from[it]
-            val v = edges.to[it]
-            val w = edges.weights[it]
-            neighbours[u].add(v)
-            weights[u].add(w)
-        }
+internal class AdjacecnyListDynamic(
+    override val size: Int,
+    private val forEachNeighbourOf: (node: Int, action: (Int) -> Unit) -> Unit,
+) : AdjacencyList {
+    private fun unsupported(): Nothing {
+        val callerName = Thread.currentThread().stackTrace
+            .drop(1) // getStackTrace() itself
+            .firstOrNull { it.className != this::class.java.name }
+            ?.methodName
+            ?: "This operation"
+        throw UnsupportedOperationException("$callerName cannot use be used with dynamic connections.")
     }
 
-    override val isDynamic = false
-    override fun nodes() = nodes
-    override fun edges() = edges.boxedEdges()
-    override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
-    override fun weights(node: Int) = weights[node].doubleArray()
+    override val isDynamic = true
+    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) = forEachNeighbourOf(node, action)
+    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) = forEachNeighbourOf(node) { action(1.0, it) }
 
-    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
-        neighbours[node].intArray().forEach { v ->
-            action(v)
-        }
+    override fun neighbours(node: Int): IntArray {
+        val neighbours = IntArrayList()
+        forEachNeighbourOf(node) { neighbours.add(it) }
+        return neighbours.intArray()
     }
-
-    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
-        val neighbours = neighbours[node].intArray()
-        val weights = weights[node].doubleArray()
-        neighbours.indices.forEach {
-            action(weights[it], neighbours[it])
-        }
-    }
-
-    override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
-    override val size get() = nrOfNodes
-
-    override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
+    override fun edges(): List<Triple<Int, Int, Double>> = unsupported()
+    override fun nodes(): IntArray = unsupported()
+    override fun weights(node: Int): DoubleArray = unsupported()
+    override fun deepCopy(): AdjacencyList = unsupported()
+    override fun reversed(): AdjacencyList = unsupported()
 }
 
 
@@ -1210,6 +1197,49 @@ internal class AdjacencyListFlattened(val nrOfNodes: Int, val edges: UnboxedEdge
 
     override val size get() = nrOfNodes
     override fun reversed(): AdjacencyList = AdjacencyListFlattened(nrOfNodes, edges.reversed())
+}
+
+
+internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
+    // No need to make lazy because this should only be used when needed
+    private val nodes = IntArray(nrOfNodes) { it }
+    private val neighbours = Array(nrOfNodes) { IntArrayList() }
+    private val weights = Array(nrOfNodes) { DoubleArrayList() }
+
+    init {
+        repeat(edges.size) {
+            val u = edges.from[it]
+            val v = edges.to[it]
+            val w = edges.weights[it]
+            neighbours[u].add(v)
+            weights[u].add(w)
+        }
+    }
+
+    override val isDynamic = false
+    override fun nodes() = nodes
+    override fun edges() = edges.boxedEdges()
+    override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
+    override fun weights(node: Int) = weights[node].doubleArray()
+
+    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
+        neighbours[node].intArray().forEach { v ->
+            action(v)
+        }
+    }
+
+    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {
+        val neighbours = neighbours[node].intArray()
+        val weights = weights[node].doubleArray()
+        neighbours.indices.forEach {
+            action(weights[it], neighbours[it])
+        }
+    }
+
+    override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
+    override val size get() = nrOfNodes
+
+    override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
 }
 
 

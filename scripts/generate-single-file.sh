@@ -13,8 +13,9 @@ FILES=(
   graphClasses/IntGraph.kt
   graphClasses/Grid.kt
   graphClasses/AdjacencyList.kt
-  graphClasses/AdjacencyListNested.kt
+  graphClasses/AdjacecnyListDynamic.kt
   graphClasses/AdjacencyListFlattened.kt
+  graphClasses/AdjacencyListNested.kt
   graphAlgorithms/BFS.kt
   graphAlgorithms/DFS.kt
   graphAlgorithms/Dijkstra.kt

@@ -215,10 +215,10 @@ abstract class BaseGraph<T : Any>(
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPathsFrom).
      *
      * @return The node that is the farthest from the starting node.
-     * @throws IllegalStateException If no search algorithm (dfs, bfs, shortestPathsFrom) has been executed yet. */
+     * @throws IllegalStateException If no search algorithm (bfs, dfs, shortestPathsFrom) has been executed yet. */
     fun furthestNode(): T =
         searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() }) }
-            ?: error("Haven't computed furthest node because no search algorithm (dfs, bfs, shortestPathsFrom) has been run yet.")
+            ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
 
     /** Retrieves a list of edges connected to the specified node.
      *
