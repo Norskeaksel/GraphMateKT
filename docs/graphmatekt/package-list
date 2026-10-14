@@ -1,5 +1,7 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/graphmatekt/[root]/index.html
+$dokka.location://main/#/PointingToDeclaration/graphmatekt/[root]/main.html
 $dokka.location:fastInputReader////PointingToDeclaration/graphmatekt/fastInputReader/index.html
 $dokka.location:fastInputReader/InputReader.Companion///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/-companion/index.html
 $dokka.location:fastInputReader/InputReader///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/index.html
@@ -71,15 +73,16 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfPaths/#TypeParam(bounds=[
 $dokka.location:graphMateKT.graphClasses/BaseGraph/print/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/printConnections/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print-connections.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/resetSearchResults/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/reset-search-results.html
-$dokka.location:graphMateKT.graphClasses/BaseGraph/shortestPaths/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])?/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/shortest-paths.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/shortestPathsFrom/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])?/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/shortest-paths-from.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/size/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/size.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/stronglyConnectedComponents/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/strongly-connected-components.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/topologicalSort/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/topological-sort.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/visitedNodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/visited-nodes.html
 $dokka.location:graphMateKT.graphClasses/Graph///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/index.html
-$dokka.location:graphMateKT.graphClasses/Graph/Graph/#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/-graph.html
+$dokka.location:graphMateKT.graphClasses/Graph/Graph/#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/-graph.html
 $dokka.location:graphMateKT.graphClasses/Graph/addEdge/#kotlin.Any#kotlin.Any#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/add-edge.html
 $dokka.location:graphMateKT.graphClasses/Graph/addNode/#kotlin.Any/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/add-node.html
+$dokka.location:graphMateKT.graphClasses/Graph/connectWithRule/#kotlin.Function1[kotlin.Any,kotlin.collections.List[kotlin.Any]]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/connect-with-rule.html
 $dokka.location:graphMateKT.graphClasses/Graph/nodes/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-graph/nodes.html
 $dokka.location:graphMateKT.graphClasses/Grid///PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/index.html
 $dokka.location:graphMateKT.graphClasses/Grid/Grid/#kotlin.Int#kotlin.Int#kotlin.Boolean#kotlin.Boolean#kotlin.Boolean/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-grid/-grid.html

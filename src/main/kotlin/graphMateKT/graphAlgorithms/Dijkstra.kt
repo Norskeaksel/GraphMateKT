@@ -1,6 +1,7 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.Edge
+import graphMateKT.InvalidEdgeException
 import graphMateKT.graphClasses.AdjacencyList
 import java.util.*
 
@@ -23,12 +24,16 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             }
             graph.forEachEdge(u){ d, v ->
                 val newDistance = r.distances[u] + d
-                if (newDistance < r.distances[v]) {
-                    r.distances[v] = newDistance
-                    r.parents[v] = u
-                    if (!r.visited[v]) {
-                        pq.add(Edge(newDistance, v))
+                try {
+                    if (newDistance < r.distances[v]) {
+                        r.distances[v] = newDistance
+                        r.parents[v] = u
+                        if (!r.visited[v]) {
+                            pq.add(Edge(newDistance, v))
+                        }
                     }
+                } catch (_: ArrayIndexOutOfBoundsException) {
+                    throw InvalidEdgeException(u, v)
                 }
             }
         }

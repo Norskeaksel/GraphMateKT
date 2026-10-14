@@ -7,6 +7,7 @@ OUT="GraphMateKTSingleFile.kt"
 
 FILES=(
   HelperTypes.kt
+  InvalidEdgeException.kt
   graphClasses/BaseGraph.kt
   graphClasses/Graph.kt
   graphClasses/IntGraph.kt

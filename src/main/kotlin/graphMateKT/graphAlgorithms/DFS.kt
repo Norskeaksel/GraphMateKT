@@ -1,6 +1,7 @@
 package graphMateKT.graphAlgorithms
 
 import graphMateKT.IntComponents
+import graphMateKT.InvalidEdgeException
 import graphMateKT.graphClasses.AdjacencyList
 
 
@@ -19,13 +20,17 @@ internal class DFS(private val graph: AdjacencyList) {
             r.distances[id] = depth.toDouble()
             r.depth = depth.coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
-                r.parents[v] = id
-                visit(v, depth + 1)
+                try {
+                    r.parents[v] = id
+                    visit(v, depth + 1)
+                } catch (_: ArrayIndexOutOfBoundsException) {
+                    throw InvalidEdgeException(id, v)
+                }
             }
             r.processedOrder.add(id)
         }
 
-        visit(start, 1)
+        visit(start, 0)
         return r
     }
 

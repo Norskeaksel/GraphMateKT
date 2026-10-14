@@ -23,5 +23,5 @@ internal fun  repostsDFS(): Int {
         g.dfs(node)
         longestChain = max(longestChain, g.depth())
     }
-    return longestChain
+    return longestChain + 1
 }

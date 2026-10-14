@@ -32,7 +32,7 @@ internal fun signalJamInTheGrid(inputStream: InputStream): Int {
             grid.addEdge(u, grid.xy2NodeOrNull(v.x + m + 1, v.y) ?: return@forEach, 1)
         }
     }
-    grid.shortestPaths(start, end)
+    grid.shortestPathsFrom(start, end)
     //grid.visualizeGrid()
     return if(grid.foundTarget()) grid.distanceTo(end).coerceAtMost(grid.distanceTo(firstEnd)).toInt() else -1
 }

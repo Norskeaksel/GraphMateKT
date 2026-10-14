@@ -1,5 +1,6 @@
 package graphMateKT.graphAlgorithms
 
+import graphMateKT.InvalidEdgeException
 import graphMateKT.graphClasses.AdjacencyList
 
 
@@ -30,15 +31,19 @@ internal class BFS(private val graph: AdjacencyList) {
             }
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
-                if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
-                    r.parents[v] = currentId
-                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
-                    r.distances[v] = newDistance
-                    if (v == targetId) {
-                        r.currentVisited.add(v)
-                        r.foundTarget = true
+                try {
+                    if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
+                        r.parents[v] = currentId
+                        r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                        r.distances[v] = newDistance
+                        if (v == targetId) {
+                            r.currentVisited.add(v)
+                            r.foundTarget = true
+                        }
+                        queue.add(v)
                     }
-                    queue.add(v)
+                } catch (_: ArrayIndexOutOfBoundsException) {
+                    throw InvalidEdgeException(currentId, v)
                 }
             }
         }
