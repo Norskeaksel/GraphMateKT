@@ -30,14 +30,7 @@ private data class GridState(val person: Tile, val stone: Tile) {
     }
 }
 
-/** Solves https://open.kattis.com/problems/AWCProblem4 */
-internal fun ACWProblem4(inputStream: InputStream): Int {
-    val scanner = InputReader(inputStream)
-    val lines = generateSequence { scanner.nextString() }.toList()
-    base = lines.size
-    val grid = Grid(lines)
-    grid.deleteNodesWithData('#')
-
+private fun solve(grid: Grid): Triple<Double, List<Int>, List<Int>> {
     val personStart = grid.nodes().first { it.data == 'X' }.copy(data = '.')
     val stoneStart = grid.nodes().first { it.data == '*' }.copy(data = '.')
     val target = grid.nodes().first { it.data == 'T' }.copy(data = '.')
@@ -46,7 +39,7 @@ internal fun ACWProblem4(inputStream: InputStream): Int {
     grid.addNode(target)
 
     val nrOfStates = base.toDouble().pow(4).toInt()
-    val graph = IntGraph(nrOfStates)
+    val graph = IntGraph(nrOfStates, true)
 
     val initialState = GridState(personStart, stoneStart).encode()
     val targetState = GridState(target.copy(x = target.x - 1), target).encode()
@@ -75,10 +68,44 @@ internal fun ACWProblem4(inputStream: InputStream): Int {
         nextStates.filter { it.person.y <= it.stone.y || it.person.y <= gridState.person.y }.map { it.encode() }
     }
     graph.bfs(initialState, targetState)
-    val visitedNodes = graph.currentVisitedNodes().map { GridState.decode(it) }.flatMap { listOf(it.person, it.stone) }
-    val boost = visitedNodes.size * 2.0
-    val distances = visitedNodes.indices.map { if (it % 2 == 1) it + boost else it.toDouble() }
-    val finalPath = graph.getPath(targetState)?.map { GridState.decode(it) }?.map { it.person } ?: emptyList()
-    grid.visualizeGrid(visitedNodes, finalPath, nodeDistances = distances)
-    return graph.distanceTo(targetState).toInt()
+    return Triple(graph.distanceTo(targetState), graph.currentVisitedNodes(), graph.getPath(targetState)!!)
+}
+
+/** Solves https://open.kattis.com/problems/AWCProblem4 */
+internal fun ACWProblem4(inputStream: InputStream): Int {
+    val scanner = InputReader(inputStream)
+    val lines = generateSequence { scanner.nextString() }.toList()
+    base = lines.size
+    val grid = Grid(lines)
+    grid.deleteNodesWithData('#')
+    println("Finding Solution")
+    val (distance, visitedNodeCodes, finalPathCodes) = solve(grid)
+    println("Remapping nodes")
+    val personStatesSet = mutableSetOf<Tile>()
+    val stoneStatesSet = mutableSetOf<Tile>()
+    val finalStates = mutableListOf<Pair<Tile, Double>>()
+    val boost = visitedNodeCodes.size * 2.5
+
+    visitedNodeCodes.forEachIndexed { i, it ->
+        val (personState, stoneState) = GridState.decode(it)
+        if (stoneState !in stoneStatesSet)
+            finalStates.add(stoneState to i.toDouble() + boost)
+        stoneStatesSet.add(stoneState)
+        if (personState !in personStatesSet)
+            finalStates.add(personState to i.toDouble())
+        personStatesSet.add(personState)
+    }
+    val (visitedNodes, distances) = finalStates.unzip()
+    val finalPath = finalPathCodes.map { GridState.decode(it).person }
+    println("Visualizing Solution")
+    grid.visualizeGrid(
+        visitedNodes,
+        finalPath,
+        distances,
+        "Autumn Code Walk final problem. Ways to push a stone.",
+        0.40,
+        startPaused = true,
+        screenWidthMultiplier = 1.8
+    )
+    return distance.toInt()
 }

@@ -10,8 +10,8 @@ class AWCProblem4Test {
     @Test
     fun ACWProblem4a() {
         val expectedOutput = 7
-        File("src/test/SampleInput/ACWProblem4/input1").inputStream().use {
+        File("src/test/SampleInput/ACWProblem4/input2").inputStream().use {
             assertThat(ACWProblem4(it)).isEqualTo(expectedOutput)
         }
-    }|
+    }
 }

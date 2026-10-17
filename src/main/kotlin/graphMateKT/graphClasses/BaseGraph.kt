@@ -81,9 +81,14 @@ abstract class BaseGraph<T : Any>(
      * @param getNeighbours A user defined function that takes a `Node` as input and returns a list of neighboring `Nodes`
      */
     open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
-        adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
-        adjacencyListIsFinalized = true
-        clearEdges()
+        val time = measureTimeMillis {
+            adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
+            adjacencyListIsFinalized = true
+            clearEdges()
+        }
+        if (debugTimeUse) {
+            debug("connectWithRule took $time ms.")
+        }
     }
 
     protected fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
@@ -561,11 +566,17 @@ abstract class BaseGraph<T : Any>(
      * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
      * @throws IllegalStateException If no search algorithm (DFS, BFS, shortestPathsFrom) has been executed yet. */
     fun getPath(target: T): List<T>? {
-        val targetId = node2IdOrNull(target)
-        val pathIds = searchResults?.let { getPath(targetId, it.parents) }
-            ?: error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
-        if (pathIds.isEmpty()) return null
-        val path = pathIds.mapNotNull { id2NodeOrNull(it) }
+        val path: List<T>
+        val time = measureTimeMillis {
+            val targetId = node2IdOrNull(target)
+            val pathIds = searchResults?.let { getPath(targetId, it.parents) }
+                ?: error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
+            if (pathIds.isEmpty()) return null
+            path = pathIds.mapNotNull { id2NodeOrNull(it) }
+        }
+        if (debugTimeUse) {
+            debug("getPath took $time ms.")
+        }
         return path
     }
 
