@@ -46,7 +46,8 @@ internal fun boggle(): String {
         val grid = Grid(lines)
         repeat(4) { y ->
             repeat(4) { x ->
-                foundWords.addAll(trieBFS(trie, grid, grid.xy2Node(x, y)!!))
+                foundWords.addAll(trieBFS(trie, grid, grid.xy2Node(x, y)))
+
             }
         }
         foundWords.forEach { word ->

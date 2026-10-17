@@ -29,7 +29,7 @@ internal fun handleVizualizeGrid(
     when (algorithmSelector.value) {
         Algorithms.BFS -> grid.bfs(starts, target)
         Algorithms.DFS -> grid.dfs(start)
-        Algorithms.Dijkstra -> grid.shortestPaths(start, target)
+        Algorithms.Dijkstra -> grid.shortestPathsFrom(start, target)
         else -> {}
     }
     when (algorithmSelector.value) {

@@ -26,7 +26,7 @@ internal fun bigtruck(): String {
         ig.addEdge(a, b, d - ITEM_BOOST * items[b])
         ig.addEdge(b, a, d - ITEM_BOOST * items[a])
     }
-    ig.shortestPaths(1)
+    ig.shortestPathsFrom(1)
     if (ig.distanceTo(n) == Double.POSITIVE_INFINITY) {
         return "impossible"
     }

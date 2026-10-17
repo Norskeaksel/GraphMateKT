@@ -18,7 +18,7 @@ internal fun  dijkstraCF(): List<Int> {
         val (u, v, w) = readInts(3)
         g.connect(u, v, w.toDouble())
     }
-    g.shortestPaths(1)
+    g.shortestPathsFrom(1)
     val path = g.getPath(n) ?: return listOf(-1)
     return path
 }

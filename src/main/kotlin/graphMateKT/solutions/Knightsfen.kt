@@ -1,61 +1,63 @@
 package graphMateKT.solutions
 
 import fastInputReader.InputReader
-import graphMateKT.graphAlgorithms.BFS
-import graphMateKT.graphClasses.AdjacencyList
+import graphMateKT.graphClasses.Graph
 import java.io.InputStream
 
+private val dx = intArrayOf(-2, -1, 1, 2, -2, -1, 1, 2)
+private val dy = intArrayOf(-1, -2, -2, -1, 1, 2, 2, 1)
+private val targetBoard = listOf("11111", "01111", "00 11", "00001", "00000")
+
+/** Solves https://open.kattis.com/problems/knightsfen */
 internal fun main() {
     val ans = knightsfen(System.`in`)
     println(ans)
     System.out.flush()
 }
 
-private fun boardsEmptyCoordinates(board: List<String>): String {
-    repeat(5) { y ->
-        repeat(5) { x ->
-            if (board[y][x] == ' ')
-                return (x + y * 5).toString(2).padStart(5, '0')
-        }
+private fun boardsEmptyCoordinates(board: List<String>): Pair<Int, Int> {
+    val y = board.indexOfFirst { row -> row.contains(' ') }
+    val x = board[y].indexOf(' ')
+    return x to y
+}
+
+fun getNeighbours(board: List<String>): List<List<String>> {
+    val (x, y) = boardsEmptyCoordinates(board)
+    val neighbours = mutableListOf<List<String>>()
+    dx.indices.forEach { i ->
+        val nx = x + dx[i]
+        val ny = y + dy[i]
+        if (nx !in 0..4 || ny !in 0..4) return@forEach
+        val mutableBoard = Array(5) { board[it].toCharArray() }
+        mutableBoard[y][x] = board[ny][nx]
+        mutableBoard[ny][nx] = ' '
+        neighbours.add(mutableBoard.map { it.joinToString("") })
     }
-    return ""
+    return neighbours
 }
 
-fun board2BitCode(board: List<String>): String {
-    return board.joinToString().replace(" ", "1") + boardsEmptyCoordinates(board)
-}
-
-class KnightGridAdjacencyList : AdjacencyList {
-    val dx = listOf(-2, -1, 1, 2).let { it + it }
-    val dy = listOf(-1, -2, -2, -1, 1, 2, 2, 1)
-    override fun forEachNeighbour(node: Int, action: (Int) -> Unit) {
-        val neighbours =
-            action(node)
-    }
-
-    override fun forEachEdge(node: Int, action: (Double, Int) -> Unit) {}
-
-    override val size = 10_000_000
-}
-
-/** Solves https://open.kattis.com/problems/knightsfen */
 internal fun knightsfen(inputStream: InputStream): String {
     val scanner = InputReader(inputStream)
     val n = scanner.nextInt()
-    val targetBoard = """11111
-        01111
-        00 11
-        00001
-        00000
-    """.trimIndent()
+    val ans = StringBuilder()
+    val graph = Graph()
+    graph.addNode(targetBoard)
+    graph.connectWithRule {
+        getNeighbours(it as List<String>)
+    }
+    graph.bfs(listOf(targetBoard), maxDistance = 10.0)
     repeat(n) {
         val startingBoard = mutableListOf<String>()
-        repeat(5) {
-            startingBoard.add(scanner.nextString()!!)
+        repeat(5) { y ->
+            val line = scanner.nextLine()!!.padEnd(5, ' ')
+            startingBoard.add(line)
         }
-        val adjacencyList = KnightGridAdjacencyList()
-        val bfs = BFS(adjacencyList)
-        bfs.bfs(listOf(1))
+        val distance = graph.distanceTo(startingBoard).toInt()
+        if (distance <= 10) {
+            ans.appendLine("Solvable in $distance move(s).")
+        } else {
+            ans.appendLine("Unsolvable in less than 11 move(s).")
+        }
     }
-    return ""
+    return ans.toString()
 }

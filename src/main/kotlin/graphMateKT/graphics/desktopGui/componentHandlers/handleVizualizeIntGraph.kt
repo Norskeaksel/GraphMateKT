@@ -41,7 +41,7 @@ internal fun handleVizualizeIntGraph(
     when (algorithmSelector.value) {
         Algorithms.BFS -> intGraph.bfs(start, target)
         Algorithms.DFS -> intGraph.dfs(start)
-        Algorithms.Dijkstra -> intGraph.shortestPaths(start, target)
+        Algorithms.Dijkstra -> intGraph.shortestPathsFrom(start, target)
         Algorithms.StronglyConnectedComponents -> intGraph.stronglyConnectedComponents().run {
             visualizeComponents()
             return

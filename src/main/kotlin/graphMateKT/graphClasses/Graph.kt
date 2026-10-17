@@ -1,7 +1,5 @@
 package graphMateKT.graphClasses
 
-import graphMateKT.UnboxedEdges
-
 /** A general graph class that represents nodes of any datatype.
  *
  * Any new node is given an ID upon creation, which is used to build an adjacency list. The class maintains internal
@@ -21,12 +19,9 @@ import graphMateKT.UnboxedEdges
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
-    private var nrOfNodes = 0
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, false) {
     private val node2id = mutableMapOf<Any, Int>()
     private val id2Node = mutableMapOf<Int, Any>()
-    private val edges = UnboxedEdges()
-    private var adjacencyListIsFinalized = false
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -34,7 +29,6 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
 
     override fun addNode(node: Any) {
         if (node2id.containsKey(node)) {
-            //debug("Warning: The node already exists, it can't be added again")
             return
         }
         node2id[node] = nrOfNodes
@@ -50,12 +44,17 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(debugTimeUse) {
         adjacencyListIsFinalized = false
     }
 
-    override fun node2Id(node: Any): Int? = node2id[node]
-    override fun id2Node(id: Int): Any? = id2Node[id]
+    override fun node2IdOrNull(node: Any): Int? = node2id[node]
+    override fun node2Id(node: Any): Int = node2id[node] ?: (nrOfNodes++).also {
+        node2id[node] = it
+        id2Node[it] = node
+    }
+
+    override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
+    override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
     override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun finalizeAdjacencyListIfNeeded() {
-        if (adjacencyListIsFinalized) return
-        adjacencyList = AdjacencyListFlattened(nrOfNodes, edges)
-        adjacencyListIsFinalized = true
+    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
+        isSparse = true
+        super.connectWithRule(getNeighbours)
     }
 }

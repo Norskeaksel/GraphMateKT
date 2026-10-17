@@ -25,43 +25,16 @@ import kotlin.system.measureTimeMillis
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
  *
- * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1. This cannot be altered later.*/
-class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
-    BaseGraph<Int>(debugTimeUse) {
+ * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1.
+ * @param debugTimeUse optional flag that prints the time use of run algorithms to standard error*/
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
+    BaseGraph<Int>(size, debugTimeUse, isSparse) {
 
-    private val nodes = IntArray(size) { it }
-    private val edges = UnboxedEdges()
-    private val nrOfEdgesFrom = IntArray(size)
-    private var adjacencyListIsFinalized = false
+    private val nodes by lazy { IntArray(size) { it } }
+    private val nrOfEdgesFrom by lazy { IntArray(size) }
 
-    override fun finalizeAdjacencyListIfNeeded() {
-        if (adjacencyListIsFinalized)
-            return
-        val starts = IntArray(size)
-        val ends = IntArray(size)
-        val flattenedAdjacencyList = IntArray(edgesCount)
-        val flattenWeights = DoubleArray(edgesCount)
-        val nrOfEdgesCopy = nrOfEdgesFrom.copyOf()
-        var sum = 0
-        repeat(size) { i ->
-            starts[i] = sum
-            sum += nrOfEdgesCopy[i]
-            ends[i] = sum
-        }
-        repeat(edgesCount) { i ->
-            edges.run {
-                val u = from[i]
-                val v = to[i]
-                val offset = --nrOfEdgesCopy[u]
-                val idx = starts[u] + offset
-                flattenedAdjacencyList[idx] = v
-                flattenWeights[idx] = weights[i]
-            }
-        }
-        adjacencyList = AdjacencyListFlattened(size, edges)
-        adjacencyListIsFinalized = true
-    }
-
+    /** IntGraph doesn't support addNode(), because nodes are set on initialization.
+     * @throws IllegalStateException if called.*/
     override fun addNode(node: Int) =
         error("IntGraph doesn't support addNode(), because nodes are set on initialization.")
 
@@ -72,11 +45,13 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
         nrOfEdgesFrom[node1]++
     }
 
+    override fun id2NodeOrNull(id: Int) = id
     override fun id2Node(id: Int) = id
+    override fun node2IdOrNull(node: Int) = node
     override fun node2Id(node: Int) = node
     override fun nodes() = nodes.toList()
     override fun stronglyConnectedComponents(): IntComponents {
-        finalizeAdjacencyListIfNeeded()
+        finalizeAdjacencyListIfNeeded(true)
         val scc: IntComponents
         val time = measureTimeMillis {
             scc = DFS(adjacencyList).stronglyConnectedComponents()

@@ -1,9 +1,7 @@
 package graphMateKT
 
 /** Edge has a weight w to a destination node v */
-typealias Edge = Pair<Double, Int>
-/** Mutable list of edges */
-typealias Edges = MutableList<Edge>
+internal typealias Edge = Pair<Double, Int>
 /** List of list of nodes */
 typealias Components = List<List<Any>>
 /** List of list of integer nodes */
@@ -20,8 +18,9 @@ internal class IntArrayList {
 
     fun add(value: Int) {
         if (size >= intArray.size) {
-            intArray = intArray.copyOf(intArray.size * 2)
+            intArray = intArray.copyOf((size + 1) * 2)
         }
+        mutableListOf(1).add(2)
         intArray[size] = value
         size++
     }
@@ -33,6 +32,19 @@ internal class IntArrayList {
         }
         return intArray
     }
+
+    fun asList() = intArray.copyOf(size).asList()
+
+    fun clear() {
+        intArray = IntArray(INITIAL_CAPACITY)
+        size = 0
+    }
+
+    fun reversed() = IntArrayList().apply {
+        for (i in size - 1 downTo 0) {
+            add(intArray[i])
+        }
+    }
 }
 
 internal class DoubleArrayList {
@@ -42,7 +54,7 @@ internal class DoubleArrayList {
 
     fun add(value: Double) {
         if (size >= doubleArray.size) {
-            doubleArray = doubleArray.copyOf(doubleArray.size * 2)
+            doubleArray = doubleArray.copyOf((size + 1) * 2)
         }
         doubleArray[size] = value
         size++
@@ -58,21 +70,29 @@ internal class DoubleArrayList {
 }
 
 internal class UnboxedEdges {
-    val from = IntArrayList()
-    val to = IntArrayList()
-    val weights = DoubleArrayList()
-    var size = 0
-        private set
+    lateinit var from: IntArrayList
+    lateinit var to: IntArrayList
+    lateinit var weights: DoubleArrayList
+    val size get() = from.size
+
+    init {
+        clear()
+    }
 
     fun addEdge(u: Int, v: Int, weight: Double) {
         from.add(u)
         to.add(v)
         weights.add(weight)
-        size++
     }
 
     fun addEdge(u: Int, v: Int) {
         addEdge(u, v, 1.0)
+    }
+
+    fun clear() {
+        from = IntArrayList()
+        to = IntArrayList()
+        weights = DoubleArrayList()
     }
 
     fun boxedEdges() = List(size) { i -> Triple(from[i], to[i], weights[i]) }

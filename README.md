@@ -72,8 +72,8 @@ Once the graph is built, you may use the following graph algorithms:
 - **Depth-First Search (DFS)**:
     - `dfs(startNode: T, reset: Boolean = true)`
 
-- **Shortest Paths (Dijkstra)**:
-    - `shortestPaths(startNode: T, target: T? = null)`
+- **Shortest Path (Dijkstra)**:
+    - `shortestPathsFrom(startNode: T, target: T? = null)`
 
 - **All Pairs Shortest Paths (Floyd-Warshall)**:
     - `allPairsShortestPaths()`
@@ -113,7 +113,7 @@ internal fun main() {
 
   val startNode = 0
   val targetNode = 3
-  graph.shortestPaths(startNode)
+  graph.shortestPathsFrom(startNode)
   val nodes: List<Int> =
     graph.nodes().map { it as Int } // Nodes are of type Any and must therefore be cast to Int
   println("Shortest paths from source node $startNode:")
@@ -152,7 +152,7 @@ internal fun main() {
       intGraph.addEdge(fromNode as Int, toNode, weight)
     }
   }
-  intGraph.shortestPaths(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
+  intGraph.shortestPathsFrom(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
   val intNodes: List<Int> = intGraph.nodes()
   println("Shortest paths from source node $startNode:")
   intNodes.forEach { node ->

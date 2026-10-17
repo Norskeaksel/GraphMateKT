@@ -30,15 +30,15 @@ internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {
             grid.addEdge(u, v, 1000)
         }
         val v = when {
-            u.x < dim -> grid.xy2Node(u.x + 1, u.y)
-            u.x < dim * 2 -> grid.xy2Node(u.x, u.y - 1)
-            u.x < dim * 3 -> grid.xy2Node(u.x - 1, u.y)
-            else -> grid.xy2Node(u.x, u.y + 1)
+            u.x < dim -> grid.xy2NodeOrNull(u.x + 1, u.y)
+            u.x < dim * 2 -> grid.xy2NodeOrNull(u.x, u.y - 1)
+            u.x < dim * 3 -> grid.xy2NodeOrNull(u.x - 1, u.y)
+            else -> grid.xy2NodeOrNull(u.x, u.y + 1)
         } ?: return@forEach
         grid.addEdge(u, v)
     }
     val start = grid.nodes().first { it.data == 'S' }
-    grid.shortestPaths(start)
+    grid.shortestPathsFrom(start)
     val goal = grid.nodes().filter { it.data as Char == 'E' }.minBy { grid.distanceTo(it) }
     val finalPath = grid.getPath(goal)!!
     // grid.visualizeGrid(finalPath = finalPath, screenWidthMultiplier = 2.0, startPaused = true)
@@ -50,7 +50,7 @@ internal fun Day16ReindeerMaze2024Part2(grid: Grid, optimalDistance: Double): In
     val goals = grid.nodes().filter { it.data as Char == 'E' }
     val nodesInAnOptimalPath = mutableSetOf<Tile>()
     ProgressBar.wrap(grid.nodes(), "Part 2").forEach { t ->
-        grid.shortestPaths(t)
+        grid.shortestPathsFrom(t)
         if (distanceFromStartToNode[t]!! + goals.minOf { grid.distanceTo(it) } == optimalDistance) {
             nodesInAnOptimalPath.add(Tile(t.x % dim, t.y))
         }
