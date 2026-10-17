@@ -2,6 +2,7 @@ package graphMateKT.solutions
 
 import fastInputReader.InputReader
 import graphMateKT.graphClasses.Graph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
 
 var inputLines = listOf<String>()
@@ -54,5 +55,6 @@ internal fun day1SecretEntrance2025(inputStream: InputStream): Int {
         nextNode2(it as Node2)
     }
     graph.bfs(startingNode)
+    // graph.visualizeGraph()
     return graph.visitedNodes().count { (it as Node2).value.mod(100) == 0 }
 }

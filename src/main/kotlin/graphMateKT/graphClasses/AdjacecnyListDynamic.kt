@@ -7,12 +7,7 @@ internal class AdjacecnyListDynamic(
     private val forEachNeighbourOf: (node: Int, action: (Int) -> Unit) -> Unit,
 ) : AdjacencyList {
     private fun unsupported(): Nothing {
-        val callerName = Thread.currentThread().stackTrace
-            .drop(1) // getStackTrace() itself
-            .firstOrNull { it.className != this::class.java.name }
-            ?.methodName
-            ?: "This operation"
-        throw UnsupportedOperationException("$callerName cannot use be used with dynamic connections.")
+        throw UnsupportedOperationException("Function cannot use be used with dynamic connections.")
     }
 
     override val isDynamic = true

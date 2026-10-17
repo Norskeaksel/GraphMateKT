@@ -8,7 +8,7 @@ import graphMateKT.graphAlgorithms.BFS
 import graphMateKT.graphAlgorithms.DFS
 import graphMateKT.graphAlgorithms.Dijkstra
 import graphMateKT.graphAlgorithms.FloydWarshall
-import graphMateKT.graphAlgorithms.GraphSearchResults
+import graphMateKT.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
 /** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
@@ -49,6 +49,11 @@ abstract class BaseGraph<T : Any>(
         adjacencyList.edges().map { Triple(id2Node(it.first), id2Node(it.second), it.third) }
     }
 
+    fun clearEdges() {
+        edges.clear()
+        edgesCount = 0
+    }
+
     protected abstract fun node2IdOrNull(node: T): Int?
     protected abstract fun node2Id(node: T): Int
     protected abstract fun id2NodeOrNull(id: Int): T?
@@ -78,6 +83,7 @@ abstract class BaseGraph<T : Any>(
     open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
         adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
         adjacencyListIsFinalized = true
+        clearEdges()
     }
 
     protected fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
@@ -88,6 +94,7 @@ abstract class BaseGraph<T : Any>(
                 val uId = node2Id(u)
                 adjacencyList.forEachNeighbour(uId) { vId ->
                     edges.addEdge(uId, vId)
+                    edgesCount++
                 }
             }
         }
@@ -154,7 +161,7 @@ abstract class BaseGraph<T : Any>(
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
     fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.mapNotNull { id2NodeOrNull(it) }
+        searchResults?.currentVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
@@ -288,7 +295,7 @@ abstract class BaseGraph<T : Any>(
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
-     * @throws IllegalStateException If any of the starting nodes is not found in the graph. */
+     * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
@@ -300,6 +307,10 @@ abstract class BaseGraph<T : Any>(
             val startNodeIds = startNodes.map { node ->
                 node2IdOrNull(node) ?: error("startNode '$node' not found in graph")
             }
+            target?.let {
+                node2IdOrNull(it)
+                    ?: error("target '$target' not found in graph. Add it to the graph before searching for it.")
+            }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             try {
                 if (reset)
@@ -310,7 +321,7 @@ abstract class BaseGraph<T : Any>(
                     else
                         bfs(startNodeIds, targetId, searchResults, maxDistance)
                 }
-                searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
+                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                     if (finalNode == target)
                         finalPath = getPath(finalNode)
                 }
@@ -325,8 +336,8 @@ abstract class BaseGraph<T : Any>(
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
      * an optional target, instead of a list of starting nodes and an optional list of targets */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Double = Double.POSITIVE_INFINITY) =
-        bfs(listOf(startNode), target, reset, maxDepth)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDistance: Double = Double.POSITIVE_INFINITY) =
+        bfs(listOf(startNode), target, reset, maxDistance)
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
@@ -346,7 +357,12 @@ abstract class BaseGraph<T : Any>(
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
             if (reset) searchResults = null
             try {
-                searchResults = DFS(adjacencyList).dfs(startId, searchResults)
+                searchResults = DFS(adjacencyList).run {
+                    if (isSparse)
+                        dfsSparse(startId, searchResults)
+                    else
+                        dfs(startId, searchResults)
+                }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "dfs")
             }
@@ -373,7 +389,7 @@ abstract class BaseGraph<T : Any>(
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
-     * @throws IllegalStateException If the starting node is not found in the graph. */
+     * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
     fun shortestPathsFrom(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -381,9 +397,14 @@ abstract class BaseGraph<T : Any>(
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
-            val targetId = target?.let { node2IdOrNull(it) } ?: -1
+            val targetId = target?.let { node2IdOrNull(it) ?: error("target '$target' not found in graph") } ?: -1
             try {
-                searchResults = Dijkstra(adjacencyList).dijkstra(startId, targetId)
+                searchResults = Dijkstra(adjacencyList).run {
+                    if (isSparse)
+                        dijkstraSparse(startId, targetId)
+                    else
+                        dijkstra(startId, targetId)
+                }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "shortestPathsFrom")
             }
@@ -413,7 +434,7 @@ abstract class BaseGraph<T : Any>(
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun allPairsShortestPaths() {
-        finalizeAdjacencyListIfNeeded(false)
+        finalizeAdjacencyListIfNeeded(true)
         val time = measureTimeMillis {
             if (edgesCount == 0 && !adjacencyList.isDynamic) {
                 System.err.println("Warning: The graph has no edges, making pathfinding infeasible.")

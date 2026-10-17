@@ -1,4 +1,4 @@
-package graphMateKT.graphAlgorithms
+package graphMateKT
 
 internal data class GraphSearchResults(private val graphSize: Int) {
     val visited by lazy { BooleanArray(graphSize) }
@@ -8,7 +8,7 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val visitedSparse = mutableSetOf<Int>()
     val distancesSparse = mutableMapOf<Int, Double>()
     val parentsSparse = mutableMapOf<Int, Int>()
-    var currentVisited = mutableListOf<Int>()
-    var processedOrder = mutableListOf<Int>()
+    var currentVisited = IntArrayList()
+    var processedOrder = IntArrayList()
     var foundTarget = false
 }

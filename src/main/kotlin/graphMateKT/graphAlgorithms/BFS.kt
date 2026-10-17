@@ -1,5 +1,6 @@
 package graphMateKT.graphAlgorithms
 
+import graphMateKT.GraphSearchResults
 import graphMateKT.InvalidEdgeException
 import graphMateKT.graphClasses.AdjacencyList
 

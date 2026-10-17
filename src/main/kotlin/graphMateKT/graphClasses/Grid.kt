@@ -48,7 +48,13 @@ import graphMateKT.graphAlgorithms.DFS
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
-class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
+class Grid(
+    val width: Int,
+    val height: Int,
+    initWithDatalessTiles: Boolean = true,
+    debugTimeUse: Boolean = false,
+    isSparse: Boolean = false
+) :
     BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
@@ -152,6 +158,8 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) } ?: error("No node found at coordinates ($x, $y)")
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
+        require(edgesCount == 0 && !adjacencyList.isDynamic) { "Deleting nodes after edges are added is not supported" }
+        activeNodesNeedUpdating = true
         nodes[id] = null
     }
 
@@ -167,20 +175,20 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * If the coordinates are outside the grid, a warning is printed, and no action is taken.
      *
      * @param x The x-coordinate of the node to delete.
-     * @param y The y-coordinate of the node to delete. */
+     * @param y The y-coordinate of the node to delete.
+     * @throws IllegalArgumentException Called the function after edges have been added to the grid is not supported */
     fun deleteNodeAtXY(x: Int, y: Int) {
         val id = xy2Id(x, y) ?: run {
             System.err.println("Warning, coordinates ($x, $y) are outside the grid")
             return
         }
-        activeNodesNeedUpdating = true
         deleteNodeId(id)
     }
 
     /** Deletes all nodes in the grid that have the specified data. Deleted nodes are not considered neighbours of nodes.
-     * @param data The data value to match for deletion. */
+     * @param data The data value to match for deletion.
+     * @throws IllegalArgumentException Called the function after edges have been added to the grid is not supported */
     fun deleteNodesWithData(data: Any?) {
-        activeNodesNeedUpdating = true
         nodes.indices.forEach { i ->
             if (nodes[i]?.data == data) {
                 deleteNodeId(i)
@@ -242,6 +250,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
         adjacencyList = AdjacecnyListDynamic(gridSize, ::forEachStraightNeighbourId)
+        clearEdges()
         adjacencyListIsFinalized = true
     }
 

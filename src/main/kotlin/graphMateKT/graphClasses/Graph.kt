@@ -45,7 +45,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
     }
 
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
-    override fun node2Id(node: Any): Int = node2id[node] ?: (++nrOfNodes).also {
+    override fun node2Id(node: Any): Int = node2id[node] ?: (nrOfNodes++).also {
         node2id[node] = it
         id2Node[it] = node
     }
