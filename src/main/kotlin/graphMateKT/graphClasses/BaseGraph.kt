@@ -67,6 +67,7 @@ abstract class BaseGraph<T : Any>(
      * or when the graph's state space is too large or to be stored in memory effectivly. The tradeof is that seaches
      * (bfs, dfs) will be less performent per iteration, compared to if the graph was fully defined in advance.
      * NOTE: This will overwrite all existing edges (but not nodes) in the graph.
+     * It will also define the graph as being `sparse` if invoked from the Graph() class.
      *
      * <i>Example usage (if invoked from a grid):<i>
      * ```
@@ -95,6 +96,9 @@ abstract class BaseGraph<T : Any>(
         if (adjacencyListIsFinalized && (!fullGraphIsNeeded || !adjacencyList.isDynamic))
             return
         if (adjacencyList.isDynamic) {
+            if(isSparse && searchResults == null){
+                System.err.println("Warning: Trying to materialize edges on a sparse unexplored graph. (No search algorithm has been run yet). This might cause some defined edges to be lost." )
+            }
             nodes().forEach { u ->
                 val uId = node2Id(u)
                 adjacencyList.forEachNeighbour(uId) { vId ->
