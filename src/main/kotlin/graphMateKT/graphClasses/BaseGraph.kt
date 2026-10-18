@@ -217,24 +217,39 @@ abstract class BaseGraph<T : Any>(
         error("Haven't computed distance to '$node'.")
     }
 
-    /** Retrieves the maximum distance from the starting node to any other node of the most recent search operation (BFS, shortestPathsFrom).
+    /** Retrieves the maximum distance from the starting node to any other node after the most recent search operation (BFS, shortestPathsFrom).
      *
-     * If no search has been performed or a node cannot be reached, the function returns `Double.MAX_VALUE`.
+     * If no search has been performed or a node cannot be reached, the function returns `Double.POSITIVE_INFINITY`.
      * @return The maximum distance to any node. */
     fun maxDistance() = searchResults?.run {
         if (isSparse)
             distancesSparse.values.maxOrNull()
         else
             distances.maxOrNull()
-    } ?: Double.MAX_VALUE
+    } ?: Double.POSITIVE_INFINITY
 
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPathsFrom).
      *
      * @return The node that is the farthest from the starting node.
      * @throws IllegalStateException If no search algorithm (bfs, dfs, shortestPathsFrom) has been executed yet. */
-    fun furthestNode(): T =
-        searchResults?.let { r -> id2Node(r.distances.indices.first { r.distances[it] == maxDistance() }) }
-            ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+    fun furthestNode(): T {
+        val node: T
+        val time = measureTimeMillis {
+            node = searchResults?.let { r ->
+                val maxDistance = maxDistance()
+                if (isSparse) {
+                    id2Node(r.distancesSparse.keys.first { r.distancesSparse[it] == maxDistance })
+                } else {
+                    id2Node(r.distances.indices.first { r.distances[it] == maxDistance })
+                }
+            }
+                ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+        }
+        if (debugTimeUse) {
+            debug("furthestNode took $time ms.")
+        }
+        return node
+    }
 
     /** Retrieves a list of edges connected to the specified node.
      *
@@ -253,7 +268,8 @@ abstract class BaseGraph<T : Any>(
                 val weights = adjacencyList.weights(u)
                 edges = ArrayList(neighbours.size)
                 for (i in neighbours.indices) {
-                    val v = id2NodeOrNull(neighbours[i]) ?: error("Node with ID ${neighbours[i]} not found in graph")
+                    val v =
+                        id2NodeOrNull(neighbours[i]) ?: error("Node with ID ${neighbours[i]} not found in graph")
                     edges.add(weights[i] to v)
                 }
             }
@@ -345,10 +361,11 @@ abstract class BaseGraph<T : Any>(
                     else
                         bfs(startNodeIds, targetId, searchResults, maxDistance)
                 }
-                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
-                    if (finalNode == target)
-                        finalPath = getPath(finalNode)
-                }
+                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
+                    ?.also { finalNode ->
+                        if (finalNode == target)
+                            finalPath = getPath(finalNode)
+                    }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "bfs")
             }
@@ -360,7 +377,12 @@ abstract class BaseGraph<T : Any>(
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
      * an optional target, instead of a list of starting nodes and an optional list of targets */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDistance: Double = Double.POSITIVE_INFINITY) =
+    fun bfs(
+        startNode: T,
+        target: T? = null,
+        reset: Boolean = true,
+        maxDistance: Double = Double.POSITIVE_INFINITY
+    ) =
         bfs(listOf(startNode), target, reset, maxDistance)
 
 
@@ -629,7 +651,8 @@ abstract class BaseGraph<T : Any>(
     }
 
     private fun getPathFromArray(destination: Int?, parents: IntArray) = getPath(destination) { parents[it] }
-    private fun getPathFromMap(destination: Int?, parents: Map<Int, Int>) = getPath(destination) { parents[it] ?: -1 }
+    private fun getPathFromMap(destination: Int?, parents: Map<Int, Int>) =
+        getPath(destination) { parents[it] ?: -1 }
 
 
 // HELPER FUNCTIONS
