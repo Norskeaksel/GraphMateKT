@@ -1,3 +1,4 @@
+import graphMateKT.debug
 import graphMateKT.solutions.knightsfen
 
 
@@ -26,7 +27,7 @@ Solvable in 7 move(s).
         File("src/test/SampleInput/Knightsfen/input2").inputStream().use {
             measureTimeMillis {
                 assertThat(knightsfen(it)).isEqualTo(expectedOutput)
-            }.also { println("knightsfenb took $it ms") }
+            }.also { debug("knightsfenb took $it ms") }
         }
     }
 

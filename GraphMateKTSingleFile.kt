@@ -434,9 +434,11 @@ abstract class BaseGraph<T : Any>(
      * @param startNodes A list of starting nodes for the BFS traversal.
      * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
-     * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
+     * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
+     * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
-     * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
+     * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
+     * and the target node is not defined beforehand. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
@@ -448,9 +450,14 @@ abstract class BaseGraph<T : Any>(
             val startNodeIds = startNodes.map { node ->
                 node2IdOrNull(node) ?: error("startNode '$node' not found in graph")
             }
-            target?.let {
-                node2IdOrNull(it)
-                    ?: error("target '$target' not found in graph. Add it to the graph before searching for it.")
+            if (isSparse) {
+                target?.let {
+                    node2IdOrNull(it)
+                        ?: error(
+                            """target '$target' not found in graph. Target must be added to the graph before a search
+                            is performed if the graph is sparse, which it often will be if connectWithRule is used."""
+                        )
+                }
             }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             try {
@@ -525,12 +532,11 @@ abstract class BaseGraph<T : Any>(
      * - `maxDistance()`
      * - `furthestNode()`
      *
-     * If the graph is unweighted or has no weighted connections, a warning is issued, and BFS is executed instead.
-     *
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
-     * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
+     * @throws IllegalStateException If the starting node is not found in the graph, or if the graph * is sparse, and
+     * the target node is not defined beforehand. */
     fun shortestPathsFrom(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -538,7 +544,16 @@ abstract class BaseGraph<T : Any>(
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
-            val targetId = target?.let { node2IdOrNull(it) ?: error("target '$target' not found in graph") } ?: -1
+            if (isSparse) {
+                target?.let {
+                    node2IdOrNull(it)
+                        ?: error(
+                            """target '$target' not found in graph. Target must be added to the graph before a search
+                            is performed if the graph is sparse, which it often will be if connectWithRule is used."""
+                        )
+                }
+            }
+            val targetId = target?.let { node2IdOrNull(it) } ?: -1
             try {
                 searchResults = Dijkstra(adjacencyList).run {
                     if (isSparse)
@@ -1126,9 +1141,11 @@ class Grid(
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        adjacencyList = AdjacecnyListDynamic(gridSize, ::forEachStraightNeighbourId)
-        clearEdges()
-        adjacencyListIsFinalized = true
+        nodes().forEach { u ->
+            getStraightNeighbours(u).forEach { v ->
+                addEdge(u, v)
+            }
+        }
     }
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/

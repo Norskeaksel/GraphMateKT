@@ -249,9 +249,11 @@ class Grid(
     /** Connects all nodes in the grid with their straight neighbours, i.e. top, down, left, right neighbours,
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
-        adjacencyList = AdjacecnyListDynamic(gridSize, ::forEachStraightNeighbourId)
-        clearEdges()
-        adjacencyListIsFinalized = true
+        nodes().forEach { u ->
+            getStraightNeighbours(u).forEach { v ->
+                addEdge(u, v)
+            }
+        }
     }
 
     /** Print the content of the grid, tile by tile, to the standard error stream*/
