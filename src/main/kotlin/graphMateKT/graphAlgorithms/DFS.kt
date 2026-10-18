@@ -23,8 +23,10 @@ internal class DFS(private val graph: AdjacencyList) {
             r.depth = depth.coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
                 try {
-                    r.parents[v] = id
-                    visit(v, depth + 1)
+                    if (!r.visited[v]) {
+                        r.parents[v] = id
+                        visit(v, depth + 1)
+                    }
                 } catch (_: ArrayIndexOutOfBoundsException) {
                     throw InvalidEdgeException(id, v)
                 }
@@ -50,8 +52,10 @@ internal class DFS(private val graph: AdjacencyList) {
             r.depth = depth.coerceAtLeast(r.depth)
             graph.forEachNeighbour(id) { v ->
                 try {
-                    r.parentsSparse[v] = id
-                    visit(v, depth + 1)
+                    if (v !in r.visitedSparse) {
+                        r.parentsSparse[v] = id
+                        visit(v, depth + 1)
+                    }
                 } catch (_: ArrayIndexOutOfBoundsException) {
                     throw InvalidEdgeException(id, v)
                 }
