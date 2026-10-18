@@ -232,8 +232,8 @@ abstract class BaseGraph<T : Any>(
         if (adjacencyListIsFinalized && (!fullGraphIsNeeded || !adjacencyList.isDynamic))
             return
         if (adjacencyList.isDynamic) {
-            if(isSparse && searchResults == null){
-                System.err.println("Warning: Trying to materialize edges on a sparse unexplored graph. (No search algorithm has been run yet). This might cause some defined edges to be lost." )
+            if (isSparse && searchResults == null) {
+                System.err.println("Warning: Trying to materialize edges on a sparse unexplored graph. (No search algorithm has been run yet). This might cause some defined edges to be lost.")
             }
             nodes().forEach { u ->
                 val uId = node2Id(u)
@@ -322,8 +322,8 @@ abstract class BaseGraph<T : Any>(
         }
             ?: emptyList()
 
-    /** Retrieves the shortest path from the start to target node path during the most recent search operation
-     * (DFS, BFS, shortestPathsFrom)
+    /** Retrieves the shortest path from the start to target node (if a target was specified) during the most recent
+     *  search operation (DFS, BFS, shortestPathsFrom).
      *
      * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet or no path was found.
      * Note: Starting at a node, does not count as a path to that node */
@@ -380,16 +380,24 @@ abstract class BaseGraph<T : Any>(
      * @param node The node whose edges are to be retrieved.
      * @return A list of pairs representing the edges connected to the node.
      * @throws IllegalStateException If the specified node is not found in the graph. */
-    fun edges(node: T): List<Pair<Double, T>> = finalizeAdjacencyListIfNeeded(true).run {
-        val u = node2Id(node)
-        val neighbours = adjacencyList.neighbours(u)
-        val weights = adjacencyList.weights(u)
-        val edges = ArrayList<Pair<Double, T>>(neighbours.size)
-        for (i in neighbours.indices) {
-            val v = id2NodeOrNull(neighbours[i]) ?: error("Node with ID ${neighbours[i]} not found in graph")
-            edges.add(weights[i] to v)
+    fun edges(node: T): List<Pair<Double, T>> {
+        val edges: List<Pair<Double, T>>
+        val time = measureTimeMillis {
+            finalizeAdjacencyListIfNeeded(true).run {
+                val u = node2Id(node)
+                val neighbours = adjacencyList.neighbours(u)
+                val weights = adjacencyList.weights(u)
+                edges = ArrayList(neighbours.size)
+                for (i in neighbours.indices) {
+                    val v = id2NodeOrNull(neighbours[i]) ?: error("Node with ID ${neighbours[i]} not found in graph")
+                    edges.add(weights[i] to v)
+                }
+            }
         }
-        edges
+        if (debugTimeUse) {
+            debug("edges took $time ms.")
+        }
+        return edges
     }
 
     /** Retrieves a list the neighboring nodes of the specified node.
@@ -724,8 +732,16 @@ abstract class BaseGraph<T : Any>(
         val path: List<T>
         val time = measureTimeMillis {
             val targetId = node2IdOrNull(target)
-            val pathIds = searchResults?.let { getPath(targetId, it.parents) }
-                ?: error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
+            if (searchResults == null) {
+                error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
+            }
+            val pathIds = searchResults!!.run {
+                if (isSparse) {
+                    getPathFromMap(targetId, parentsSparse)
+                } else {
+                    getPathFromArray(targetId, parents)
+                }
+            }
             if (pathIds.isEmpty()) return null
             path = pathIds.mapNotNull { id2NodeOrNull(it) }
         }
@@ -735,18 +751,22 @@ abstract class BaseGraph<T : Any>(
         return path
     }
 
-    private fun getPath(destination: Int?, parents: IntArray): List<Int> {
+    private inline fun getPath(destination: Int?, parentOf: (Int) -> Int): List<Int> {
         val path = mutableListOf<Int>()
         destination?.let { dest ->
             var current = dest
-            while (parents[current] != -1 && parents[current] != destination) {
+            while (parentOf(current) != -1 && parentOf(current) != destination) {
                 path.add(current)
-                current = parents[current]
+                current = parentOf(current)
             }
             path.add(current)
         }
         return if (path.size > 1) path.reversed() else emptyList()
     }
+
+    private fun getPathFromArray(destination: Int?, parents: IntArray) = getPath(destination) { parents[it] }
+    private fun getPathFromMap(destination: Int?, parents: Map<Int, Int>) = getPath(destination) { parents[it] ?: -1 }
+
 
 // HELPER FUNCTIONS
     /** Clears the search results stored in the graph.

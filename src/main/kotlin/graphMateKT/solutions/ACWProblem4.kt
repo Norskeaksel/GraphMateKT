@@ -79,7 +79,7 @@ internal fun ACWProblem4(inputStream: InputStream): Int {
     val grid = Grid(lines)
     grid.deleteNodesWithData('#')
     val (distance, visitedNodeCodes, finalPathCodes) = solve(grid)
-    val personStatesSet = mutableSetOf<Tile>()
+    /* val personStatesSet = mutableSetOf<Tile>()
     val stoneStatesSet = mutableSetOf<Tile>()
     val finalStates = mutableListOf<Pair<Tile, Double>>()
     val boost = visitedNodeCodes.size * 2.5
@@ -93,7 +93,7 @@ internal fun ACWProblem4(inputStream: InputStream): Int {
             finalStates.add(personState to i.toDouble())
         personStatesSet.add(personState)
     }
-    /* val (visitedNodes, distances) = finalStates.unzip()
+    val (visitedNodes, distances) = finalStates.unzip()
     val finalPath = finalPathCodes.map { GridState.decode(it).person }
     grid.visualizeGrid(
         visitedNodes,
