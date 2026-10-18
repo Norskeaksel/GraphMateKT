@@ -663,7 +663,9 @@ abstract class BaseGraph<T : Any>(
         val (totalWeight, mst) = prims(adjacencyList).run {
             first to second.let { connections ->
                 val mstGraph = Graph()
-                connections.edges().forEach { (u, v, w) ->
+                connections.edges().forEach { (uId, vId, w) ->
+                    val u = id2Node(uId)
+                    val v = id2Node(vId)
                     mstGraph.addEdge(u, v, w)
                 }
                 mstGraph
@@ -1621,8 +1623,8 @@ internal class FloydWarshall(val graph: AdjacencyList) {
     init {
         graph.nodes().forEachIndexed { u, node ->
             distances[u][u] = 0.0
-            graph.forEachEdge(node){ d, v ->
-                distances[u][v] = d
+            graph.forEachEdge(node) { d, v ->
+                distances[u][v] = d.coerceAtMost(distances[u][v])
             }
         }
     }
@@ -1637,6 +1639,7 @@ internal class FloydWarshall(val graph: AdjacencyList) {
         }
         return distances
     }
+
     fun printDistances() {
         distances.forEachIndexed { i, row ->
             System.err.println("$i: ${row.joinToString(", ")}")

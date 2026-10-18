@@ -527,7 +527,9 @@ abstract class BaseGraph<T : Any>(
         val (totalWeight, mst) = prims(adjacencyList).run {
             first to second.let { connections ->
                 val mstGraph = Graph()
-                connections.edges().forEach { (u, v, w) ->
+                connections.edges().forEach { (uId, vId, w) ->
+                    val u = id2Node(uId)
+                    val v = id2Node(vId)
                     mstGraph.addEdge(u, v, w)
                 }
                 mstGraph
