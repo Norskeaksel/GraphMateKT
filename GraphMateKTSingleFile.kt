@@ -371,15 +371,11 @@ abstract class BaseGraph<T : Any>(
     fun furthestNode(): T {
         val node: T
         val time = measureTimeMillis {
-            node = searchResults?.let { r ->
-                val maxDistance = maxDistance()
-                if (isSparse) {
-                    id2Node(r.distancesSparse.keys.first { r.distancesSparse[it] == maxDistance })
-                } else {
-                    id2Node(r.distances.indices.first { r.distances[it] == maxDistance })
-                }
+            if (searchResults == null) {
+                error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
             }
-                ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+            val maxDistance = maxDistance()
+            node = nodes().first { distanceTo(it) == maxDistance }
         }
         if (debugTimeUse) {
             debug("furthestNode took $time ms.")
@@ -1051,8 +1047,8 @@ class Grid(
     override fun id2Node(id: Int): Tile = nodes.getOrNull(id) ?: error("Node with ID $id not found in grid")
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
-        val u = node2Id(node1)
-        val v = node2Id(node2)
+        val u = node2IdOrNull(node1) ?: error("$node1 not found in grid")
+        val v = node2IdOrNull(node2) ?: error("$node2 not found in grid")
         edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false

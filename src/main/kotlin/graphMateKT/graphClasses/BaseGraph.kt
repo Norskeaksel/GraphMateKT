@@ -235,15 +235,11 @@ abstract class BaseGraph<T : Any>(
     fun furthestNode(): T {
         val node: T
         val time = measureTimeMillis {
-            node = searchResults?.let { r ->
-                val maxDistance = maxDistance()
-                if (isSparse) {
-                    id2Node(r.distancesSparse.keys.first { r.distancesSparse[it] == maxDistance })
-                } else {
-                    id2Node(r.distances.indices.first { r.distances[it] == maxDistance })
-                }
+            if (searchResults == null) {
+                error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
             }
-                ?: error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+            val maxDistance = maxDistance()
+            node = nodes().first { distanceTo(it) == maxDistance }
         }
         if (debugTimeUse) {
             debug("furthestNode took $time ms.")
