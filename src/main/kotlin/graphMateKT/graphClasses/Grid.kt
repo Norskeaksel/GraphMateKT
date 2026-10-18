@@ -110,8 +110,8 @@ class Grid(
     override fun id2Node(id: Int): Tile = nodes.getOrNull(id) ?: error("Node with ID $id not found in grid")
 
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
-        val u = node2Id(node1)
-        val v = node2Id(node2)
+        val u = node2IdOrNull(node1) ?: error("$node1 not found in grid")
+        val v = node2IdOrNull(node2) ?: error("$node2 not found in grid")
         edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false
