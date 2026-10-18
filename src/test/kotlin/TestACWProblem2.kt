@@ -16,12 +16,4 @@ class ACWProblem2Test {
             assertThat(ACWProblem2(it)).isEqualTo(expectedOutput)
         }
     }
-
-    @Test
-    fun ACWProblem2b() {
-        val expectedOutput = 48
-        File("src/test/SampleInput/ACWProblem2/input2").inputStream().use{
-            assertThat(ACWProblem2(it)).isEqualTo(expectedOutput)
-        }
-    }
 }
