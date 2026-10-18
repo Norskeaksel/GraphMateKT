@@ -221,12 +221,19 @@ abstract class BaseGraph<T : Any>(
      *
      * If no search has been performed or a node cannot be reached, the function returns `Double.POSITIVE_INFINITY`.
      * @return The maximum distance to any node. */
-    fun maxDistance() = searchResults?.run {
-        if (isSparse)
-            distancesSparse.values.maxOrNull()
-        else
-            distances.maxOrNull()
-    } ?: Double.POSITIVE_INFINITY
+    fun maxDistance(): Double {
+        val maxDistance: Double
+        val time = measureTimeMillis {
+            if (searchResults == null) {
+                error("Cannot compute maxDistance because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+            }
+            maxDistance = nodes().maxOfOrNull { distanceTo(it) } ?: Double.POSITIVE_INFINITY
+        }
+        if (debugTimeUse) {
+            debug("maxDistance took $time ms.")
+        }
+        return maxDistance
+    }
 
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPathsFrom).
      *
@@ -236,7 +243,7 @@ abstract class BaseGraph<T : Any>(
         val node: T
         val time = measureTimeMillis {
             if (searchResults == null) {
-                error("Haven't computed furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
+                error("Cannot compute furthest node because no search algorithm (bfs, dfs, shortestPathsFrom) has been run yet.")
             }
             val maxDistance = maxDistance()
             node = nodes().first { distanceTo(it) == maxDistance }
