@@ -21,8 +21,9 @@ internal class IntArrayList {
 
     fun add(value: Int) {
         if (size >= intArray.size) {
-            intArray = intArray.copyOf(intArray.size * 2)
+            intArray = intArray.copyOf((size + 1) * 2)
         }
+        mutableListOf(1).add(2)
         intArray[size] = value
         size++
     }
@@ -34,6 +35,19 @@ internal class IntArrayList {
         }
         return intArray
     }
+
+    fun asList() = intArray.copyOf(size).asList()
+
+    fun clear() {
+        intArray = IntArray(INITIAL_CAPACITY)
+        size = 0
+    }
+
+    fun reversed() = IntArrayList().apply {
+        for (i in size - 1 downTo 0) {
+            add(intArray[i])
+        }
+    }
 }
 
 internal class DoubleArrayList {
@@ -43,7 +57,7 @@ internal class DoubleArrayList {
 
     fun add(value: Double) {
         if (size >= doubleArray.size) {
-            doubleArray = doubleArray.copyOf(doubleArray.size * 2)
+            doubleArray = doubleArray.copyOf((size + 1) * 2)
         }
         doubleArray[size] = value
         size++
@@ -59,21 +73,29 @@ internal class DoubleArrayList {
 }
 
 internal class UnboxedEdges {
-    val from = IntArrayList()
-    val to = IntArrayList()
-    val weights = DoubleArrayList()
-    var size = 0
-        private set
+    lateinit var from: IntArrayList
+    lateinit var to: IntArrayList
+    lateinit var weights: DoubleArrayList
+    val size get() = from.size
+
+    init {
+        clear()
+    }
 
     fun addEdge(u: Int, v: Int, weight: Double) {
         from.add(u)
         to.add(v)
         weights.add(weight)
-        size++
     }
 
     fun addEdge(u: Int, v: Int) {
         addEdge(u, v, 1.0)
+    }
+
+    fun clear() {
+        from = IntArrayList()
+        to = IntArrayList()
+        weights = DoubleArrayList()
     }
 
     fun boxedEdges() = List(size) { i -> Triple(from[i], to[i], weights[i]) }
@@ -163,6 +185,11 @@ abstract class BaseGraph<T : Any>(
         adjacencyList.edges().map { Triple(id2Node(it.first), id2Node(it.second), it.third) }
     }
 
+    fun clearEdges() {
+        edges.clear()
+        edgesCount = 0
+    }
+
     protected abstract fun node2IdOrNull(node: T): Int?
     protected abstract fun node2Id(node: T): Int
     protected abstract fun id2NodeOrNull(id: Int): T?
@@ -190,8 +217,14 @@ abstract class BaseGraph<T : Any>(
      * @param getNeighbours A user defined function that takes a `Node` as input and returns a list of neighboring `Nodes`
      */
     open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
-        adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
-        adjacencyListIsFinalized = true
+        val time = measureTimeMillis {
+            adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
+            adjacencyListIsFinalized = true
+            clearEdges()
+        }
+        if (debugTimeUse) {
+            debug("connectWithRule took $time ms.")
+        }
     }
 
     protected fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
@@ -202,6 +235,7 @@ abstract class BaseGraph<T : Any>(
                 val uId = node2Id(u)
                 adjacencyList.forEachNeighbour(uId) { vId ->
                     edges.addEdge(uId, vId)
+                    edgesCount++
                 }
             }
         }
@@ -268,7 +302,7 @@ abstract class BaseGraph<T : Any>(
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
     fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.mapNotNull { id2NodeOrNull(it) }
+        searchResults?.currentVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
@@ -402,7 +436,7 @@ abstract class BaseGraph<T : Any>(
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
-     * @throws IllegalStateException If any of the starting nodes is not found in the graph. */
+     * @throws IllegalStateException If any of the starting nodes or the target node is not found in the graph. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
@@ -414,6 +448,10 @@ abstract class BaseGraph<T : Any>(
             val startNodeIds = startNodes.map { node ->
                 node2IdOrNull(node) ?: error("startNode '$node' not found in graph")
             }
+            target?.let {
+                node2IdOrNull(it)
+                    ?: error("target '$target' not found in graph. Add it to the graph before searching for it.")
+            }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             try {
                 if (reset)
@@ -424,7 +462,7 @@ abstract class BaseGraph<T : Any>(
                     else
                         bfs(startNodeIds, targetId, searchResults, maxDistance)
                 }
-                searchResults?.currentVisited?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
+                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }?.also { finalNode ->
                     if (finalNode == target)
                         finalPath = getPath(finalNode)
                 }
@@ -439,8 +477,8 @@ abstract class BaseGraph<T : Any>(
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
      * an optional target, instead of a list of starting nodes and an optional list of targets */
-    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDepth: Double = Double.POSITIVE_INFINITY) =
-        bfs(listOf(startNode), target, reset, maxDepth)
+    fun bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDistance: Double = Double.POSITIVE_INFINITY) =
+        bfs(listOf(startNode), target, reset, maxDistance)
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
@@ -460,7 +498,12 @@ abstract class BaseGraph<T : Any>(
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
             if (reset) searchResults = null
             try {
-                searchResults = DFS(adjacencyList).dfs(startId, searchResults)
+                searchResults = DFS(adjacencyList).run {
+                    if (isSparse)
+                        dfsSparse(startId, searchResults)
+                    else
+                        dfs(startId, searchResults)
+                }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "dfs")
             }
@@ -487,7 +530,7 @@ abstract class BaseGraph<T : Any>(
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
-     * @throws IllegalStateException If the starting node is not found in the graph. */
+     * @throws IllegalStateException If the starting node or the target node is not found in the graph. */
     fun shortestPathsFrom(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -495,9 +538,14 @@ abstract class BaseGraph<T : Any>(
                 System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
             }
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
-            val targetId = target?.let { node2IdOrNull(it) } ?: -1
+            val targetId = target?.let { node2IdOrNull(it) ?: error("target '$target' not found in graph") } ?: -1
             try {
-                searchResults = Dijkstra(adjacencyList).dijkstra(startId, targetId)
+                searchResults = Dijkstra(adjacencyList).run {
+                    if (isSparse)
+                        dijkstraSparse(startId, targetId)
+                    else
+                        dijkstra(startId, targetId)
+                }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "shortestPathsFrom")
             }
@@ -527,7 +575,7 @@ abstract class BaseGraph<T : Any>(
      *
      * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
     fun allPairsShortestPaths() {
-        finalizeAdjacencyListIfNeeded(false)
+        finalizeAdjacencyListIfNeeded(true)
         val time = measureTimeMillis {
             if (edgesCount == 0 && !adjacencyList.isDynamic) {
                 System.err.println("Warning: The graph has no edges, making pathfinding infeasible.")
@@ -654,11 +702,17 @@ abstract class BaseGraph<T : Any>(
      * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
      * @throws IllegalStateException If no search algorithm (DFS, BFS, shortestPathsFrom) has been executed yet. */
     fun getPath(target: T): List<T>? {
-        val targetId = node2IdOrNull(target)
-        val pathIds = searchResults?.let { getPath(targetId, it.parents) }
-            ?: error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
-        if (pathIds.isEmpty()) return null
-        val path = pathIds.mapNotNull { id2NodeOrNull(it) }
+        val path: List<T>
+        val time = measureTimeMillis {
+            val targetId = node2IdOrNull(target)
+            val pathIds = searchResults?.let { getPath(targetId, it.parents) }
+                ?: error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
+            if (pathIds.isEmpty()) return null
+            path = pathIds.mapNotNull { id2NodeOrNull(it) }
+        }
+        if (debugTimeUse) {
+            debug("getPath took $time ms.")
+        }
         return path
     }
 
@@ -754,7 +808,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
     }
 
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
-    override fun node2Id(node: Any): Int = node2id[node] ?: (++nrOfNodes).also {
+    override fun node2Id(node: Any): Int = node2id[node] ?: (nrOfNodes++).also {
         node2id[node] = it
         id2Node[it] = node
     }
@@ -871,7 +925,13 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: B
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
-class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
+class Grid(
+    val width: Int,
+    val height: Int,
+    initWithDatalessTiles: Boolean = true,
+    debugTimeUse: Boolean = false,
+    isSparse: Boolean = false
+) :
     BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
@@ -975,6 +1035,8 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) } ?: error("No node found at coordinates ($x, $y)")
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
     private fun deleteNodeId(id: Int) {
+        require(edgesCount == 0 && !adjacencyList.isDynamic) { "Deleting nodes after edges are added is not supported" }
+        activeNodesNeedUpdating = true
         nodes[id] = null
     }
 
@@ -990,20 +1052,20 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * If the coordinates are outside the grid, a warning is printed, and no action is taken.
      *
      * @param x The x-coordinate of the node to delete.
-     * @param y The y-coordinate of the node to delete. */
+     * @param y The y-coordinate of the node to delete.
+     * @throws IllegalArgumentException Called the function after edges have been added to the grid is not supported */
     fun deleteNodeAtXY(x: Int, y: Int) {
         val id = xy2Id(x, y) ?: run {
             System.err.println("Warning, coordinates ($x, $y) are outside the grid")
             return
         }
-        activeNodesNeedUpdating = true
         deleteNodeId(id)
     }
 
     /** Deletes all nodes in the grid that have the specified data. Deleted nodes are not considered neighbours of nodes.
-     * @param data The data value to match for deletion. */
+     * @param data The data value to match for deletion.
+     * @throws IllegalArgumentException Called the function after edges have been added to the grid is not supported */
     fun deleteNodesWithData(data: Any?) {
-        activeNodesNeedUpdating = true
         nodes.indices.forEach { i ->
             if (nodes[i]?.data == data) {
                 deleteNodeId(i)
@@ -1065,6 +1127,7 @@ class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = tru
      * if they exist within the grid boundaries and have not been deleted.*/
     fun connectGridDefault() {
         adjacencyList = AdjacecnyListDynamic(gridSize, ::forEachStraightNeighbourId)
+        clearEdges()
         adjacencyListIsFinalized = true
     }
 
@@ -1101,12 +1164,7 @@ internal class AdjacecnyListDynamic(
     private val forEachNeighbourOf: (node: Int, action: (Int) -> Unit) -> Unit,
 ) : AdjacencyList {
     private fun unsupported(): Nothing {
-        val callerName = Thread.currentThread().stackTrace
-            .drop(1) // getStackTrace() itself
-            .firstOrNull { it.className != this::class.java.name }
-            ?.methodName
-            ?: "This operation"
-        throw UnsupportedOperationException("$callerName cannot use be used with dynamic connections.")
+        throw UnsupportedOperationException("Function cannot use be used with dynamic connections.")
     }
 
     override val isDynamic = true
@@ -1345,7 +1403,7 @@ internal class DFS(private val graph: AdjacencyList) {
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = mutableListOf()
+        r.currentVisited = IntArrayList()
         fun visit(id: Int, depth: Int) {
             if (r.visited[id]) return
             r.visited[id] = true
@@ -1367,16 +1425,43 @@ internal class DFS(private val graph: AdjacencyList) {
         return r
     }
 
+    fun dfsSparse(
+        start: Int,
+        initialSearchResults: GraphSearchResults? = null,
+    ): GraphSearchResults {
+        r = initialSearchResults ?: GraphSearchResults(graph.size)
+        r.currentVisited = IntArrayList()
+        fun visit(id: Int, depth: Int) {
+            if (id in r.visitedSparse) return
+            r.visitedSparse.add(id)
+            r.currentVisited.add(id)
+            r.distancesSparse[id] = depth.toDouble()
+            r.depth = depth.coerceAtLeast(r.depth)
+            graph.forEachNeighbour(id) { v ->
+                try {
+                    r.parentsSparse[v] = id
+                    visit(v, depth + 1)
+                } catch (_: ArrayIndexOutOfBoundsException) {
+                    throw InvalidEdgeException(id, v)
+                }
+            }
+            r.processedOrder.add(id)
+        }
+
+        visit(start, 0)
+        return r
+    }
+
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
         val topologicalOrder = DFS(graph.reversed()).topologicalSort(deleted).reversed()
-        val stronglyConnectedComponents: IntComponents = topologicalOrder.mapNotNull { id ->
+        val stronglyConnectedComponents = topologicalOrder.mapNotNull { id ->
             if (r.visited[id]) null
             else {
                 dfs(id, r)
                 r.currentVisited
             }
         }
-        return stronglyConnectedComponents
+        return stronglyConnectedComponents.map { it.asList() }
     }
 
     fun topologicalSort(deleted: BooleanArray = BooleanArray(graph.size)): List<Int> {
@@ -1384,7 +1469,7 @@ internal class DFS(private val graph: AdjacencyList) {
             if (deleted[i]) continue
             dfs(i, r)
         }
-        return r.processedOrder
+        return r.processedOrder.asList()
     }
 }
 
@@ -1392,7 +1477,7 @@ internal class DFS(private val graph: AdjacencyList) {
 internal class Dijkstra(private val graph: AdjacencyList) {
     private var r = GraphSearchResults(graph.size)
     fun dijkstra(start: Int, target: Int = -1): GraphSearchResults {
-        r =  GraphSearchResults(graph.size)
+        r = GraphSearchResults(graph.size)
         r.distances[start] = 0.0
         val pq = PriorityQueue<Edge> { a, b -> a.first.compareTo(b.first) }
         pq.add(Edge(0.0, start))
@@ -1402,17 +1487,51 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u]) continue
             r.visited[u] = true
             r.currentVisited.add(u)
-            if(u == target) {
+            if (u == target) {
                 r.foundTarget = true
                 break
             }
-            graph.forEachEdge(u){ d, v ->
+            graph.forEachEdge(u) { d, v ->
                 val newDistance = r.distances[u] + d
                 try {
                     if (newDistance < r.distances[v]) {
                         r.distances[v] = newDistance
                         r.parents[v] = u
                         if (!r.visited[v]) {
+                            pq.add(Edge(newDistance, v))
+                        }
+                    }
+                } catch (_: ArrayIndexOutOfBoundsException) {
+                    throw InvalidEdgeException(u, v)
+                }
+            }
+        }
+        r.processedOrder = r.currentVisited
+        return r
+    }
+
+    fun dijkstraSparse(start: Int, target: Int = -1): GraphSearchResults {
+        r = GraphSearchResults(graph.size)
+        r.distancesSparse[start] = 0.0
+        val pq = PriorityQueue<Edge> { a, b -> a.first.compareTo(b.first) }
+        pq.add(Edge(0.0, start))
+        while (pq.isNotEmpty()) {
+            val u = pq.poll().second
+
+            if (u in r.visitedSparse) continue
+            r.visitedSparse.add(u)
+            r.currentVisited.add(u)
+            if (u == target) {
+                r.foundTarget = true
+                break
+            }
+            graph.forEachEdge(u) { d, v ->
+                val newDistance = r.distancesSparse[u]!! + d
+                try {
+                    if (newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY)) {
+                        r.distancesSparse[v] = newDistance
+                        r.parentsSparse[v] = u
+                        if (v !in r.visitedSparse) {
                             pq.add(Edge(newDistance, v))
                         }
                     }
@@ -1465,8 +1584,8 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val visitedSparse = mutableSetOf<Int>()
     val distancesSparse = mutableMapOf<Int, Double>()
     val parentsSparse = mutableMapOf<Int, Int>()
-    var currentVisited = mutableListOf<Int>()
-    var processedOrder = mutableListOf<Int>()
+    var currentVisited = IntArrayList()
+    var processedOrder = IntArrayList()
     var foundTarget = false
 }
 

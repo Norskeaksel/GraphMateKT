@@ -20,7 +20,7 @@ FILES=(
   graphAlgorithms/DFS.kt
   graphAlgorithms/Dijkstra.kt
   graphAlgorithms/FloydWarshall.kt
-  graphAlgorithms/GraphSearchResults.kt
+  GraphSearchResults.kt
   graphAlgorithms/NrOfPaths.kt
   graphAlgorithms/Prims.kt
   AdvancedRead.kt
