@@ -2,12 +2,14 @@ package graphMateKT.graphClasses
 
 import graphMateKT.GridComponents
 import graphMateKT.Tile
+import graphMateKT.debug
 import graphMateKT.graphAlgorithms.DFS
+import kotlin.system.measureTimeMillis
 
 /** A general graph class that represents a 2D grid structure of nodes.
  *
  * It uses the data class:
- * `Tile(val x: Int, val y: Int, var data: Any? = null)`
+ * `Tile(val x: Int, val y: Int, val data: Any? = null)`
  * to represent nodes of any datatype, where each node also has x and y coordinates.
  *
  * The grid can be created in two ways:
@@ -17,7 +19,7 @@ import graphMateKT.graphAlgorithms.DFS
  * The Grid class supports the same algorithms as the Graph class. Additionally, it
  * provides methods for connecting nodes in the grid without explicitly adding edges:
  * - `.connectGridDefault()` connects each node to its neighbors in the up, down, left, and right directions, if they exist.
- * - `.connectGrid(::yourCustomFunction)` (or `.connectGrid { yourLambda }`) allows custom connections, where the function
+ * - `.connectWithRule(::yourCustomFunction)` (or `.connectWithRule { yourLambda }`) allows custom connections, where the function
  *   takes a `Tile` and returns a `List<Tile>` to connect to.
  *
  * <i>Example usage:</i>
@@ -38,10 +40,10 @@ import graphMateKT.graphAlgorithms.DFS
  * )
  * val grid = Grid(stringList)
  * grid.deleteNodesWithData('#')
- * grid.connectGrid { t ->
- *     grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y } // connect right and down
+ * grid.connectWithRule { t ->
+ *     grid.getStraightNeighbours(t).filter { it.x > t.x || it.y > t.y } // connect right and down
  * }
- * grid.bfs(Tile(0, 0, 'S'))
+ * grid.bfs(Tile(0, 0))
  * grid.visualizeGrid()
  * ```
  *
@@ -98,6 +100,12 @@ class Grid(
     }
 
 
+    /** Adds (or replaces) the tile at the node's (x, y) coordinates. Can also be used to restore a deleted tile.
+     *
+     * NOTE: For performance, the coordinates are not validated. An x outside 0 until width, with a valid y, overwrites
+     * a tile on another row.
+     * @param node The tile to add
+     * @throws IndexOutOfBoundsException If `x + y * width` is outside the grid (0 until width * height). */
     override fun addNode(node: Tile) {
         val id = node2Id(node)
         nodes[id] = node

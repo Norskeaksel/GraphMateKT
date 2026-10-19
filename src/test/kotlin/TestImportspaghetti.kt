@@ -37,5 +37,4 @@ class ImportspaghettiTest {
         _reader = File("src/test/SampleInput/Importspaghetti/input3").inputStream().bufferedReader()
         assertThat(importspaghetti()).isEqualTo(expectedOutput)
     }
-
 }

@@ -39,6 +39,7 @@ internal class BFS(private val graph: AdjacencyList) {
                         r.distances[v] = newDistance
                         if (v == targetId) {
                             r.currentVisited.add(v)
+                            r.visited[v] = true
                             r.foundTarget = true
                         }
                         queue.add(v)
@@ -86,6 +87,7 @@ internal class BFS(private val graph: AdjacencyList) {
                     r.distancesSparse[v] = newDistance
                     if (v == targetId) {
                         r.currentVisited.add(v)
+                        r.visitedSparse.add(v)
                         r.foundTarget = true
                     }
                     queue.add(v)

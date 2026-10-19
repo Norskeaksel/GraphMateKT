@@ -16,11 +16,11 @@ import kotlin.system.measureTimeMillis
  * <i>Example usage:</i>
  *
  * ```
- * val intGraph = IntGraph(3, 3) // Creates a graph with nodes 0, 1 and 2, and 3 edges
+ * val graph = IntGraph(3) // Creates a graph with nodes 0, 1 and 2
  * graph.addEdge(0, 1, 5.0)
  * graph.addEdge(0, 2, 2.0)
  * graph.addEdge(2, 1, 1.0)
- * graph.dijkstra(0, 1)
+ * graph.shortestPathsFrom(0, 1)
  * // NOTE: visualizeGraph() requires the smartgraph.css and smartgraph.properties files to be added to the root of your project.
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```

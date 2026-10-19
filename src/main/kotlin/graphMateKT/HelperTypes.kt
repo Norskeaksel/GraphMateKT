@@ -20,7 +20,6 @@ internal class IntArrayList {
         if (size >= intArray.size) {
             intArray = intArray.copyOf((size + 1) * 2)
         }
-        mutableListOf(1).add(2)
         intArray[size] = value
         size++
     }

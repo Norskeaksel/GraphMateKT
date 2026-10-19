@@ -343,7 +343,7 @@ abstract class BaseGraph<T : Any>(
      * @return The distance to the specified node.
      * @throws IllegalStateException If neither BFS nor shortestPathsFrom has been executed yet. */
     fun distanceTo(node: T): Double {
-        val id = node2Id(node)
+        val id = node2IdOrNull(node) ?: error("'$node' not found in graph")
         searchResults?.run {
             return if (isSparse)
                 distancesSparse[id] ?: Double.POSITIVE_INFINITY

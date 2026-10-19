@@ -12,7 +12,7 @@ package graphMateKT.graphClasses
  * graph.addEdge("A", "B", 5.0)
  * graph.addEdge("A", "C", 2.0)
  * graph.addEdge("C", "B", 1.0)
- * graph.dijkstra("A", "B")
+ * graph.shortestPathsFrom("A", "B")
  * // NOTE: visualizeGraph() requires the smartgraph.css and smartgraph.properties files to be added to the root of your project.
  * graph.visualizeGraph() // Find the needed files here: https://github.com/Norskeaksel/GraphMateKT
  * ```
@@ -33,7 +33,9 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
         }
         node2id[node] = nrOfNodes
         id2Node[nrOfNodes++] = node
-        adjacencyListIsFinalized = false
+        if (!adjacencyList.isDynamic) {
+            adjacencyListIsFinalized = false
+        }
     }
 
     override fun addEdge(node1: Any, node2: Any, weight: Double) {

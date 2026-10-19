@@ -4,14 +4,14 @@ import graphMateKT.graphClasses.Graph
 import graphMateKT.readString
 
 
-internal fun  main() {
+internal fun main() {
     val ans = familydag()
     println(ans)
     System.out.flush()
 }
 
 /** Solves https://open.kattis.com/problems/familydag */
-internal fun  familydag(): String {
+internal fun familydag(): String {
     var graph = Graph()
     val ans = StringBuilder()
     while (true) {
@@ -48,7 +48,7 @@ private fun findHillbilliesAndParadoxes(graph: Graph, sortedNodes: List<Any>): M
         fun hillbillyDfs(node: Any) {
             if (isHillbilly) return
             visited.add(node)
-            graph.neighbours(node).forEach { v ->
+            graph.forEachNeighbour(node) { v ->
                 if (v in visited) isHillbilly = true
                 hillbillyDfs(v)
             }

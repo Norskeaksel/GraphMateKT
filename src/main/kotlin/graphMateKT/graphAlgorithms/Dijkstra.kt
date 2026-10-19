@@ -15,12 +15,11 @@ internal class Dijkstra(private val graph: AdjacencyList) {
         pq.add(Edge(0.0, start))
         while (pq.isNotEmpty()) {
             val u = pq.poll().second
-
-            if (r.visited[u]) continue
+            if (r.visited[u])
+                continue
             r.visited[u] = true
             r.currentVisited.add(u)
             if (u == target) {
-                r.foundTarget = true
                 break
             }
             graph.forEachEdge(u) { d, v ->
@@ -31,6 +30,9 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                         r.parents[v] = u
                         if (!r.visited[v]) {
                             pq.add(Edge(newDistance, v))
+                        }
+                        if (v == target) {
+                            r.foundTarget = true
                         }
                     }
                 } catch (_: ArrayIndexOutOfBoundsException) {
@@ -49,12 +51,11 @@ internal class Dijkstra(private val graph: AdjacencyList) {
         pq.add(Edge(0.0, start))
         while (pq.isNotEmpty()) {
             val u = pq.poll().second
-
-            if (u in r.visitedSparse) continue
+            if (u in r.visitedSparse)
+                continue
             r.visitedSparse.add(u)
             r.currentVisited.add(u)
             if (u == target) {
-                r.foundTarget = true
                 break
             }
             graph.forEachEdge(u) { d, v ->
@@ -65,6 +66,9 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                         r.parentsSparse[v] = u
                         if (v !in r.visitedSparse) {
                             pq.add(Edge(newDistance, v))
+                        }
+                        if(v == target) {
+                            r.foundTarget = true
                         }
                     }
                 } catch (_: ArrayIndexOutOfBoundsException) {
