@@ -15,12 +15,13 @@ internal class DFS(private val graph: AdjacencyList) {
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
         r.currentVisited = IntArrayList()
+        var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
             if (r.visited[id]) return
             r.visited[id] = true
             r.currentVisited.add(id)
             r.distances[id] = depth.toDouble()
-            r.depth = depth.coerceAtLeast(r.depth)
+            maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
                 try {
                     if (!r.visited[v]) {
@@ -35,6 +36,7 @@ internal class DFS(private val graph: AdjacencyList) {
         }
 
         visit(start, 0)
+        r.depth = maxDepth
         return r
     }
 
@@ -44,12 +46,13 @@ internal class DFS(private val graph: AdjacencyList) {
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
         r.currentVisited = IntArrayList()
+        var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
             if (id in r.visitedSparse) return
             r.visitedSparse.add(id)
             r.currentVisited.add(id)
             r.distancesSparse[id] = depth.toDouble()
-            r.depth = depth.coerceAtLeast(r.depth)
+            maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
                 try {
                     if (v !in r.visitedSparse) {
@@ -64,6 +67,7 @@ internal class DFS(private val graph: AdjacencyList) {
         }
 
         visit(start, 0)
+        r.depth = maxDepth
         return r
     }
 

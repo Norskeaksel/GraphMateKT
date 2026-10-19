@@ -14,6 +14,7 @@ internal class BFS(private val graph: AdjacencyList) {
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
+        var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
             queue.add(it)
@@ -35,7 +36,7 @@ internal class BFS(private val graph: AdjacencyList) {
                 try {
                     if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
                         r.parents[v] = currentId
-                        r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                        depth = newDistance.toInt().coerceAtLeast(depth)
                         r.distances[v] = newDistance
                         if (v == targetId) {
                             r.currentVisited.add(v)
@@ -49,6 +50,7 @@ internal class BFS(private val graph: AdjacencyList) {
                 }
             }
         }
+        r.depth = depth
         r.processedOrder = r.currentVisited
         return r
     }
@@ -61,6 +63,7 @@ internal class BFS(private val graph: AdjacencyList) {
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
+        var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
             queue.add(it)
@@ -83,7 +86,7 @@ internal class BFS(private val graph: AdjacencyList) {
                     (v !in r.distancesSparse && newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY))
                 ) {
                     r.parentsSparse[v] = currentId
-                    r.depth = newDistance.toInt().coerceAtLeast(r.depth)
+                    depth = newDistance.toInt().coerceAtLeast(depth)
                     r.distancesSparse[v] = newDistance
                     if (v == targetId) {
                         r.currentVisited.add(v)
@@ -94,6 +97,7 @@ internal class BFS(private val graph: AdjacencyList) {
                 }
             }
         }
+        r.depth = depth
         r.processedOrder = r.currentVisited
         return r
     }

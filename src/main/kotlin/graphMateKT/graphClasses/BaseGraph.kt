@@ -11,7 +11,7 @@ import graphMateKT.graphAlgorithms.FloydWarshall
 import graphMateKT.GraphSearchResults
 import kotlin.system.measureTimeMillis
 
-/** And abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
+/** An abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
 abstract class BaseGraph<T : Any>(
     initialNrOfNodes: Int,
     protected val debugTimeUse: Boolean,
@@ -49,9 +49,11 @@ abstract class BaseGraph<T : Any>(
         adjacencyList.edges().map { Triple(id2Node(it.first), id2Node(it.second), it.third) }
     }
 
+
     fun clearEdges() {
         edges.clear()
         edgesCount = 0
+        adjacencyList = AdjacencyListNested(nrOfNodes, edges)
     }
 
     protected abstract fun node2IdOrNull(node: T): Int?
@@ -64,12 +66,14 @@ abstract class BaseGraph<T : Any>(
      *
      * This will configure edges and nodes to be lazily/dynamically added to the graph, based on the user defined
      * function `getNeighbours`. This is useful when the nodes or edges of the graph are not known/defined in advance,
-     * or when the graph's state space is too large or to be stored in memory effectivly. The tradeof is that seaches
-     * (bfs, dfs) will be less performent per iteration, compared to if the graph was fully defined in advance.
-     * NOTE: This will overwrite all existing edges (but not nodes) in the graph. If invoked from the Graph() class, it
+     * or when the graph's state space is too large to be stored in memory effectively. The tradeoff is that searches
+     * (bfs, dfs) will be less performant per iteration, compared to if the graph was fully defined in advance.
+     *
+     * DISCLAIMER: This will overwrite all existing edges (but not nodes) in the graph. If invoked from the Graph() class, it
      * will make the graph be considered sparse and create new nodes during traversal. If invoked from the IntGraph() or
      * Grid() class, it's on the user to make sure all reachable nodes are defined in the graph. Otherwise, the behavior
-     * will be undefined.
+     * will be undefined. If edges are added after connectWithRule is invoked, all nodes 'defined' in the graph will be
+     * connected according to the rule. Then the rule will be dropped and not considered in future searches.
      *
      * <i>Example usage (if invoked from a grid):<i>
      * ```
@@ -85,9 +89,9 @@ abstract class BaseGraph<T : Any>(
      */
     open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
         val time = measureTimeMillis {
+            clearEdges()
             adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
             adjacencyListIsFinalized = true
-            clearEdges()
         }
         if (debugTimeUse) {
             debug("connectWithRule took $time ms.")
@@ -167,7 +171,7 @@ abstract class BaseGraph<T : Any>(
      * @return The depth of the graph.
      * @throws IllegalStateException If neither DFS nor BFS has been run yet.*/
     fun depth() =
-        searchResults?.depth ?: error("Can't retrieve depth because neither DFS nor BFS has been run yet.")
+        searchResults?.depth ?: error("Can't retrieve depth because the most recent search was not a DFS or BFS.")
 
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
@@ -231,7 +235,7 @@ abstract class BaseGraph<T : Any>(
 
     /** Retrieves the node that is the farthest from the starting node in the most recent search operation (BFS, shortestPathsFrom).
      *
-     * @return The node that is the farthest from the starting node.
+     * @return The node that is the farthest from the starting node. It can be unreachable.
      * @throws IllegalStateException If no search algorithm (bfs, dfs, shortestPathsFrom) has been executed yet. */
     fun furthestNode(): T {
         val node: T
@@ -277,7 +281,7 @@ abstract class BaseGraph<T : Any>(
         return edges
     }
 
-    /** Retrieves a list the neighboring nodes of the specified node.
+    /** Retrieves a list of the neighboring nodes of the specified node.
      *
      * NOTE: should be replaced with the forEachNeighbour function if performance is critical, to avoid copying overhead.
      *
@@ -295,7 +299,7 @@ abstract class BaseGraph<T : Any>(
 
     /** Executes a given function on all the neighbours of a given node.
      *
-     * More performant then retrieving a copied list of nodes and calling forEach on them.
+     * More performant than retrieving a copied list of nodes and calling forEach on them.
      * NOTE: For performance, the node is not validated. Passing a node that isn't in the graph results in undefined
      * behaviour (e.g. Graph will add it as a new node, and Grid may process a different tile's neighbours).
      *
@@ -327,7 +331,7 @@ abstract class BaseGraph<T : Any>(
      * make foundTarget() return true, and store the path to the found target node for use in visualizations.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
-     * @param maxDistance Nodes further away from the starNodes then maxDistance will not be traversed.
+     * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
      * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
      * and the target node is not defined beforehand. */
     fun bfs(
@@ -394,6 +398,7 @@ abstract class BaseGraph<T : Any>(
      * - `depth()`
      * - `currentVisitedNodes()`
      * - `visitedNodes()`
+     * - `distanceTo(node: T)`* Note: will return the depth of the node in the DFS tree, not the shortest distance.
      *
      * @param startNode The starting node for the DFS traversal.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false,
@@ -436,13 +441,13 @@ abstract class BaseGraph<T : Any>(
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
      * target node for use in visualization and flag the target as found so that foundTarget() returns true
-     * @throws IllegalStateException If the starting node is not found in the graph, or if the graph * is sparse, and
+     * @throws IllegalStateException If the starting node is not found in the graph, or if the graph is sparse, and
      * the target node is not defined beforehand. */
     fun shortestPathsFrom(startNode: T, target: T? = null) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
             if (edgesCount == 0 && !adjacencyList.isDynamic) {
-                System.err.println("Warning: The adjacently list has no connections, making pathfinding infeasible.")
+                System.err.println("Warning: The adjacency list has no connections, making pathfinding infeasible.")
             }
             val startId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
             if (isSparse) {
@@ -490,7 +495,8 @@ abstract class BaseGraph<T : Any>(
      * The results can be retrieved using the `distanceFromUtoV(u: T, v: T)` function, which provides the shortest
      * distance between any two nodes.
      *
-     * @throws IllegalStateException If the graph contains nodes but no edges, making pathfinding infeasible. */
+     * If the graph has no edges, a warning is printed to the standard error stream and nothing is computed. Results
+     * from a previous run (if any) are kept, otherwise `distanceFromUtoV` will throw. */
     fun allPairsShortestPaths() {
         finalizeAdjacencyListIfNeeded(true)
         val time = measureTimeMillis {
@@ -518,7 +524,7 @@ abstract class BaseGraph<T : Any>(
         val uId = node2IdOrNull(u) ?: error("'$u' not found in graph")
         val vId = node2IdOrNull(v) ?: error("'$v' not found in graph")
         it[uId][vId]
-    } ?: error("FloydWarshall must be run sucsessfully before calling distanceFromUtoV")
+    } ?: error("FloydWarshall must be run successfully before calling distanceFromUtoV")
 
 // ADDITIONAL ALGORITHMS
     /** Computes the Minimum Spanning Tree (MST) of the graph using Prim's algorithm.
@@ -676,7 +682,7 @@ abstract class BaseGraph<T : Any>(
      * The search results are replaced with empty results, as if a search had visited no nodes. Until a new search
      * (DFS, BFS, or shortestPathsFrom) is run, the following functions return:
      *
-     * - `depth()`: 0
+     * - `depth()`: throws IllegalStateException
      * - `currentVisitedNodes()`: an empty list
      * - `visitedNodes()`: an empty list
      * - `foundTarget()`: false
@@ -696,11 +702,13 @@ abstract class BaseGraph<T : Any>(
     }
 
     /** Prints which nodes each node is connected to. */
-    fun printConnections() = buildString {
-        nodes().forEach { node ->
-            val edges = edges(node)
-            val edgeString = edges.joinToString { it.second.toString() }
-            append("$node ----> [$edgeString]\n")
-        }
+    fun printConnections() {
+        System.err.println(buildString {
+            nodes().forEach { node ->
+                val edges = edges(node)
+                val edgeString = edges.joinToString { it.second.toString() }
+                append("$node ----> [$edgeString]\n")
+            }
+        })
     }
 }
