@@ -117,9 +117,18 @@ class Grid(
     override fun id2NodeOrNull(id: Int) = nodes.getOrNull(id)
     override fun id2Node(id: Int): Tile = nodes.getOrNull(id) ?: error("Node with ID $id not found in grid")
 
+    /** Adds a directed edge from node1 to node2. Tiles are matched by their (x, y) coordinates, so `data` is ignored.
+     *
+     *  NOTE: For performance, the tiles are not validated. Both must be within grid bounds and not deleted,
+     *  otherwise the behavior is undefined.
+     *
+     * @param node1 The starting tile of the edge.
+     * @param node2 The ending tile of the edge.
+     * @param weight The weight of the edge, for example used to calculate distances with shortestPathsFrom. Defaults to 1.0.
+     * @throws IllegalStateException If a tile is outside the grid or has been deleted. */
     override fun addEdge(node1: Tile, node2: Tile, weight: Double) {
-        val u = node2IdOrNull(node1) ?: error("$node1 not found in grid")
-        val v = node2IdOrNull(node2) ?: error("$node2 not found in grid")
+        val u = node2Id(node1)
+        val v = node2Id(node2)
         edges.addEdge(u, v, weight)
         edgesCount++
         adjacencyListIsFinalized = false
@@ -157,11 +166,11 @@ class Grid(
      * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location. */
     fun xy2NodeOrNull(x: Int, y: Int) = xy2Id(x, y)?.let { id2NodeOrNull(it) }
 
-    /** Retrieves the `Tile` node at the specified (x, y) coordinates, if it exists.
+    /** Retrieves the `Tile` node at the specified (x, y) coordinates.
      *
      * @param x The x-coordinate of the node.
      * @param y The y-coordinate of the node.
-     * @return The `Tile` node at the given coordinates, or `null` if no node exists at the specified location.
+     * @return The `Tile` node at the given coordinates.
      * @throws IllegalStateException if no node is found at coordinates (x, y) */
     fun xy2Node(x: Int, y: Int) = xy2Id(x, y)?.let { id2Node(it) } ?: error("No node found at coordinates ($x, $y)")
     private fun gridHasId(id: Int) = nodes.getOrNull(id) != null
@@ -180,7 +189,7 @@ class Grid(
 
     /** Deletes the node at the specified (x, y) coordinates in the grid.
      *
-     * If the coordinates are outside the grid, a warning is printed, and no action is taken.
+     * If the coordinates are outside the grid, or the node is already deleted, a warning is printed, and no action is taken.
      *
      * @param x The x-coordinate of the node to delete.
      * @param y The y-coordinate of the node to delete.

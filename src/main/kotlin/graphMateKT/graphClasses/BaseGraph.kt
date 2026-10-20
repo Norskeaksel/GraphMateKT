@@ -37,7 +37,7 @@ abstract class BaseGraph<T : Any>(
      * @param node The node to add */
     abstract fun addNode(node: T)
 
-    /** Adds an edge between two nodes in the graph, and creates the nodes if they don't exist.
+    /** Adds a directed edge from node1 to node2. See the implementing class for how undefined nodes are handled.
      *
      * @param node1 The starting node of the edge.
      * @param node2 The ending node of the edge.
@@ -49,7 +49,7 @@ abstract class BaseGraph<T : Any>(
         adjacencyList.edges().map { Triple(id2Node(it.first), id2Node(it.second), it.third) }
     }
 
-
+    /** Removes all edges from the graph, including a rule defined by connectWithRule. Nodes and search results are kept. */
     fun clearEdges() {
         edges.clear()
         edgesCount = 0
@@ -169,7 +169,7 @@ abstract class BaseGraph<T : Any>(
      * Depth is defined as the deepest level of recursion or the maximum distance from the starting node to
      * any other node during the search traversal if the weights are counted as 1 and the starting depth is 0.
      * @return The depth of the graph.
-     * @throws IllegalStateException If neither DFS nor BFS has been run yet.*/
+     * @throws IllegalStateException If the most recent search was not a DFS or BFS.*/
     fun depth() =
         searchResults?.depth ?: error("Can't retrieve depth because the most recent search was not a DFS or BFS.")
 
@@ -194,9 +194,9 @@ abstract class BaseGraph<T : Any>(
             ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node (if a target was specified) during the most recent
-     *  search operation (DFS, BFS, shortestPathsFrom).
+     *  search operation (BFS, shortestPathsFrom). After topologicalSort(), it holds the topological ordering.
      *
-     * @return A list of nodes representing the final path or null if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet or no path was found.
+     * @return A list of nodes representing the final path or null if no path was found. Running dfs() clears it.
      * Note: Starting at a node, does not count as a path to that node */
     fun finalPath(): List<T>? = finalPath
 
@@ -205,10 +205,11 @@ abstract class BaseGraph<T : Any>(
      * @return `true` if the target node was found, `false` otherwise. */
     fun foundTarget() = searchResults?.foundTarget ?: false
 
-    /** Retrieves the distance to the specified node from the starting node of the most recent search operation (BFS, shortestPathsFrom).
+    /** Retrieves the distance to the specified node from the starting node of the most recent search operation (BFS, DFS, shortestPathsFrom).
      *
      * @param node The target node whose distance is to be retrieved.
-     * @return The distance to the specified node, or Double.POSITIVE_INFINITY if no path to the node has been found. */
+     * @return The distance to the specified node, or Double.POSITIVE_INFINITY if no path to the node has been found,
+     * the node is not in the graph, or no search has been run. */
     fun distanceTo(node: T) = node2IdOrNull(node)?.let { id ->
         searchResults?.run {
             if (isSparse)
@@ -381,8 +382,8 @@ abstract class BaseGraph<T : Any>(
         }
     }
 
-    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean) that accepts a single starting node and
-     * an optional target, instead of a list of starting nodes */
+    /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean, maxDistance: Double) that accepts a single
+     * starting node instead of a list of starting nodes */
     fun bfs(
         startNode: T,
         target: T? = null,
@@ -398,7 +399,9 @@ abstract class BaseGraph<T : Any>(
      * - `depth()`
      * - `currentVisitedNodes()`
      * - `visitedNodes()`
-     * - `distanceTo(node: T)`* Note: will return the depth of the node in the DFS tree, not the shortest distance.
+     * - `distanceTo(node: T)` Note: returns the depth of the node in the DFS tree, not the shortest distance.
+     * - `maxDistance()` (based on DFS tree depth)
+     * - `furthestNode()` (based on DFS tree depth)
      *
      * @param startNode The starting node for the DFS traversal.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false,
@@ -440,7 +443,8 @@ abstract class BaseGraph<T : Any>(
      *
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
-     * target node for use in visualization and flag the target as found so that foundTarget() returns true
+     * target node for use in visualization and flag the target as found so that foundTarget() returns true.
+     * NOTE: Edge weights must be non-negative.
      * @throws IllegalStateException If the starting node is not found in the graph, or if the graph is sparse, and
      * the target node is not defined beforehand. */
     fun shortestPathsFrom(startNode: T, target: T? = null) {
@@ -495,8 +499,9 @@ abstract class BaseGraph<T : Any>(
      * The results can be retrieved using the `distanceFromUtoV(u: T, v: T)` function, which provides the shortest
      * distance between any two nodes.
      *
-     * If the graph has no edges, a warning is printed to the standard error stream and nothing is computed. Results
-     * from a previous run (if any) are kept, otherwise `distanceFromUtoV` will throw. */
+     * If the graph has no edges, a warning is printed to the standard error stream and nothing is computed (this
+     * function does not throw). Results from a previous run (if any) are kept. If there are none, a later call to
+     * `distanceFromUtoV` will throw. */
     fun allPairsShortestPaths() {
         finalizeAdjacencyListIfNeeded(true)
         val time = measureTimeMillis {
@@ -519,7 +524,8 @@ abstract class BaseGraph<T : Any>(
      * @param u The starting node.
      * @param v The target node.
      * @return The shortest distance between the two nodes.
-     * @throws IllegalStateException If the Floyd-Warshall algorithm has not been executed before calling this function. */
+     * @throws IllegalStateException If allPairsShortestPaths() has not successfully computed any results before calling
+     * this function, or if u or v is not found in the graph. */
     fun distanceFromUtoV(u: T, v: T) = allDistances?.let {
         val uId = node2IdOrNull(u) ?: error("'$u' not found in graph")
         val vId = node2IdOrNull(v) ?: error("'$v' not found in graph")
@@ -529,7 +535,7 @@ abstract class BaseGraph<T : Any>(
 // ADDITIONAL ALGORITHMS
     /** Computes the Minimum Spanning Tree (MST) of the graph using Prim's algorithm.
      *
-     * If the graph is unweighted, it is first converted to a weighted graph with default edge weights.
+     * Assumes the graph is undirected, i.e. that each edge exists in both directions (e.g. added with connect()).
      * Does not work on Grids with deleted nodes.
      *
      * @return A pair containing the total weight of the MST and a graph whose edges represents the MST.
@@ -558,6 +564,8 @@ abstract class BaseGraph<T : Any>(
     /** Builds an order of nodes so that the first nodes has no outgoing edges, then nodes with edges pointing to these
      * and so on, assuming the graph is a Directed Acyclic Graph (DAG). This is done by running a DFS from each node
      * and ordering the nodes by descending depth (post-order).
+     *
+     * The result is also stored, and can be retrieved with finalPath().
      *
      * @return A list of nodes in topological order if the graph was a DAG.
      * Otherwise, returns a list of nodes in undefined order */
@@ -701,7 +709,7 @@ abstract class BaseGraph<T : Any>(
         System.err.println("$it ---> ${edges(it)}")
     }
 
-    /** Prints which nodes each node is connected to. */
+    /** Prints which nodes each node is connected to, to the standard error stream. */
     fun printConnections() {
         System.err.println(buildString {
             nodes().forEach { node ->

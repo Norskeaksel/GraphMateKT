@@ -38,6 +38,11 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
         }
     }
 
+    /** Adds a directed edge from node1 to node2. Nodes that don't exist in the graph yet are created.
+     *
+     * @param node1 The starting node of the edge.
+     * @param node2 The ending node of the edge.
+     * @param weight The weight of the edge, for example used to calculate distances with shortestPathsFrom. Defaults to 1.0. */
     override fun addEdge(node1: Any, node2: Any, weight: Double) {
         val id1 = getOrAddNodeId(node1)
         val id2 = getOrAddNodeId(node2)

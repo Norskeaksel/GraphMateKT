@@ -38,6 +38,14 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: B
     override fun addNode(node: Int) =
         error("IntGraph doesn't support addNode(), because nodes are set on initialization.")
 
+    /** Adds a directed edge from node1 to node2.
+     *
+     * NOTE: For performance, the nodes are not validated. Both must be in 0 until size, otherwise the behavior is
+     * undefined.
+     *
+     * @param node1 The starting node of the edge.
+     * @param node2 The ending node of the edge.
+     * @param weight The weight of the edge, for example used to calculate distances with shortestPathsFrom. Defaults to 1.0. */
     override fun addEdge(node1: Int, node2: Int, weight: Double) {
         adjacencyListIsFinalized = false
         edges.addEdge(node1, node2, weight)
