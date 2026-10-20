@@ -36,5 +36,5 @@ internal fun importspaghetti(): String {
         }
     }
     if(shortestCycleLength == Int.MAX_VALUE) return "SHIP IT"
-    return shortestCyclePath.joinToString().replace(", ", " ")
+    return shortestCyclePath.drop(1).joinToString().replace(", ", " ")
 }

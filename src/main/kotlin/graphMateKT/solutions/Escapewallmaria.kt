@@ -16,7 +16,7 @@ internal fun escapewallmaria(inputStream: InputStream): String {
     val (t, n, m) = scanner.nextIntArray(3)
     val lines = generateSequence { scanner.nextString() }.toList()
     val grid = Grid(lines)
-    grid.connectGrid { t ->
+    grid.connectWithRule { t ->
         grid.getStraightNeighbours(t).filter {
             it.data == '0' ||
                     it.y < t.y && it.data == 'D' ||

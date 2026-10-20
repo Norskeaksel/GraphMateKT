@@ -35,7 +35,7 @@ internal fun slowleak(): String {
                 compressedGraph.connect(u, v, w)
         }
     }
-    compressedGraph.shortestPaths(start)
+    compressedGraph.shortestPathsFrom(start)
     val finalDistance = compressedGraph.distanceTo(goal)
     return if (finalDistance == Double.POSITIVE_INFINITY)
         "stuck"

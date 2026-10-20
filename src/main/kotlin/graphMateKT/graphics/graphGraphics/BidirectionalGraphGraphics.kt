@@ -12,6 +12,7 @@ import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Duration
 
@@ -74,11 +75,17 @@ internal class BidirectionalGraphGraphics : Application() {
             timeline.keyFrames.add(keyFrame)
         }
 
-        timeline.play()
+        if (closeOnEnd) {
+            timeline.setOnFinished { stage.close() }
+        }
 
-        graphVisualization.setOnKeyPressed { event ->
+        if (!startPaused) {
+            timeline.play()
+        }
+        graphVisualization.addEventFilter(KeyEvent.KEY_PRESSED) { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
+                event.consume()
             }
         }
     }
@@ -96,8 +103,11 @@ internal class BidirectionalGraphGraphics : Application() {
 
 private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any> {
     val g = GraphEdgeList<Any, Any>()
-    nodes().forEach { node ->
-        g.insertVertex(node)
+    val insertedVertices = HashSet<Any>()
+    fun ensureVertex(node: Any) {
+        if (insertedVertices.add(node)) {
+            g.insertVertex(node)
+        }
     }
     val zeroWidthSpace = '\u200B'
     var edgeCounter = 0
@@ -108,6 +118,8 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any
             val uv = u to v
             val vu = v to u
             if (uv !in addedEdges && vu !in addedEdges) {
+                ensureVertex(u)
+                ensureVertex(v)
                 val uniqueWeightLabel = w.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
                 g.insertEdge(u, v, uniqueWeightLabel)
                 addedEdges.add(uv)

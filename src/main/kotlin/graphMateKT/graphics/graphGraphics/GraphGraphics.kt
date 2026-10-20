@@ -12,6 +12,7 @@ import javafx.animation.Timeline
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.Stage
 import javafx.util.Duration
 
@@ -42,7 +43,7 @@ internal class GraphGraphics : Application() {
         val container = SmartGraphDemoContainer(graphView)
         val graphVisualization = Scene(container)
         stage.apply {
-            title = BidirectionalGraphGraphics.screenTitle
+            title = screenTitle
             scene = graphVisualization
             width = GUIConstants.width
             height = GUIConstants.height
@@ -75,12 +76,18 @@ internal class GraphGraphics : Application() {
             timeline.keyFrames.add(keyFrame)
         }
 
+        if (closeOnEnd) {
+            timeline.setOnFinished { stage.close() }
+        }
+
         if (!startPaused) {
             timeline.play()
         }
-        graphVisualization.setOnKeyPressed { event ->
+
+        graphVisualization.addEventFilter(KeyEvent.KEY_PRESSED) { event ->
             if (event.code == KeyCode.SPACE) {
                 toggleAnimation(timeline)
+                event.consume()
             }
         }
     }
@@ -98,14 +105,19 @@ internal class GraphGraphics : Application() {
 
 private fun BaseGraph<Any>.convertToVisualizationGraph(): DigraphEdgeList<Any, Any> {
     val g = DigraphEdgeList<Any, Any>()
-    nodes().forEach { node ->
-        g.insertVertex(node)
+    val insertedVertices = HashSet<Any>()
+    fun ensureVertex(node: Any) {
+        if (insertedVertices.add(node)) {
+            g.insertVertex(node)
+        }
     }
     val zeroWidthSpace = '\u200B'
     var edgeCounter = 0
     nodes().forEach { node ->
         val edges = edges(node).ifEmpty { neighbours(node).map { 1.0 to it } }
         edges.forEach { edge ->
+            ensureVertex(node)
+            ensureVertex(edge.second)
             val uniqueWeightLabel = edge.first.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
             g.insertEdge(node, edge.second, uniqueWeightLabel)
         }

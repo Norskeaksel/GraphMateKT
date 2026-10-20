@@ -5,9 +5,9 @@ import graphMateKT.IntArrayList
 import graphMateKT.UnboxedEdges
 
 internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges: UnboxedEdges) : AdjacencyList {
-    private val nodes = IntArray(nrOfNodes) { it }
-    private val neighbours = Array(nrOfNodes) { IntArrayList() }
-    private val weights = Array(nrOfNodes) { DoubleArrayList() }
+    private val nodes by lazy { IntArray(nrOfNodes) { it } }
+    private val neighbours by lazy { Array(nrOfNodes) { IntArrayList() } }
+    private val weights by lazy { Array(nrOfNodes) { DoubleArrayList() } }
 
     init {
         repeat(edges.size) {
@@ -19,6 +19,7 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
         }
     }
 
+    override val isDynamic = false
     override fun nodes() = nodes
     override fun edges() = edges.boxedEdges()
     override fun neighbours(node: Int): IntArray = neighbours[node].intArray()
@@ -40,5 +41,6 @@ internal class AdjacencyListNested(private val nrOfNodes: Int, private val edges
 
     override fun deepCopy() = AdjacencyListNested(nrOfNodes, edges.deepCopy())
     override val size get() = nrOfNodes
+
     override fun reversed() = AdjacencyListNested(nrOfNodes, edges.reversed())
 }

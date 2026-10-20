@@ -10,13 +10,14 @@ import graphMateKT.graphClasses.Grid
  * <i>Example usage:</i>
  *
  * ```
- * val lines = listOf("ABC, ABC")
+ * val lines = listOf("ABC", "ABC")
  * val grid = Grid(lines)
- * grid.connectGrid{ t ->
- *     grid.getStraigtNeighbours(t).filter { it.data == t.data }
+ * grid.connectWithRule { t ->
+ *     grid.getStraightNeighbours(t).filter { it.data == t.data }
  * }
  * val scc = grid.stronglyConnectedComponents()
- * scc.visualizeComponents() */
+ * scc.visualizeGridComponents()
+ * ``` */
 fun GridComponents.visualizeGridComponents(animationTicTimeOverride: Double? = null) {
     val (width, height) = flatten().fold(0 to 0) { (maxX, maxY), t ->
         (t.x + 1).coerceAtLeast(maxX) to (t.y + 1).coerceAtLeast(maxY)

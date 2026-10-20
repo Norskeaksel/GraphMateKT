@@ -2,11 +2,12 @@ import graphMateKT.solutions.watersheds
 import graphMateKT.INPUT
 import graphMateKT._reader
 import graphMateKT.debug
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import java.io.File
 import org.junit.jupiter.api.Test
 import kotlin.system.measureTimeMillis
+import org.assertj.core.api.Assertions.assertThat
+
 
 class WatershedsTest {
     companion object {

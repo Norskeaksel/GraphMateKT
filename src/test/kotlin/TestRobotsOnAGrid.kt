@@ -1,4 +1,4 @@
-import graphMateKT.solutions.RobotsOnAGrid
+import graphMateKT.solutions.robotsOnAGrid
         
 
 import org.assertj.core.api.Assertions.assertThat
@@ -13,7 +13,7 @@ class RobotsOnAGridTest {
     fun RobotsOnAGrida() {
         val expectedOutput = """6"""
         File("src/test/SampleInput/RobotsOnAGrid/input1").inputStream().use{
-            assertThat(RobotsOnAGrid(it)).isEqualTo(expectedOutput)
+            assertThat(robotsOnAGrid(it)).isEqualTo(expectedOutput)
         }
     }
 
@@ -21,7 +21,7 @@ class RobotsOnAGridTest {
     fun RobotsOnAGridb() {
         val expectedOutput = """THE GAME IS A LIE"""
         File("src/test/SampleInput/RobotsOnAGrid/input2").inputStream().use{
-            assertThat(RobotsOnAGrid(it)).isEqualTo(expectedOutput)
+            assertThat(robotsOnAGrid(it)).isEqualTo(expectedOutput)
         }
     }
 
@@ -30,7 +30,7 @@ class RobotsOnAGridTest {
         val input = listOf("1000") + List(1000) { ".".repeat(1000) }
         makeStringsTestInput(input).use { line ->
             val time = measureTimeMillis {
-               RobotsOnAGrid(line)
+               robotsOnAGrid(line)
             }
             debug("RobotsOnAGrid time use: $time ms")
         }

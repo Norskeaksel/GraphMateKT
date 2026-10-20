@@ -40,7 +40,7 @@ internal fun day3GearRatios2023(): Int {
             if (nrOfAdjacentNumbers == 2) startNodes.add(node)
         }*/
     }
-    grid.connectGrid { t ->
+    grid.connectWithRule { t ->
         grid.getAllNeighbours(t).filter { it.dataIsDigit() }
     }
     grid.print()

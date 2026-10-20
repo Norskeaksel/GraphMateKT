@@ -10,8 +10,8 @@ internal class FloydWarshall(val graph: AdjacencyList) {
     init {
         graph.nodes().forEachIndexed { u, node ->
             distances[u][u] = 0.0
-            graph.forEachEdge(node){ d, v ->
-                distances[u][v] = d
+            graph.forEachEdge(node) { d, v ->
+                distances[u][v] = d.coerceAtMost(distances[u][v])
             }
         }
     }
@@ -26,6 +26,7 @@ internal class FloydWarshall(val graph: AdjacencyList) {
         }
         return distances
     }
+
     fun printDistances() {
         distances.forEachIndexed { i, row ->
             System.err.println("$i: ${row.joinToString(", ")}")

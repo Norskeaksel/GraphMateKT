@@ -19,7 +19,7 @@ internal fun amoebas(): String {
     }
     val grid = Grid(lines)
     grid.deleteNodesWithData('.')
-    grid.connectGrid { t->
+    grid.connectWithRule { t->
         grid.getAllNeighbours(t)
     }
     return grid.stronglyConnectedComponents().size.toString()

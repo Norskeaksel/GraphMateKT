@@ -71,7 +71,7 @@ internal fun powerDemand(inputStream: InputStream): Int {
         }
     }
     graph.printConnections()
-    graph.shortestPaths(initialState, goalState)
+    graph.shortestPathsFrom(initialState, goalState)
     // graph.visualizeGraph()
     return graph.distanceTo(goalState).toInt()
 }

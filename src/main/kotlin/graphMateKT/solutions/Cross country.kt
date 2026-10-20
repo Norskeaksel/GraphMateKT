@@ -20,6 +20,6 @@ internal fun crossCountry(): Int {
             graph.addEdge(i, j, d)
         }
     }
-    graph.shortestPaths(s)
+    graph.shortestPathsFrom(s)
     return graph.distanceTo(t).toInt()
 }
