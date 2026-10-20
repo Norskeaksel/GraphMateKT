@@ -1196,17 +1196,6 @@ class Grid(
         }
     }
 
-    private fun forEachStraightNeighbourId(id: Int, action: (Int) -> Unit) {
-        val x = id % width
-        val y = id / width
-        // @formatter:off
-        if (y > 0)          nodes[id - width]?.let { action(id - width) }
-        if (x > 0)          nodes[id - 1]?.let     { action(id - 1) }
-        if (x < width - 1)  nodes[id + 1]?.let     { action(id + 1) }
-        if (y < height - 1) nodes[id + width]?.let { action(id + width) }
-        // @formatter:on
-    }
-
     /** Retrieves the straight (orthogonal) neighbors of the given tile.
      *
      * The neighbors are the tiles directly above, to the left, to the right and below the given tile, in that order,
