@@ -49,7 +49,10 @@ import kotlin.system.measureTimeMillis
  *
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
- * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
+ * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
+ * @param debugTimeUse If `true`, prints the time use of algorithms to standard error. Defaults to `false`.
+ * @param isSparse If `true`, search results are stored in maps instead of arrays. More performant when searches only reach a
+ * small part of a large grid. Defaults to `false`. */
 class Grid(
     val width: Int,
     val height: Int,
@@ -70,6 +73,8 @@ class Grid(
      * `deleteNodeAtXY(x,y)` or `deleteNodesWithData(data)` can be used after the grid is created.
      *
      * @param stringGrid A list of strings representing the grid
+     * @param debugTimeUse If `true`, the time taken by each graph algorithm is printed to the standard error stream. Defaults to `false`.
+     * @param isSparse If `true`, search results are stored in maps instead of arrays. Defaults to `false`.
      * */
     constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
         stringGrid[0].length,

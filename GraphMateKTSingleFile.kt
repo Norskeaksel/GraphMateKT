@@ -943,7 +943,9 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
  * ```
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1.
- * @param debugTimeUse optional flag that prints the time use of run algorithms to standard error*/
+ * @param debugTimeUse optional flag that prints the time use of run algorithms to standard error
+ * @param isSparse If `true`, search results are stored in maps instead of arrays. More performant when searches only reach a
+ * small part of a large graph. Defaults to `false`.*/
 class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
     BaseGraph<Int>(size, debugTimeUse, isSparse) {
 
@@ -1032,7 +1034,10 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: B
  *
  * @param width The width of the grid (number of columns).
  * @param height The height of the grid (number of rows).
- * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles. */
+ * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
+ * @param debugTimeUse If `true`, prints the time use of algorithms to standard error. Defaults to `false`.
+ * @param isSparse If `true`, search results are stored in maps instead of arrays. More performant when searches only reach a
+ * small part of a large grid. Defaults to `false`. */
 class Grid(
     val width: Int,
     val height: Int,
@@ -1053,6 +1058,8 @@ class Grid(
      * `deleteNodeAtXY(x,y)` or `deleteNodesWithData(data)` can be used after the grid is created.
      *
      * @param stringGrid A list of strings representing the grid
+     * @param debugTimeUse If `true`, the time taken by each graph algorithm is printed to the standard error stream. Defaults to `false`.
+     * @param isSparse If `true`, search results are stored in maps instead of arrays. Defaults to `false`.
      * */
     constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
         stringGrid[0].length,
