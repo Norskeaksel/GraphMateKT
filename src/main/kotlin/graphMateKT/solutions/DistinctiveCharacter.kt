@@ -5,6 +5,9 @@ import graphMateKT.graphClasses.IntGraph
 import java.io.InputStream
 import kotlin.math.pow
 
+internal fun Int.flipBit(i: Int): Int {
+    return this xor (1 shl i)
+}
 
 internal fun main() {
     val ans = distinctiveCharacter(System.`in`)
@@ -24,12 +27,9 @@ internal fun distinctiveCharacter(inputStream: InputStream): String {
     val nrOfCombinations = 2.0.pow(f).toInt()
     val graph = IntGraph(nrOfCombinations)
     graph.connectWithRule { u ->
-        val bits = u.toString(2).padStart(f, '0')
         buildList {
             repeat(f) { i ->
-                // TODO flip the bit faster
-                val newBits = bits.replaceRange(i, i + 1, ((bits[i].digitToInt() + 1) % 2).toString())
-                add(newBits.toInt(2))
+                add(u.flipBit(i))
             }
         }
     }

@@ -1771,7 +1771,7 @@ internal fun nrOfPaths(graph: AdjacencyList, start: Int, target: Int, mod: Long)
 internal fun nrOfPathsSparse(graph: AdjacencyList, start: Int, target: Int, mod: Long): Long {
     val memo = MemoMap()
     return memoDfs(start, target, graph, memo, mod)
-}package graphMateKT.graphAlgorithms
+}
 
 
 internal fun prims(graph: AdjacencyList): Pair<Double, AdjacencyList> {
