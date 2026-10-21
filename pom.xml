@@ -6,7 +6,7 @@
 
     <artifactId>graphmatekt</artifactId>
     <groupId>io.github.norskeaksel</groupId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
     <distributionManagement>
         <repository>
@@ -25,15 +25,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>2.1.0</kotlin.version>
-        <junit.version>5.10.2</junit.version>
-        <javafx.version>21</javafx.version>
+        <kotlin.version>2.4.21</kotlin.version>
+        <junit.version>6.1.3</junit.version>
+        <javafx.version>27.0.1</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <com.brunomnsilva.smartGraph.version>2.3.0</com.brunomnsilva.smartGraph.version>
         <me.tongfei.progressbar.version>0.10.2</me.tongfei.progressbar.version>
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
-        <dokka.version>2.1.0</dokka.version>
-
+        <dokka.version>2.2.0</dokka.version>
+        <maven.surefire.plugin.version>3.6.0</maven.surefire.plugin.version>
+        <central.publishing.plugin.version>0.12.0</central.publishing.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+        <assertj.version>3.27.7</assertj.version>
     </properties>
 
     <dependencyManagement>
@@ -60,7 +64,7 @@
                 <version>${kotlin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <jvmTarget>21</jvmTarget>
+                    <jvmTarget>26</jvmTarget>
                 </configuration>
             </plugin>
 
@@ -94,7 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <!-- Increase the forked test JVM thread stack size to avoid
                          StackOverflowError in deep recursive graph traversals. -->
@@ -105,7 +109,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
+                <version>${central.publishing.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -129,7 +133,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -143,7 +147,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>${maven.gpg.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -174,7 +178,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>21</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.brunomnsilva</groupId>
@@ -203,7 +207,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.7</version>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

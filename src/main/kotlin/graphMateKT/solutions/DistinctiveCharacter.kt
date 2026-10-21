@@ -1,0 +1,38 @@
+package graphMateKT.solutions
+
+import fastInputReader.InputReader
+import graphMateKT.graphClasses.IntGraph
+import java.io.InputStream
+import kotlin.math.pow
+
+
+internal fun main() {
+    val ans = distinctiveCharacter(System.`in`)
+    println(ans)
+    System.out.flush()
+}
+
+/** Solves https://open.kattis.com/problems/distinctiveCharacter */
+internal fun distinctiveCharacter(inputStream: InputStream): String {
+    val scanner = InputReader(inputStream)
+    val (n, f) = scanner.nextIntArray(2)
+    val startNodes = IntArray(n)
+    repeat(n) {
+        val bits = scanner.nextString()!!
+        startNodes[it] = bits.toInt(2)
+    }
+    val nrOfCombinations = 2.0.pow(f).toInt()
+    val graph = IntGraph(nrOfCombinations)
+    graph.connectWithRule { u ->
+        val bits = u.toString(2).padStart(f, '0')
+        buildList {
+            repeat(f) { i ->
+                // TODO flip the bit faster
+                val newBits = bits.replaceRange(i, i + 1, ((bits[i].digitToInt() + 1) % 2).toString())
+                add(newBits.toInt(2))
+            }
+        }
+    }
+    graph.bfs(startNodes.asList())
+    return graph.furthestNode().toString(2).padStart(f, '0')
+}
