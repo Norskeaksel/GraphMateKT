@@ -48,9 +48,9 @@ internal fun knightsfen(inputStream: InputStream): String {
     graph.bfs(listOf(targetBoard), maxDistance = 10.0)
     repeat(n) {
         val startingBoard = mutableListOf<String>()
-        repeat(5) { y ->
-            val line = scanner.nextLine()!!.padEnd(5, ' ')
-            startingBoard.add(line)
+        while (startingBoard.size < 5) {
+            val line = scanner.nextLine()!!.trimEnd('\r')
+            if (line.isNotEmpty()) startingBoard.add(line.padEnd(5, ' '))
         }
         val distance = graph.distanceTo(startingBoard).toInt()
         if (distance <= 10) {
