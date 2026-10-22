@@ -2,3 +2,6 @@
 # so the CI drift check is deterministic across Windows and Linux.
 GraphMateKTSingleFile.kt text eol=lf
 scripts/generate-single-file.sh text eol=lf
+
+# Test inputs are parsed byte-by-byte; keep them LF on every OS.
+src/test/SampleInput/** text eol=lf
