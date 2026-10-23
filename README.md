@@ -13,6 +13,9 @@ in addition to containing any data type. All the classes inherit from the abstra
 [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
 class, which defines the basic functionality of the graphs.
 
+It also comes bundled with a Kotlin translation of williamfiset's [FastJavaIO](https://github.com/williamfiset/FastJavaIO)
+library, because that's the library I use for competitive programming for fast input parsing and smooth unit test setup.
+
 ## Documentation
 
 [![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT  )
