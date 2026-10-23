@@ -1,5 +1,5 @@
 import graphMateKT.solutions.comma
-        
+
 
 import org.assertj.core.api.Assertions.assertThat
 import java.io.File
@@ -12,7 +12,7 @@ class CommaTest {
     @Test
     fun commaa() {
         val expectedOutput = """please, sit spot. sit spot, sit. spot, here now, here."""
-        File("src/test/SampleInput/Comma/input1").inputStream().use{
+        File("src/test/SampleInput/Comma/input1").inputStream().use {
             assertThat(comma(it)).isEqualTo(expectedOutput)
         }
     }
@@ -20,15 +20,15 @@ class CommaTest {
     @Test
     fun commab() {
         val expectedOutput = """          one, two. one, tree. four, tree. four, four. five, four. six five."""
-        File("src/test/SampleInput/Comma/input2").inputStream().use{
+        File("src/test/SampleInput/Comma/input2").inputStream().use {
             assertThat(comma(it)).isEqualTo(expectedOutput)
         }
     }
 
     @Test
     fun commaSpeed() {
-        val input = listOf("1") + List(100) { "1".repeat(100) }
-        val expectedOutput = """"""
+        val input = listOf("a, ".repeat(1_000_000 / 3))
+        val expectedOutput = input.joinToString("")
         makeStringsTestInput(input).use { line ->
             val time = measureTimeMillis {
                 assertThat(comma(line)).isEqualTo(expectedOutput)

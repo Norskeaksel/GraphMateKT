@@ -32,31 +32,36 @@ internal fun comma(inputStream: InputStream): String {
             wordsWithTrailingComma.add(second.trimChunk())
         }
     }
-    val startingNodes = wordsWithTrailingComma.flatMap { wordIndexes[it]!! }
+    val startingNodes = chunks.mapIndexedNotNull { i, chunk -> if (chunk.last() == ',') i else null }
 
-    val trimmedWords = originalString.replace(",", "").replace(".", "").trim().split(" ")
-    val graph = IntGraph(trimmedWords.size)
+    val graph = IntGraph(chunks.size)
     graph.connectWithRule { u ->
-        debug("Current word: ${trimmedWords[u]} index: $u")
+        val (pChunk, currentChunk, nChunk) = Triple(chunks.getOrNull(u - 1), chunks[u], chunks.getOrNull(u + 1))
+        val (pWord, currentWord, nWord) = Triple(pChunk?.trimChunk(), currentChunk.trimChunk(), nChunk?.trimChunk())
+        // debug("Current: $currentChunk")// Previous: $pChunk Next: $nChunk")
         val neighbours = mutableListOf<Int>()
-        val word = trimmedWords[u]
-        if (word in wordsWithTrailingComma) {
-            neighbours.addAll(wordIndexes[word]!! + wordIndexes[word]!!.map { if (it < trimmedWords.size - 1) it + 1 else  it})
-            neighbours.forEach {
-                if(it < trimmedWords.size - 1) {
-                    wordsWithPrecedingComma.add(trimmedWords[it + 1])
+        neighbours.addAll(wordIndexes[currentWord]!!) // TODO avoid duplicate edges
+        if (currentWord in wordsWithTrailingComma) {
+            if (currentChunk.last() == ',') {
+                nWord?.let {
+                    neighbours.add(u + 1)
+                    wordsWithPrecedingComma.add(it)
                 }
             }
         }
-        if (word in wordsWithPrecedingComma) {
-            neighbours.addAll((wordIndexes[word]!!).map { if (it > 0) it - 1 else 0 })
+        if (currentWord in wordsWithPrecedingComma) {
+            pChunk?.let {
+                if (it.last() != '.') {
+                    neighbours.add(u - 1)
+                    wordsWithTrailingComma.add(pWord!!)
+                }
+            }
         }
-        debug("Adding words: ${neighbours.map { trimmedWords[it] }.joinToString(" ")} indexes: ${neighbours.joinToString(" ")}")
+        // debug("Neighbours for $currentChunk: ${neighbours.map { chunks[it] }.joinToString(" ")}")
         neighbours
     }
 
     graph.bfs(startingNodes)
-    wordsWithTrailingComma.addAll(graph.visitedNodes().map { chunks[it].trimChunk() })
     return chunks.joinToString(" ") { word ->
         if (word.trimChunk() in wordsWithTrailingComma) {
             if (word.last() in listOf(',', '.'))
