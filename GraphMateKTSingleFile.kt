@@ -925,7 +925,7 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
 
 /** A specialized graph class that represent integer nodes ranging from 0 to size-1.
  *
- * The IntGraph class behaves a lot like the Graph class when used with integers like the example above.
+ * The IntGraph class behaves a lot like the Graph class when used with integers.
  * However, it's more performant, because it does not need to maintain an internal mapping between the nodes and their
  * indexes in the adjacency list. The obvious drawback being it only supports integer nodes.
  * It also requires the number of nodes to be defined at initialization.

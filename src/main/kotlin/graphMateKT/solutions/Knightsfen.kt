@@ -21,7 +21,7 @@ private fun boardsEmptyCoordinates(board: List<String>): Pair<Int, Int> {
     return x to y
 }
 
-fun getNeighbours(board: List<String>): List<List<String>> {
+internal fun getNeighbours(board: List<String>): List<List<String>> {
     val (x, y) = boardsEmptyCoordinates(board)
     val neighbours = mutableListOf<List<String>>()
     dx.indices.forEach { i ->
