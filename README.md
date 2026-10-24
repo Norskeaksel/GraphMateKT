@@ -18,7 +18,7 @@ library, because that's the library I use for competitive programming for fast i
 
 ## Documentation
 
-[![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT)
+[![kdoc](https://img.shields.io/badge/kdoc-3.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT)
 
 ## Using the library
 
