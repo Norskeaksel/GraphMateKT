@@ -5,7 +5,7 @@
 GraphMateKT is a thoroughly tested graph library that contains classes and algorithms for making, traversing and
 visualizing grids and graphs. This can for example be used to create and debug competitive programming solutions.
 The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using the library to solve various problems.
-These solutions are also used as units tests for the library, to ensure robustness throughout further development.
+These solutions are also used as unit tests for the library, to ensure robustness throughout further development.
 
 The library contains the general `Graph` class, which can be used to create graphs of any datatype, the `IntGraph`
 class, which is performance optimized for integer nodes, and the `Grid` class, where each node has x and y coordinates
@@ -13,9 +13,12 @@ in addition to containing any data type. All the classes inherit from the abstra
 [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
 class, which defines the basic functionality of the graphs.
 
+It also comes bundled with a Kotlin translation of williamfiset's [FastJavaIO](https://github.com/williamfiset/FastJavaIO)
+library, because that's the library I use for competitive programming for fast input parsing and smooth unit test setup.
+
 ## Documentation
 
-[![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT  )
+[![kdoc](https://img.shields.io/badge/kdoc-1.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT)
 
 ## Using the library
 
@@ -26,12 +29,12 @@ Add the following dependency to your `pom.xml` file:
 <dependency>
     <groupId>io.github.norskeaksel</groupId>
     <artifactId>graphmatekt</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
-:warning: Please note that for the ```Graph().visualizeGraph() function``` to work as intended
-, the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
+:warning: Please note that for the `Graph().visualizeGraph()` function to work as intended,
+the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
 as described in [Bruno Silva](https://github.com/brunomnsilva)'
 s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
 
@@ -51,7 +54,7 @@ internal fun main(){
 
 ### Using the library in a single file.
 
-In some competitive programing platforms like Kattis or Codeforces, users are required to upload a single file without
+In some competitive programming platforms like Kattis or Codeforces, users are required to upload a single file without
 external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
 the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note, this file does not
 have the graph visualization functions, because they themselves require external dependencies.
@@ -84,7 +87,7 @@ Once the graph is built, you may use the following graph algorithms:
 - **Strongly Connected Components (SCC)**:
     - `stronglyConnectedComponents()`
 
-- **Minimum Spanning Tree (Prims)**:
+- **Minimum Spanning Tree (Prim's)**:
     - `minimumSpanningTree()`
 - **NrOfPaths**:
     - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
@@ -183,7 +186,7 @@ fixed number of nodes (`size`).
 
 The Grid class is a specialized graph class. It uses the data class:
 ```Tile(val x: Int, val y: Int, var data: Any? = null)```
-to represent nodes of any datatype, where each node also have x and y coordinates.
+to represent nodes of any datatype, where each node also has x and y coordinates.
 The grid can be created with a width and height, or by passing a list of strings.
 The grid can be traversed using the same algorithms as the graph class,
 but it also has some additional methods for connecting the grid without explicitly adding
@@ -219,10 +222,10 @@ fun main() {
     fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
     grid.connectGrid(bidirectional = true, ::connectDownOrRight)
 
-    // Nodes in a grid consists of Tile objects with x, y coordinates and data
+    // Nodes in a grid consist of Tile objects with x, y coordinates and data
     val startNode = Tile(width / 2, height / 2)
 
-    // We can run a seach algorithm like BFS (Breadth-First Search) from a start node
+    // We can run a search algorithm like BFS (Breadth-First Search) from a start node
     val target = Tile(width - 1, height - 1) // Define a target to find a path to it
     grid.bfs(startNode, target)
 
@@ -265,5 +268,5 @@ private fun Grid.deleteDiamondAtOffset(centerOffset: Int) {
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE-AkselsGraphLibrary) files for details. **All
+This project is licensed under the MIT License - see the [LICENSE](LICENSE-AkselsGraphLibrary) file for details. **All
 derivative work should include this license**.

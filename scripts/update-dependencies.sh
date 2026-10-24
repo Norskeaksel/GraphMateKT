@@ -3,7 +3,7 @@
 # Properties and their artifacts are discovered automatically from <version>${property}</version> usages.
 #
 # Usage:
-#   ./scripts/update-dependencies.sh            # update pom.xml (backup saved as pom.xml.bak)
+#   ./scripts/update-dependencies.sh            # update pom.xml
 #   ./scripts/update-dependencies.sh --dry-run  # only show what would change
 #
 # JavaFX N requires JDK N-2 or newer, so JavaFX is capped at major version <jvmTarget> + 2.
@@ -74,9 +74,8 @@ echo
 if $DRY_RUN; then
   echo "Dry run: $changes update(s) available. pom.xml was not modified."
 elif (( changes > 0 )); then
-  echo "Updated $changes version(s) in $POM. Backup saved as $POM.bak."
+  echo "Updated $changes version(s) in $POM."
   echo "Run 'mvn clean test' to verify the build."
 else
-  rm -f "$POM.bak"
   echo "Everything is already up to date."
 fi
