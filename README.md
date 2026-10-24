@@ -13,8 +13,11 @@ in addition to containing any data type. All the classes inherit from the abstra
 [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
 class, which defines the basic functionality of the graphs.
 
-It also comes bundled with a Kotlin translation of williamfiset's [FastJavaIO](https://github.com/williamfiset/FastJavaIO)
-library, because that's the library I use for competitive programming for fast input parsing and smooth unit test setup.
+For graph visualization, GraphMateKT bundles [Bruno Silva](https://github.com/brunomnsilva)'s
+[JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) library. Grid visualization is done with
+GraphMateKT's own code, using [JavaFX](https://openjfx.io/).
+[William Fiset](https://github.com/williamfiset)'s [FastJavaIO](https://github.com/williamfiset/FastJavaIO)  library is
+also bundled, because that's what I use for input parsing for competitive programming and smooth unit test setup.
 
 ## Documentation
 
@@ -35,8 +38,7 @@ Add the following dependency to your `pom.xml` file:
 
 :warning: Please note that for the `Graph().visualizeGraph()` function to work as intended,
 the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
-as described in [Bruno Silva](https://github.com/brunomnsilva)'
-s [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) repository.
+as described in 
 
 ## Library GUI
 

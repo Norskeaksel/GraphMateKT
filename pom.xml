@@ -81,14 +81,22 @@
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
                 <version>${dokka.version}</version>
-                <configuration>
-                    <outputDir>${project.basedir}/docs</outputDir>
-                </configuration>
                 <executions>
                     <execution>
+                        <id>dokka-site</id>
+                        <configuration>
+                            <outputDir>${project.basedir}/docs</outputDir>
+                        </configuration>
                         <phase>pre-site</phase>
                         <goals>
                             <goal>dokka</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>dokka-javadoc-jar</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>javadocJar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -115,21 +123,6 @@
                     <publishingServerId>central</publishingServerId>
                 </configuration>
             </plugin>
-            <!--            javadoc
-            <plugin>
-                <groupId>org.jetbrains.dokka</groupId>
-                <artifactId>dokka-maven-plugin</artifactId>
-                <version>1.9.20</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>javadocJar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>  -->
-            <!--            source-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
