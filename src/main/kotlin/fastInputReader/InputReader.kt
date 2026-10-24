@@ -36,18 +36,6 @@ class InputReader @JvmOverloads constructor(
      */
     constructor(bufferSize: Int) : this(DEFAULT_STREAM, bufferSize)
 
-    /**
-     * Create an InputReader that reads from the given stream.
-     * @param  stream        The [InputStream][InputStream] to read from.
-     * @param  bufferSize    The size of the buffer to use.
-     */
-    /**
-     * Create an InputReader that reads from standard input.
-     */
-    /**
-     * Create an InputReader that reads from the given stream.
-     * @param stream  The InputStream to read from.
-     */
     init {
         require(!(stream == null || bufferSize <= 0))
         buf = ByteArray(bufferSize)
