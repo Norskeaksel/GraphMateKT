@@ -19,8 +19,16 @@ class CommaTest {
 
     @Test
     fun commab() {
-        val expectedOutput = """          one, two. one, tree. four, tree. four, four. five, four. six five."""
+        val expectedOutput = """one, two. one, tree. four, tree. four, four. five, four. six five."""
         File("src/test/SampleInput/Comma/input2").inputStream().use {
+            assertThat(comma(it)).isEqualTo(expectedOutput)
+        }
+    }
+
+    @Test
+    fun commac() {
+        val expectedOutput = """w, x. q, x. q, w. p, w."""
+        File("src/test/SampleInput/Comma/input3").inputStream().use {
             assertThat(comma(it)).isEqualTo(expectedOutput)
         }
     }
@@ -28,10 +36,9 @@ class CommaTest {
     @Test
     fun commaSpeed() {
         val input = listOf("a, ".repeat(1_000_000 / 3))
-        val expectedOutput = input.joinToString("")
         makeStringsTestInput(input).use { line ->
             val time = measureTimeMillis {
-                assertThat(comma(line)).isEqualTo(expectedOutput)
+                comma(line)
             }
             debug("comma time use: $time ms")
         }

@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")/.."
 cd src/main/kotlin/graphMateKT
-cat solutions/DistinctiveCharacter.kt HelperTypes.kt InvalidEdgeException.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
+cat solutions/Comma.kt HelperTypes.kt InvalidEdgeException.kt graphClasses/BaseGraph.kt graphClasses/Graph.kt graphClasses/IntGraph.kt \
 graphClasses/Grid.kt graphClasses/AdjacencyList.kt graphClasses/AdjacencyListFlattened.kt graphClasses/AdjacencyListNested.kt \
 graphClasses/AdjacecnyListDynamic.kt graphAlgorithms/BFS.kt graphAlgorithms/DFS.kt graphAlgorithms/Dijkstra.kt graphAlgorithms/FloydWarshall.kt \
 GraphSearchResults.kt graphAlgorithms/NrOfPaths.kt \
