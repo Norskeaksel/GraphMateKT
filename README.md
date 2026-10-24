@@ -5,7 +5,7 @@
 GraphMateKT is a thoroughly tested graph library that contains classes and algorithms for making, traversing and
 visualizing grids and graphs. This can for example be used to create and debug competitive programming solutions.
 The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using the library to solve various problems.
-These solutions are also used as unit tests for the library, to ensure robustness throughout further development.
+These solutions are then used as unit tests for the library, to ensure robustness throughout further development.
 
 The library contains the general `Graph` class, which can be used to create graphs of any datatype, the `IntGraph`
 class, which is performance optimized for integer nodes, and the `Grid` class, where each node has x and y coordinates
