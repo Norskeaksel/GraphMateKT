@@ -1,11 +1,3 @@
-/**
- * A very fast input reader to read data from any InputStream (System.in in particular).
- * I primarily use this input reader for competitive programming to get an edge on the
- * time required to read input. That being said, this input reader assumes you know what
- * data types you are reading in and will not do any validation of input whatsoever!
- *
- * @author William Fiset, william.alexandre.fiset@gmail.com
- */
 package fastInputReader
 
 import java.io.IOException
@@ -14,6 +6,14 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import kotlin.math.max
 
+/**
+ * A very fast input reader to read data from any InputStream (System.in in particular).
+ * I primarily use this input reader for competitive programming to get an edge on the
+ * time required to read input. That being said, this input reader assumes you know what
+ * data types you are reading in and will not do any validation of input whatsoever!
+ *
+ * @author William Fiset, william.alexandre.fiset@gmail.com
+ */
 class InputReader @JvmOverloads constructor(
     stream: InputStream = DEFAULT_STREAM,
     bufferSize: Int = DEFAULT_BUFFER_SIZE

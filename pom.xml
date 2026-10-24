@@ -81,12 +81,13 @@
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
                 <version>${dokka.version}</version>
+                <!-- Default output (also used by `mvn dokka:dokka`) -->
+                <configuration>
+                    <outputDir>${project.basedir}/docs</outputDir>
+                </configuration>
                 <executions>
                     <execution>
                         <id>dokka-site</id>
-                        <configuration>
-                            <outputDir>${project.basedir}/docs</outputDir>
-                        </configuration>
                         <phase>pre-site</phase>
                         <goals>
                             <goal>dokka</goal>
@@ -94,6 +95,10 @@
                     </execution>
                     <execution>
                         <id>dokka-javadoc-jar</id>
+                        <configuration>
+                            <!-- Keep javadoc-jar output away from docs/ -->
+                            <outputDir>${project.build.directory}/dokkaJavadoc</outputDir>
+                        </configuration>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>javadocJar</goal>
