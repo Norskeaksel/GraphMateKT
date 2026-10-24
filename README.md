@@ -25,7 +25,8 @@ also bundled, because that's what I use for input parsing for competitive progra
 
 ## Using the library
 
-Add the following dependency to your `pom.xml` file:
+Add the following dependency to your `pom.xml` file.
+It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/io.github.norskeaksel/graphmatekt).
 
 ```xml
 
