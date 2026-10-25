@@ -1,5 +1,5 @@
-import graphMateKT.solutions.Day16ReindeerMaze2024
-import graphMateKT.solutions.Day16ReindeerMaze2024Part2
+import graphMateKT.solutions.adventOfCode.Day16ReindeerMaze2024
+import graphMateKT.solutions.adventOfCode.Day16ReindeerMaze2024Part2
 
 
 import org.assertj.core.api.Assertions.assertThat

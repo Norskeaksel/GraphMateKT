@@ -1,8 +1,8 @@
-import graphMateKT.solutions.Day11Reactor2025Part1
+import graphMateKT.solutions.adventOfCode.Day11Reactor2025Part1
         
 import graphMateKT.INPUT
 import graphMateKT._reader
-import graphMateKT.solutions.Day11Reactor2025Part2
+import graphMateKT.solutions.adventOfCode.Day11Reactor2025Part2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test

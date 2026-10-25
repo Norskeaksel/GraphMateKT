@@ -1,4 +1,4 @@
-import graphMateKT.solutions.day10aHoofIt2024
+import graphMateKT.solutions.adventOfCode.day10aHoofIt2024
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

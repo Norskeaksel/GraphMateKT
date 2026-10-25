@@ -1,4 +1,4 @@
-package graphMateKT.solutions
+package graphMateKT.solutions.adventOfCode
 import graphMateKT.graphClasses.Grid
 
 /** Solves https://adventofcode.com/2024/day/10 */

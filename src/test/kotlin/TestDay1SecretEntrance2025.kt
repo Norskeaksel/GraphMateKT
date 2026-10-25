@@ -1,4 +1,4 @@
-import graphMateKT.solutions.day1SecretEntrance2025
+import graphMateKT.solutions.adventOfCode.day1SecretEntrance2025
         
 
 import org.assertj.core.api.Assertions.assertThat

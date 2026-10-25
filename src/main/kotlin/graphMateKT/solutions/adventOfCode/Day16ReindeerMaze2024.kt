@@ -1,4 +1,4 @@
-package graphMateKT.solutions
+package graphMateKT.solutions.adventOfCode
 
 import fastInputReader.InputReader
 import graphMateKT.Tile

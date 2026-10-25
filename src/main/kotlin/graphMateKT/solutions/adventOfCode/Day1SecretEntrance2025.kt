@@ -1,8 +1,7 @@
-package graphMateKT.solutions
+package graphMateKT.solutions.adventOfCode
 
 import fastInputReader.InputReader
 import graphMateKT.graphClasses.Graph
-import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
 
 var inputLines = listOf<String>()
