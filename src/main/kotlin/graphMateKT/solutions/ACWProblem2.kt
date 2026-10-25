@@ -1,7 +1,9 @@
 package graphMateKT.solutions
 
 import fastInputReader.InputReader
+import graphMateKT.debug
 import graphMateKT.graphClasses.Graph
+import graphMateKT.graphics.graphGraphics.visualizeGraph
 import java.io.InputStream
 
 internal fun main() {
@@ -19,6 +21,17 @@ internal fun ACWProblem2(inputStream: InputStream): Int {
         graph.connect(u, v)
     }
     val startNode = graph.nodes().first()
+    graph.bfs(startNode, maxDistance = 3.0)
+    /*val subGraph = Graph().apply {
+        graph.visitedNodes().forEach { u ->
+            graph.forEachNeighbour(u) { v ->
+                addEdge(u, v)
+            }
+        }
+    }
+    subGraph.visualizeGraph(true, listOf(startNode), "Subgraph of ACW Problem 2") */
+    debug("Nr of nodes: ${graph.nodes().size}")
+    debug("Nr of edges: ${graph.edges().size / 2}")
     graph.dfs(startNode)
     val furthestNode = graph.furthestNode()
     graph.dfs(furthestNode)
