@@ -339,7 +339,9 @@ abstract class BaseGraph<T : Any>(
         startNodes: List<T>,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -366,7 +368,7 @@ abstract class BaseGraph<T : Any>(
                     if (isSparse)
                         bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
                     else
-                        bfs(startNodeIds, targetId, searchResults, maxDistance)
+                        bfs(startNodeIds, targetId, searchResults, maxDistance, storeParents, storeVisitationOrder)
                 }
                 searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
@@ -388,9 +390,29 @@ abstract class BaseGraph<T : Any>(
         startNode: T,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance)
+        bfs(listOf(startNode), target, reset, maxDistance, storeParents, storeVisitationOrder)
+
+    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double, storeParents: Boolean = true, storeVisitationOrder: Boolean = true) {
+        require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
+        var currentMaxDistance = 1.0
+        while (currentMaxDistance <= maxDistance) {
+            bfs(startNodes, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            val a = searchResults!!
+            bfs(target, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            val b = searchResults!!
+            val intersection = a.visitedSparse.intersect(b.visitedSparse)
+            if (intersection.isNotEmpty()) {
+                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
+                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
+                return
+            }
+            currentMaxDistance++
+        }
+    }
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
