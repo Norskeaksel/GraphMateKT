@@ -333,13 +333,16 @@ abstract class BaseGraph<T : Any>(
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
-     * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
-     * and the target node is not defined beforehand. */
+     * @param bidirectional If true, search from the Target in addition to startNode, to potentially find a path to
+     * target faster. It assumes the graph is bidirectional and the target is not null. Defaults to false.
+     * @throws IllegalStateException If any of the starting nodes is not found in the graph, if the graph is sparse
+     * and the target node is not defined beforehand, or if bidirectional is true while target is null. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
+        bidirectional: Boolean = false,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -356,17 +359,20 @@ abstract class BaseGraph<T : Any>(
                 }
             }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
+            if(bidirectional && targetId == -1){
+                error("target '$target' not found in graph. Cannot search bidirectionally without a known target.")
+            }
             try {
                 searchResults?.foundTarget = false
                 finalPath = null
                 if (reset) {
                     searchResults = null
                 }
-                searchResults = BFS(adjacencyList).run {
+                searchResults = BFS(adjacencyList, targetId, maxDistance, bidirectional).run {
                     if (isSparse)
-                        bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
+                        bfsSparse(startNodeIds, searchResults)
                     else
-                        bfs(startNodeIds, targetId, searchResults, maxDistance)
+                        bfs(startNodeIds, searchResults)
                 }
                 searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
@@ -383,14 +389,15 @@ abstract class BaseGraph<T : Any>(
     }
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean, maxDistance: Double) that accepts a single
-     * starting node instead of a list of starting nodes */
+     * start node instead of a list of start nodes. */
     fun bfs(
         startNode: T,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
+        bidirectional: Boolean = false,
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance)
+        bfs(listOf(startNode), target, reset, maxDistance, bidirectional)
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
