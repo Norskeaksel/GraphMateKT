@@ -17,46 +17,15 @@ internal class DFS(private val graph: AdjacencyList) {
         r.currentVisited = IntArrayList()
         var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
-            if (r.visited[id]) return
-            r.visited[id] = true
+            if (r.visited[id] != 0) return
+            r.visited[id] = 1
             r.currentVisited.add(id)
             r.distances[id] = depth.toDouble()
             maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
                 try {
-                    if (!r.visited[v]) {
+                    if (r.visited[v] != 0) {
                         r.parents[v] = id
-                        visit(v, depth + 1)
-                    }
-                } catch (_: ArrayIndexOutOfBoundsException) {
-                    throw InvalidEdgeException(id, v)
-                }
-            }
-            r.processedOrder.add(id)
-        }
-
-        visit(start, 0)
-        r.depth = maxDepth
-        return r
-    }
-
-    fun dfsSparse(
-        start: Int,
-        initialSearchResults: GraphSearchResults? = null,
-    ): GraphSearchResults {
-        r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = IntArrayList()
-        var maxDepth = r.depth ?: 0
-        fun visit(id: Int, depth: Int) {
-            if (id in r.visitedSparse) return
-            r.visitedSparse.add(id)
-            r.currentVisited.add(id)
-            r.distancesSparse[id] = depth.toDouble()
-            maxDepth = depth.coerceAtLeast(maxDepth)
-            graph.forEachNeighbour(id) { v ->
-                try {
-                    if (v !in r.visitedSparse) {
-                        r.parentsSparse[v] = id
                         visit(v, depth + 1)
                     }
                 } catch (_: ArrayIndexOutOfBoundsException) {
@@ -74,7 +43,7 @@ internal class DFS(private val graph: AdjacencyList) {
     fun stronglyConnectedComponents(deleted: BooleanArray = BooleanArray(graph.size)): IntComponents {
         val topologicalOrder = DFS(graph.reversed()).topologicalSort(deleted).reversed()
         val stronglyConnectedComponents = topologicalOrder.mapNotNull { id ->
-            if (r.visited[id]) null
+            if (r.visited[id] != 0) null
             else {
                 dfs(id, r)
                 r.currentVisited

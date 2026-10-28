@@ -9,10 +9,9 @@ typealias IntComponents = List<List<Int>>
 /** List of list of Tile nodes */
 typealias GridComponents = List<List<Tile>>
 
-private const val INITIAL_CAPACITY = 10
 
-internal class IntArrayList {
-    private var intArray: IntArray = IntArray(INITIAL_CAPACITY)
+internal class IntArrayList(initialCapacity: Int = 10) {
+    private var intArray: IntArray = IntArray(initialCapacity)
     var size: Int = 0
         private set
 
@@ -25,6 +24,11 @@ internal class IntArrayList {
     }
 
     operator fun get(i: Int) = intArray[i]
+    operator fun set(i: Int, v: Int) {
+        intArray[i] = v
+    }
+
+    operator fun contains(i: Int) = intArray.getOrNull(i) != 0
     fun intArray(): IntArray {
         if (intArray.size > size) {
             intArray = intArray.copyOf(size)
@@ -35,19 +39,19 @@ internal class IntArrayList {
     fun asList() = intArray.copyOf(size).asList()
 
     fun clear() {
-        intArray = IntArray(INITIAL_CAPACITY)
+        intArray = IntArray(10)
         size = 0
     }
 
-    fun reversed() = IntArrayList().apply {
+    fun reversed() = IntArrayList(size).apply {
         for (i in size - 1 downTo 0) {
             add(intArray[i])
         }
     }
 }
 
-internal class DoubleArrayList {
-    private var doubleArray: DoubleArray = DoubleArray(INITIAL_CAPACITY)
+internal class DoubleArrayList(initialCapacity: Int = 10) {
+    private var doubleArray: DoubleArray = DoubleArray(initialCapacity)
     var size: Int = 0
         private set
 

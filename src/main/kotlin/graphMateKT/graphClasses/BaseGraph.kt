@@ -15,7 +15,6 @@ import kotlin.system.measureTimeMillis
 abstract class BaseGraph<T : Any>(
     initialNrOfNodes: Int,
     protected val debugTimeUse: Boolean,
-    protected var isSparse: Boolean
 ) {
     // PROPERTIES AND INITIALIZATION
     internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
@@ -23,6 +22,7 @@ abstract class BaseGraph<T : Any>(
     protected var adjacencyListIsFinalized = false
     protected var edgesCount = 0
     protected var nrOfNodes = initialNrOfNodes
+    protected var isSparse = false
 
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
@@ -87,7 +87,8 @@ abstract class BaseGraph<T : Any>(
      *
      * @param getNeighbours A user defined function that takes a `Node` as input and returns a list of neighboring `Nodes`
      */
-    open fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
+    fun connectWithRule(getNeighbours: (node: T) -> List<T>) {
+        isSparse = true
         val time = measureTimeMillis {
             clearEdges()
             adjacencyList = AdjacecnyListDynamic(nrOfNodes, forEachNeighbourId(getNeighbours))
@@ -181,17 +182,7 @@ abstract class BaseGraph<T : Any>(
 
 
     /** @return A (unordered) list of visited nodes or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
-    fun visitedNodes(): List<T> =
-        searchResults?.run {
-            if (isSparse)
-                visitedSparse.map { id2Node(it) }
-            else buildList(visited.size) {
-                for (i in visited.indices)
-                    if (visited[i])
-                        add(id2Node(i))
-            }
-        }
-            ?: emptyList()
+    fun visitedNodes(): List<T> = searchResults?.visited?.intArray()?.map { id2Node(it) } ?: emptyList()
 
     /** Retrieves the shortest path from the start to target node (if a target was specified) during the most recent
      *  search operation (BFS, shortestPathsFrom). After topologicalSort(), it holds the topological ordering.
@@ -210,14 +201,7 @@ abstract class BaseGraph<T : Any>(
      * @param node The target node whose distance is to be retrieved.
      * @return The distance to the specified node, or Double.POSITIVE_INFINITY if no path to the node has been found,
      * the node is not in the graph, or no search has been run. */
-    fun distanceTo(node: T) = node2IdOrNull(node)?.let { id ->
-        searchResults?.run {
-            if (isSparse)
-                distancesSparse[id]
-            else
-                distances[id]
-        }
-    } ?: Double.POSITIVE_INFINITY
+    fun distanceTo(node: T) = node2IdOrNull(node)?.let { searchResults?.distances[it] } ?: Double.POSITIVE_INFINITY
 
     /** Retrieves the maximum distance from the starting node to any other node after the most recent search operation (BFS, shortestPathsFrom).
      *
@@ -333,16 +317,14 @@ abstract class BaseGraph<T : Any>(
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
-     * @param bidirectional If true, search from the Target in addition to startNode, to potentially find a path to
-     * target faster. It assumes the graph is bidirectional and the target is not null. Defaults to false.
-     * @throws IllegalStateException If any of the starting nodes is not found in the graph, if the graph is sparse
-     * and the target node is not defined beforehand, or if bidirectional is true while target is null. */
+     * @param bidirectional //TODO
+     * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
+     * and the target node is not defined beforehand. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
-        bidirectional: Boolean = false,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -359,20 +341,14 @@ abstract class BaseGraph<T : Any>(
                 }
             }
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
-            if(bidirectional && targetId == -1){
-                error("target '$target' not found in graph. Cannot search bidirectionally without a known target.")
-            }
             try {
                 searchResults?.foundTarget = false
                 finalPath = null
                 if (reset) {
                     searchResults = null
                 }
-                searchResults = BFS(adjacencyList, targetId, maxDistance, bidirectional).run {
-                    if (isSparse)
-                        bfsSparse(startNodeIds, searchResults)
-                    else
-                        bfs(startNodeIds, searchResults)
+                searchResults = BFS(adjacencyList).run {
+                    bfs(startNodeIds, targetId, searchResults, maxDistance)
                 }
                 searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
@@ -389,15 +365,32 @@ abstract class BaseGraph<T : Any>(
     }
 
     /** Overload of fun bfs(startNodes: List<T>, target: T?, reset: Boolean, maxDistance: Double) that accepts a single
-     * start node instead of a list of start nodes. */
+     * starting node instead of a list of starting nodes */
     fun bfs(
         startNode: T,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY,
-        bidirectional: Boolean = false,
+        maxDistance: Double = Double.POSITIVE_INFINITY
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance, bidirectional)
+        bfs(listOf(startNode), target, reset, maxDistance)
+
+    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double) {
+        require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
+        var currentMaxDistance = 1.0
+        while (currentMaxDistance <= maxDistance) {
+            bfs(startNodes, maxDistance = currentMaxDistance)
+            val a = searchResults!!
+            bfs(target, maxDistance = currentMaxDistance)
+            val b = searchResults!!
+            val intersection = a.visited.intArray().intersect(b.visited.intArray().toSet())
+            if (intersection.isNotEmpty()) {
+                val targetDistance = intersection.minOf { a.distances[it] + b.distances[it] }
+                searchResults!!.distances[node2Id(target)] = targetDistance
+                return
+            }
+            currentMaxDistance++
+        }
+    }
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
@@ -423,10 +416,7 @@ abstract class BaseGraph<T : Any>(
             finalPath = null
             try {
                 searchResults = DFS(adjacencyList).run {
-                    if (isSparse)
-                        dfsSparse(startId, searchResults)
-                    else
-                        dfs(startId, searchResults)
+                    dfs(startId, searchResults)
                 }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "dfs")
@@ -474,10 +464,7 @@ abstract class BaseGraph<T : Any>(
             val targetId = target?.let { node2IdOrNull(it) } ?: -1
             try {
                 searchResults = Dijkstra(adjacencyList).run {
-                    if (isSparse)
-                        dijkstraSparse(startId, targetId)
-                    else
-                        dijkstra(startId, targetId)
+                    dijkstra(startId, targetId)
                 }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "shortestPathsFrom")
@@ -651,45 +638,21 @@ abstract class BaseGraph<T : Any>(
     fun getPath(target: T): List<T>? {
         val path: List<T>
         val time = measureTimeMillis {
-            val targetId = node2IdOrNull(target)
+            var currentId = node2IdOrNull(target) ?: error("target '$target' not found in graph")
             if (searchResults == null) {
                 error("Can't getPath because no search has (DFS, BFS, shortestPathsFrom) been run yet")
             }
-            val pathIds = searchResults!!.run {
-                if (isSparse) {
-                    getPathFromMap(targetId, parentsSparse)
-                } else {
-                    getPathFromArray(targetId, parents)
-                }
-            }
-            if (pathIds.isEmpty()) return null
+            val pathIds = generateSequence { searchResults!!.parents[currentId].also { currentId = it } }
+                .takeWhile { it != -1 }.toList()
+            if (pathIds.isEmpty())
+                return null
             path = pathIds.mapNotNull { id2NodeOrNull(it) }
         }
         if (debugTimeUse) {
             debug("getPath took $time ms.")
         }
-        return path
+        return path.reversed()
     }
-
-    private inline fun getPath(destination: Int?, parentOf: (Int) -> Int): List<Int> {
-        val path = mutableListOf<Int>()
-        destination?.let { dest ->
-            var current = dest
-            while (parentOf(current) != -1) {
-                path.add(current)
-                current = parentOf(current)
-                if (current == destination)
-                    break
-            }
-            path.add(current)
-        }
-        return if (path.size > 1) path.reversed() else emptyList()
-    }
-
-    private fun getPathFromArray(destination: Int?, parents: IntArray) = getPath(destination) { parents[it] }
-    private fun getPathFromMap(destination: Int?, parents: Map<Int, Int>) =
-        getPath(destination) { parents[it] ?: -1 }
-
 
 // HELPER FUNCTIONS
     /** Clears the search results stored in the graph.

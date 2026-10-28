@@ -19,9 +19,9 @@ package graphMateKT.graphClasses
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, false) {
-    private val node2id = mutableMapOf<Any, Int>()
-    private val id2Node = mutableMapOf<Int, Any>()
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
+    private val node2id = HashMap<Any, Int>()
+    private val id2Node = mutableListOf<Any>()
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -31,8 +31,8 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
         if (node2id.containsKey(node)) {
             return
         }
-        node2id[node] = nrOfNodes
-        id2Node[nrOfNodes++] = node
+        node2id[node] = nrOfNodes++
+        id2Node.add(node)
         if (!adjacencyList.isDynamic) {
             adjacencyListIsFinalized = false
         }
@@ -54,14 +54,10 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
     override fun node2Id(node: Any): Int = node2id[node] ?: (nrOfNodes++).also {
         node2id[node] = it
-        id2Node[it] = node
+        id2Node.add(node)
     }
 
-    override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
-    override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
-    override fun nodes(): List<Any> = id2Node.values.toList()
-    override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
-        isSparse = true
-        super.connectWithRule(getNeighbours)
-    }
+    override fun id2NodeOrNull(id: Int): Any? = id2Node.getOrNull(id)
+    override fun id2Node(id: Int): Any = id2Node.getOrNull(id) ?: error("Node with ID $id not found in graph")
+    override fun nodes(): List<Any> = id2Node.toList()
 }

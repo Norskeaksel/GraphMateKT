@@ -468,13 +468,14 @@ abstract class BaseGraph<T : Any>(
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
+     * @param bidirectional //TODO
      * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
      * and the target node is not defined beforehand. */
     fun bfs(
         startNodes: List<T>,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -526,6 +527,24 @@ abstract class BaseGraph<T : Any>(
         maxDistance: Double = Double.POSITIVE_INFINITY
     ) =
         bfs(listOf(startNode), target, reset, maxDistance)
+
+    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double) {
+        require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
+        var currentMaxDistance = 1.0
+        while (currentMaxDistance <= maxDistance) {
+            bfs(startNodes, maxDistance = currentMaxDistance)
+            val a = searchResults!!
+            bfs(target, maxDistance = currentMaxDistance)
+            val b = searchResults!!
+            val intersection = a.visitedSparse.intersect(b.visitedSparse)
+            if (intersection.isNotEmpty()) {
+                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
+                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
+                return
+            }
+            currentMaxDistance++
+        }
+    }
 
 
     /** Performs a Depth-First Search, which finds all nodes that's reachable from the starting node.
@@ -876,8 +895,8 @@ abstract class BaseGraph<T : Any>(
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
 class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, false) {
-    private val node2id = mutableMapOf<Any, Int>()
-    private val id2Node = mutableMapOf<Int, Any>()
+    private val node2id = HashMap<Any, Int>()
+    private val id2Node = mutableListOf<Any>()
 
     private fun getOrAddNodeId(node: Any): Int {
         return node2id[node] ?: addNode(node).run { node2id[node]!! }
@@ -887,8 +906,8 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
         if (node2id.containsKey(node)) {
             return
         }
-        node2id[node] = nrOfNodes
-        id2Node[nrOfNodes++] = node
+        node2id[node] = nrOfNodes++
+        id2Node.add(node)
         if (!adjacencyList.isDynamic) {
             adjacencyListIsFinalized = false
         }
@@ -910,12 +929,12 @@ class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, fal
     override fun node2IdOrNull(node: Any): Int? = node2id[node]
     override fun node2Id(node: Any): Int = node2id[node] ?: (nrOfNodes++).also {
         node2id[node] = it
-        id2Node[it] = node
+        id2Node.add(node)
     }
 
-    override fun id2NodeOrNull(id: Int): Any? = id2Node[id]
-    override fun id2Node(id: Int): Any = id2Node[id] ?: error("Node with ID $id not found in graph")
-    override fun nodes(): List<Any> = id2Node.values.toList()
+    override fun id2NodeOrNull(id: Int): Any? = id2Node.getOrNull(id)
+    override fun id2Node(id: Int): Any = id2Node.getOrNull(id) ?: error("Node with ID $id not found in graph")
+    override fun nodes(): List<Any> = id2Node
     override fun connectWithRule(getNeighbours: (node: Any) -> List<Any>) {
         isSparse = true
         super.connectWithRule(getNeighbours)

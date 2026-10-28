@@ -60,7 +60,7 @@ class Grid(
     debugTimeUse: Boolean = false,
     isSparse: Boolean = false
 ) :
-    BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
+    BaseGraph<Tile>(width * height, debugTimeUse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
@@ -74,14 +74,12 @@ class Grid(
      *
      * @param stringGrid A list of strings representing the grid
      * @param debugTimeUse If `true`, the time taken by each graph algorithm is printed to the standard error stream. Defaults to `false`.
-     * @param isSparse If `true`, search results are stored in maps instead of arrays. Defaults to `false`.
      * */
-    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
         stringGrid[0].length,
         stringGrid.size,
         false,
         debugTimeUse,
-        isSparse
     ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
