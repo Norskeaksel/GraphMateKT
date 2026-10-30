@@ -16,7 +16,7 @@ internal class MemoArray(graphSize: Int) : Memo {
 }
 
 internal class MemoMap : Memo {
-    private val memo = mutableMapOf<Int, Long>()
+    private val memo = hashMapOf<Int, Long>()
     override operator fun get(id: Int): Long = memo[id] ?: -1L
     override operator fun set(id: Int, value: Long) {
         memo[id] = value
@@ -26,8 +26,10 @@ internal class MemoMap : Memo {
 private fun memoDfs(currentId: Int, target: Int, graph: AdjacencyList, memo: Memo, mod: Long): Long {
     if (currentId == target)
         return 1L
-    if (memo[currentId] != -1L)
-        return memo[currentId]
+    memo[currentId].let {
+        if (it != -1L)
+            return it
+    }
     var totalPaths = 0L
     graph.forEachNeighbour(currentId) { neighbour ->
         totalPaths = (totalPaths + memoDfs(neighbour, target, graph, memo, mod)) % mod
