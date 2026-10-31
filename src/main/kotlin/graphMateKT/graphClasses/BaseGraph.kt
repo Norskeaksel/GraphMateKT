@@ -333,6 +333,8 @@ abstract class BaseGraph<T : Any>(
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
+     * @param storePaths Enables the finalPath() and getPath() after the search, for a small performance cost. Needed to be true for final path visualizations.
+     * @param storeCurrentlyVisited Enables the currentlyVisitedNodes() after the search, for a small performance cost. Needed to be true for visualizations of the search process.
      * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
      * and the target node is not defined beforehand. */
     fun bfs(
@@ -340,8 +342,8 @@ abstract class BaseGraph<T : Any>(
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
-        storeParents: Boolean = true,
-        storeVisitationOrder: Boolean = true,
+        storePaths: Boolean = true,
+        storeCurrentlyVisited: Boolean = true,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -368,7 +370,7 @@ abstract class BaseGraph<T : Any>(
                     if (isSparse)
                         bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
                     else
-                        bfs(startNodeIds, targetId, searchResults, maxDistance, storeParents, storeVisitationOrder)
+                        bfs(startNodeIds, targetId, searchResults, maxDistance, storePaths, storeCurrentlyVisited)
                 }
                 searchResults?.currentlyVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
@@ -391,18 +393,18 @@ abstract class BaseGraph<T : Any>(
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
-        storeParents: Boolean = true,
-        storeVisitationOrder: Boolean = true
+        storePaths: Boolean = true,
+        storeCurrentlyVisited: Boolean = true
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance, storeParents, storeVisitationOrder)
+        bfs(listOf(startNode), target, reset, maxDistance, storePaths, storeCurrentlyVisited)
 
-    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double, storeParents: Boolean = true, storeVisitationOrder: Boolean = true) {
+    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double, storePaths: Boolean = true, storeCurrentlyVisited: Boolean = true) {
         require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
         var currentMaxDistance = 1.0
         while (currentMaxDistance <= maxDistance) {
-            bfs(startNodes, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            bfs(startNodes, maxDistance = currentMaxDistance, storePaths = storePaths, storeCurrentlyVisited = storeCurrentlyVisited)
             val a = searchResults!!
-            bfs(target, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            bfs(target, maxDistance = currentMaxDistance, storePaths = storePaths, storeCurrentlyVisited = storeCurrentlyVisited)
             val b = searchResults!!
             val intersection = a.visitedSparse.intersect(b.visitedSparse)
             if (intersection.isNotEmpty()) {
