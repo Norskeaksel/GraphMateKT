@@ -1,4 +1,4 @@
-# graphMateKT
+# GraphMateKT
 
 [![CI](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml/badge.svg)](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.norskeaksel/graphmatekt)](https://central.sonatype.com/artifact/io.github.norskeaksel/graphmatekt)
