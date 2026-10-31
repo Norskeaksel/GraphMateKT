@@ -18,7 +18,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u] != 0)
                 continue
             r.visited[u] = 1
-            r.currentVisited.add(u)
+            r.currentlyVisited.add(u)
             if (u == target) {
                 break
             }
@@ -40,7 +40,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                 }
             }
         }
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 }

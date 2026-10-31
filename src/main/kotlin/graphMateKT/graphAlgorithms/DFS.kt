@@ -14,12 +14,12 @@ internal class DFS(private val graph: AdjacencyList) {
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = IntArrayList()
+        r.currentlyVisited = IntArrayList()
         var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
             if (r.visited[id] != 0) return
             r.visited[id] = 1
-            r.currentVisited.add(id)
+            r.currentlyVisited.add(id)
             r.distances[id] = depth.toDouble()
             maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
@@ -46,7 +46,7 @@ internal class DFS(private val graph: AdjacencyList) {
             if (r.visited[id] != 0) null
             else {
                 dfs(id, r)
-                r.currentVisited
+                r.currentlyVisited
             }
         }
         return stronglyConnectedComponents.map { it.asList() }

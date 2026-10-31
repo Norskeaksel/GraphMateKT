@@ -310,8 +310,8 @@ abstract class BaseGraph<T : Any>(
 
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
-    fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
+    fun currentlyVisitedNodes(): List<T> =
+        searchResults?.currentlyVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
@@ -319,7 +319,7 @@ abstract class BaseGraph<T : Any>(
     fun visitedNodes(): List<T> =
         searchResults?.run {
             if (isSparse)
-                visitedSparse.map { id2Node(it) }
+                visited.map { id2Node(it) }
             else buildList(visited.size) {
                 for (i in visited.indices)
                     if (visited[i])
@@ -348,7 +348,7 @@ abstract class BaseGraph<T : Any>(
     fun distanceTo(node: T) = node2IdOrNull(node)?.let { id ->
         searchResults?.run {
             if (isSparse)
-                distancesSparse[id]
+                distances[id]
             else
                 distances[id]
         }
@@ -454,7 +454,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -506,7 +506,7 @@ abstract class BaseGraph<T : Any>(
                     else
                         bfs(startNodeIds, targetId, searchResults, maxDistance, storeParents, storeVisitationOrder)
                 }
-                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
+                searchResults?.currentlyVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
                         if (finalNode == target)
                             finalPath = getPath(finalNode)
@@ -540,10 +540,10 @@ abstract class BaseGraph<T : Any>(
             val a = searchResults!!
             bfs(target, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
             val b = searchResults!!
-            val intersection = a.visitedSparse.intersect(b.visitedSparse)
+            val intersection = a.visited.intersect(b.visited)
             if (intersection.isNotEmpty()) {
-                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
-                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
+                val targetDistance = intersection.minOf { a.distances[it]!! + b.distances[it]!! }
+                searchResults!!.distances[node2Id(target)] = targetDistance
                 return
             }
             currentMaxDistance++
@@ -558,10 +558,10 @@ abstract class BaseGraph<T : Any>(
             val a = searchResults!!
             bfs(target, maxDistance = currentMaxDistance)
             val b = searchResults!!
-            val intersection = a.visitedSparse.intersect(b.visitedSparse)
+            val intersection = a.visited.intersect(b.visited)
             if (intersection.isNotEmpty()) {
-                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
-                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
+                val targetDistance = intersection.minOf { a.distances[it]!! + b.distances[it]!! }
+                searchResults!!.distances[node2Id(target)] = targetDistance
                 return
             }
             currentMaxDistance++
@@ -573,7 +573,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `distanceTo(node: T)` Note: returns the depth of the node in the DFS tree, not the shortest distance.
      * - `maxDistance()` (based on DFS tree depth)
@@ -609,7 +609,7 @@ abstract class BaseGraph<T : Any>(
     /** Performs Dijkstra's algorithm to find the shortest path from the starting node to all other nodes. It
      *  stores results that can be retrieved with the following functions:
      *
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -867,7 +867,7 @@ abstract class BaseGraph<T : Any>(
      * (DFS, BFS, or shortestPathsFrom) is run, the following functions return:
      *
      * - `depth()`: throws IllegalStateException
-     * - `currentVisitedNodes()`: an empty list
+     * - `currentlyVisitedNodes()`: an empty list
      * - `visitedNodes()`: an empty list
      * - `foundTarget()`: false
      * - `distanceTo(node: T)`: Double.POSITIVE_INFINITY
@@ -1473,7 +1473,7 @@ internal class BFS(private val graph: AdjacencyList) {
         storeVisitationOrder: Boolean = true,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
-        r.currentVisited.clear()
+        r.currentlyVisited.clear()
         var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
@@ -1486,7 +1486,7 @@ internal class BFS(private val graph: AdjacencyList) {
                 continue
             r.visited[currentId] = true
             if(storeVisitationOrder)
-                r.currentVisited.add(currentId)
+                r.currentlyVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
             if (currentDistance >= maxDepth) {
@@ -1502,7 +1502,7 @@ internal class BFS(private val graph: AdjacencyList) {
                         r.distances[v] = newDistance
                         if (v == targetId) {
                             if(storeVisitationOrder)
-                                r.currentVisited.add(v)
+                                r.currentlyVisited.add(v)
                             r.visited[v] = true
                             r.foundTarget = true
                         }
@@ -1514,7 +1514,7 @@ internal class BFS(private val graph: AdjacencyList) {
             }
         }
         r.depth = depth
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 
@@ -1525,35 +1525,35 @@ internal class BFS(private val graph: AdjacencyList) {
         maxDepth: Double = Double.POSITIVE_INFINITY,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
-        r.currentVisited.clear()
+        r.currentlyVisited.clear()
         var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
             queue.add(it)
-            r.distancesSparse[it] = 0.0
+            r.distances[it] = 0.0
         }
         while (queue.isNotEmpty() && !r.foundTarget) {
             val currentId = queue.removeFirst()
-            if (currentId in r.visitedSparse)
+            if (currentId in r.visited)
                 continue
-            r.currentVisited.add(currentId)
-            r.visitedSparse.add(currentId)
+            r.currentlyVisited.add(currentId)
+            r.visited.add(currentId)
 
-            val currentDistance = r.distancesSparse[currentId]!!
+            val currentDistance = r.distances[currentId]!!
             if (currentDistance >= maxDepth) {
                 continue
             }
             graph.forEachNeighbour(currentId) { v ->
                 val newDistance = currentDistance + 1
                 if (v == targetId ||
-                    (v !in r.distancesSparse && newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY))
+                    (v !in r.distances && newDistance < (r.distances[v] ?: Double.POSITIVE_INFINITY))
                 ) {
                     r.parentsSparse[v] = currentId
                     depth = newDistance.toInt().coerceAtLeast(depth)
-                    r.distancesSparse[v] = newDistance
+                    r.distances[v] = newDistance
                     if (v == targetId) {
-                        r.currentVisited.add(v)
-                        r.visitedSparse.add(v)
+                        r.currentlyVisited.add(v)
+                        r.visited.add(v)
                         r.foundTarget = true
                     }
                     queue.add(v)
@@ -1561,7 +1561,7 @@ internal class BFS(private val graph: AdjacencyList) {
             }
         }
         r.depth = depth
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 }
@@ -1575,12 +1575,12 @@ internal class DFS(private val graph: AdjacencyList) {
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = IntArrayList()
+        r.currentlyVisited = IntArrayList()
         var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
             if (r.visited[id]) return
             r.visited[id] = true
-            r.currentVisited.add(id)
+            r.currentlyVisited.add(id)
             r.distances[id] = depth.toDouble()
             maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
@@ -1606,17 +1606,17 @@ internal class DFS(private val graph: AdjacencyList) {
         initialSearchResults: GraphSearchResults? = null,
     ): GraphSearchResults {
         r = initialSearchResults ?: GraphSearchResults(graph.size)
-        r.currentVisited = IntArrayList()
+        r.currentlyVisited = IntArrayList()
         var maxDepth = r.depth ?: 0
         fun visit(id: Int, depth: Int) {
-            if (id in r.visitedSparse) return
-            r.visitedSparse.add(id)
-            r.currentVisited.add(id)
-            r.distancesSparse[id] = depth.toDouble()
+            if (id in r.visited) return
+            r.visited.add(id)
+            r.currentlyVisited.add(id)
+            r.distances[id] = depth.toDouble()
             maxDepth = depth.coerceAtLeast(maxDepth)
             graph.forEachNeighbour(id) { v ->
                 try {
-                    if (v !in r.visitedSparse) {
+                    if (v !in r.visited) {
                         r.parentsSparse[v] = id
                         visit(v, depth + 1)
                     }
@@ -1638,7 +1638,7 @@ internal class DFS(private val graph: AdjacencyList) {
             if (r.visited[id]) null
             else {
                 dfs(id, r)
-                r.currentVisited
+                r.currentlyVisited
             }
         }
         return stronglyConnectedComponents.map { it.asList() }
@@ -1666,7 +1666,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u])
                 continue
             r.visited[u] = true
-            r.currentVisited.add(u)
+            r.currentlyVisited.add(u)
             if (u == target) {
                 break
             }
@@ -1688,31 +1688,31 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                 }
             }
         }
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 
     fun dijkstraSparse(start: Int, target: Int = -1): GraphSearchResults {
         r = GraphSearchResults(graph.size)
-        r.distancesSparse[start] = 0.0
+        r.distances[start] = 0.0
         val pq = PriorityQueue<Edge> { a, b -> a.first.compareTo(b.first) }
         pq.add(Edge(0.0, start))
         while (pq.isNotEmpty()) {
             val u = pq.poll().second
-            if (u in r.visitedSparse)
+            if (u in r.visited)
                 continue
-            r.visitedSparse.add(u)
-            r.currentVisited.add(u)
+            r.visited.add(u)
+            r.currentlyVisited.add(u)
             if (u == target) {
                 break
             }
             graph.forEachEdge(u) { d, v ->
-                val newDistance = r.distancesSparse[u]!! + d
+                val newDistance = r.distances[u]!! + d
                 try {
-                    if (newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY)) {
-                        r.distancesSparse[v] = newDistance
+                    if (newDistance < (r.distances[v] ?: Double.POSITIVE_INFINITY)) {
+                        r.distances[v] = newDistance
                         r.parentsSparse[v] = u
-                        if (v !in r.visitedSparse) {
+                        if (v !in r.visited) {
                             pq.add(Edge(newDistance, v))
                         }
                         if(v == target) {
@@ -1724,7 +1724,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                 }
             }
         }
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 }
@@ -1766,10 +1766,10 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val distances by lazy { DoubleArray(graphSize) { Double.POSITIVE_INFINITY } }
     val parents by lazy { IntArray(graphSize) { -1 } }
     var depth: Int? = null
-    val visitedSparse = mutableSetOf<Int>()
-    val distancesSparse = mutableMapOf<Int, Double>()
+    val visited = mutableSetOf<Int>()
+    val distances = mutableMapOf<Int, Double>()
     val parentsSparse = mutableMapOf<Int, Int>()
-    var currentVisited = IntArrayList()
+    var currentlyVisited = IntArrayList()
     var processedOrder = IntArrayList()
     var foundTarget = false
 }

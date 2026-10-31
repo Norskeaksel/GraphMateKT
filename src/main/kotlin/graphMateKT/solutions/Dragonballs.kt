@@ -18,7 +18,7 @@ internal fun dragonballs(inputStream: InputStream, dim: Int) {
     val scanner = InputReader(inputStream)
     var n = scanner.nextInt()
     var potentialPoints = listOf(Tile(dim / 2, dim / 2))
-    val currentVisitedNodes = mutableListOf<Tile>()
+    val currentlyVisitedNodes = mutableListOf<Tile>()
     val dragonBalls = mutableListOf<Tile>()
     val exploredPoints = mutableListOf<Tile>()
     while (n > 0) {
@@ -33,17 +33,17 @@ internal fun dragonballs(inputStream: InputStream, dim: Int) {
         exploredPoints.add(explorePoint.copy(data = d))
         val newPoints = pointsAtDistanceSquared(explorePoint, d, dim)
         potentialPoints = potentialPoints(exploredPoints, newPoints)
-        currentVisitedNodes.add(explorePoint)
-        currentVisitedNodes.addAll(potentialPoints)
+        currentlyVisitedNodes.add(explorePoint)
+        currentlyVisitedNodes.addAll(potentialPoints)
     }
     /*if (dim <= 101) {
         val grid = Grid(dim, dim)
         var c = 0.0
         val centers = exploredPoints.map { it.copy(data = null) }.toSet()
         grid.visualizeGrid(
-            currentVisitedNodes = currentVisitedNodes,
+            currentlyVisitedNodes = currentlyVisitedNodes,
             finalPath = dragonBalls,
-            nodeDistances = currentVisitedNodes.map {
+            nodeDistances = currentlyVisitedNodes.map {
                 if (it in centers) {
                     c++
                 }

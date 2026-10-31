@@ -41,7 +41,7 @@ private fun makeGraph(points: List<Tile>, dim: Int): Graph {
     val roots = IntArray(size) { -1 }
     // Find roots of each point
     points.forEach { roots[it.idGivenWidth(dim)] = it.idGivenWidth(dim) }
-    grid.currentVisitedNodes().forEach { node ->
+    grid.currentlyVisitedNodes().forEach { node ->
         val nodeId = node.idGivenWidth(dim)
         val nodeDist = grid.distanceTo(node).toInt()
         dist[nodeId] = nodeDist

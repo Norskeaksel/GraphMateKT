@@ -10,8 +10,8 @@ typealias IntComponents = List<List<Int>>
 typealias GridComponents = List<List<Tile>>
 
 
-internal class IntArrayList(initialCapacity: Int = 10) {
-    private var intArray: IntArray = IntArray(initialCapacity)
+internal class IntArrayList(initialCapacity: Int = 10, defaultValue: Int = 0) {
+    private var intArray: IntArray = IntArray(initialCapacity) { defaultValue }
     var size: Int = 0
         private set
 
@@ -50,8 +50,8 @@ internal class IntArrayList(initialCapacity: Int = 10) {
     }
 }
 
-internal class DoubleArrayList(initialCapacity: Int = 10) {
-    private var doubleArray: DoubleArray = DoubleArray(initialCapacity)
+internal class DoubleArrayList(initialCapacity: Int = 10, defaultValue: Double = 0.0) {
+    private var doubleArray: DoubleArray = DoubleArray(initialCapacity) { defaultValue }
     var size: Int = 0
         private set
 
@@ -64,6 +64,10 @@ internal class DoubleArrayList(initialCapacity: Int = 10) {
     }
 
     operator fun get(i: Int) = doubleArray[i]
+    operator fun set(i: Int, v: Double) {
+        doubleArray[i] = v
+    }
+
     fun doubleArray(): DoubleArray {
         if (doubleArray.size > size) {
             doubleArray = doubleArray.copyOf(size)

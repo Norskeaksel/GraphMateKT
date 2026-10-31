@@ -29,7 +29,7 @@ internal fun Day7Laboratories2025(input: List<String>): Long {
     }
     val startNode = g.nodes().first { it.data == 'S' }
     g.bfs(startNode)
-    val splittersHit = g.currentVisitedNodes().filter { it.data == '^' }
+    val splittersHit = g.currentlyVisitedNodes().filter { it.data == '^' }
     // g.visualizeGrid(finalPath = splittersHit, screenWidthMultiplier = 2.0, startPaused = true, screenTitle = "Day7 Laboratories - BFS Splitter Counter Visualization with GraphMateKT")
     // return splittersHit.size
     val maxDistance = g.visitedNodes().maxOf { g.distanceTo(it) }
@@ -39,6 +39,6 @@ internal fun Day7Laboratories2025(input: List<String>): Long {
     }
     g.resetSearchResults()
     val nrOfPaths = g.nrOfPaths(startNode, sink)
-    // g.visualizeGrid(currentVisitedNodes = currentVistedNodes)
+    // g.visualizeGrid(currentlyVisitedNodes = currentVistedNodes)
     return nrOfPaths
 }
