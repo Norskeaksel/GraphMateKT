@@ -476,6 +476,8 @@ abstract class BaseGraph<T : Any>(
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -502,7 +504,7 @@ abstract class BaseGraph<T : Any>(
                     if (isSparse)
                         bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
                     else
-                        bfs(startNodeIds, targetId, searchResults, maxDistance)
+                        bfs(startNodeIds, targetId, searchResults, maxDistance, storeParents, storeVisitationOrder)
                 }
                 searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
@@ -524,9 +526,29 @@ abstract class BaseGraph<T : Any>(
         startNode: T,
         target: T? = null,
         reset: Boolean = true,
-        maxDistance: Double = Double.POSITIVE_INFINITY
+        maxDistance: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance)
+        bfs(listOf(startNode), target, reset, maxDistance, storeParents, storeVisitationOrder)
+
+    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double, storeParents: Boolean = true, storeVisitationOrder: Boolean = true) {
+        require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
+        var currentMaxDistance = 1.0
+        while (currentMaxDistance <= maxDistance) {
+            bfs(startNodes, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            val a = searchResults!!
+            bfs(target, maxDistance = currentMaxDistance, storeParents = storeParents, storeVisitationOrder = storeVisitationOrder)
+            val b = searchResults!!
+            val intersection = a.visitedSparse.intersect(b.visitedSparse)
+            if (intersection.isNotEmpty()) {
+                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
+                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
+                return
+            }
+            currentMaxDistance++
+        }
+    }
 
     fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double) {
         require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
@@ -1447,6 +1469,8 @@ internal class BFS(private val graph: AdjacencyList) {
         targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
         maxDepth: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
@@ -1461,7 +1485,8 @@ internal class BFS(private val graph: AdjacencyList) {
             if (r.visited[currentId])
                 continue
             r.visited[currentId] = true
-            r.currentVisited.add(currentId)
+            if(storeVisitationOrder)
+                r.currentVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
             if (currentDistance >= maxDepth) {
@@ -1471,11 +1496,13 @@ internal class BFS(private val graph: AdjacencyList) {
                 val newDistance = currentDistance + 1
                 try {
                     if ((!r.visited[v] && newDistance < r.distances[v]) || v == targetId) {
-                        r.parents[v] = currentId
+                        if(storeParents)
+                            r.parents[v] = currentId
                         depth = newDistance.toInt().coerceAtLeast(depth)
                         r.distances[v] = newDistance
                         if (v == targetId) {
-                            r.currentVisited.add(v)
+                            if(storeVisitationOrder)
+                                r.currentVisited.add(v)
                             r.visited[v] = true
                             r.foundTarget = true
                         }
@@ -1762,7 +1789,7 @@ internal class MemoArray(graphSize: Int) : Memo {
 }
 
 internal class MemoMap : Memo {
-    private val memo = mutableMapOf<Int, Long>()
+    private val memo = hashMapOf<Int, Long>()
     override operator fun get(id: Int): Long = memo[id] ?: -1L
     override operator fun set(id: Int, value: Long) {
         memo[id] = value
@@ -1772,8 +1799,10 @@ internal class MemoMap : Memo {
 private fun memoDfs(currentId: Int, target: Int, graph: AdjacencyList, memo: Memo, mod: Long): Long {
     if (currentId == target)
         return 1L
-    if (memo[currentId] != -1L)
-        return memo[currentId]
+    memo[currentId].let {
+        if (it != -1L)
+            return it
+    }
     var totalPaths = 0L
     graph.forEachNeighbour(currentId) { neighbour ->
         totalPaths = (totalPaths + memoDfs(neighbour, target, graph, memo, mod)) % mod

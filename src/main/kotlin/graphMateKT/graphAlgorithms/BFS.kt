@@ -11,6 +11,8 @@ internal class BFS(private val graph: AdjacencyList) {
         targetId: Int = -1,
         previousSearchResult: GraphSearchResults? = null,
         maxDepth: Double = Double.POSITIVE_INFINITY,
+        storeParents: Boolean = true,
+        storeVisitationOrder: Boolean = true,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
         r.currentVisited.clear()
@@ -25,7 +27,8 @@ internal class BFS(private val graph: AdjacencyList) {
             if (r.visited[currentId] != 0)
                 continue
             r.visited[currentId] = 1
-            r.currentVisited.add(currentId)
+            if(storeVisitationOrder)
+                r.currentVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
             if (currentDistance >= maxDepth) {
@@ -35,11 +38,13 @@ internal class BFS(private val graph: AdjacencyList) {
                 val newDistance = currentDistance + 1
                 try {
                     if ((r.visited[v] != 0 && newDistance < r.distances[v]) || v == targetId) {
-                        r.parents[v] = currentId
+                        if(storeParents)
+                            r.parents[v] = currentId
                         depth = newDistance.toInt().coerceAtLeast(depth)
                         r.distances[v] = newDistance
                         if (v == targetId) {
-                            r.currentVisited.add(v)
+                            if(storeVisitationOrder)
+                                r.currentVisited.add(v)
                             r.visited[v] = 1
                             r.foundTarget = true
                         }

@@ -20,7 +20,7 @@ internal fun rubiksrevenge(inputStream: InputStream): Int {
     val startingState = "RRRR" + "GGGG" + "BBBB" + "YYYY"
     graph.addNode(startingState)
     graph.connectWithRule(::gridMoves)
-    graph.bfsBidirectional(listOf(startingState), targetState, maxDistance = 6.0)
+    graph.bfsBidirectional(listOf(startingState), targetState, maxDistance = 6.0, storeParents = false, storeVisitationOrder = false)
     return graph.distanceTo(targetState).toInt()
 }
 
