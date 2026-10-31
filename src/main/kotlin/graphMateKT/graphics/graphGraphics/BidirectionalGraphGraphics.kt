@@ -31,7 +31,7 @@ internal class BidirectionalGraphGraphics : Application() {
     override fun start(stage: Stage) {
         val visitationOrder: List<Any>
         val graphVisualizer: GraphEdgeList<Any, Any> = run {
-            visitationOrder = graph.currentVisitedNodes()
+            visitationOrder = graph.currentlyVisitedNodes()
             graph.convertToVisualizationGraph()
         }
         val animationKeyFrameTime =

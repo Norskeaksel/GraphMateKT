@@ -23,7 +23,7 @@ import kotlin.math.min
 internal class GridGraphics : Application() {
     companion object {
         lateinit var grid: Grid
-        var currentVisitedNodes: List<Tile> = emptyList()
+        var currentlyVisitedNodes: List<Tile> = emptyList()
         var finalPath: List<Tile> = emptyList()
         var nodeDistances: List<Double> = emptyList()
         var screenTitle = "Grid visualizer. (Click space to pause and resume animations.)"
@@ -33,7 +33,7 @@ internal class GridGraphics : Application() {
         var screenWidthMultiplier: Double = 1.0
     }
 
-    val tilesToAnimate = currentVisitedNodes.ifEmpty { grid.currentVisitedNodes() } // TODO allow empty
+    val tilesToAnimate = currentlyVisitedNodes.ifEmpty { grid.currentlyVisitedNodes() } // TODO allow empty
     val ratio = min(grid.width, grid.height).toDouble() / max(grid.width, grid.height)
     val sceneWidth = GUIConstants.height * screenWidthMultiplier
     val sceneHeight = sceneWidth * ratio

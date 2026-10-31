@@ -25,7 +25,7 @@ internal fun  builddeps(): String {
     val changedFile = readString()
     g.addNode(changedFile)
     g.dfs(changedFile)
-    val reachableNodes = g.currentVisitedNodes().toSet()
+    val reachableNodes = g.currentlyVisitedNodes().toSet()
     val order = g.topologicalSort().reversed()
     val ans = StringBuilder()
     order.forEach {file ->

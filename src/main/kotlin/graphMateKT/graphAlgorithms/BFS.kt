@@ -15,7 +15,7 @@ internal class BFS(private val graph: AdjacencyList) {
         storeVisitationOrder: Boolean = true,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
-        r.currentVisited.clear()
+        r.currentlyVisited.clear()
         var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
@@ -28,7 +28,7 @@ internal class BFS(private val graph: AdjacencyList) {
                 continue
             r.visited[currentId] = true
             if(storeVisitationOrder)
-                r.currentVisited.add(currentId)
+                r.currentlyVisited.add(currentId)
 
             val currentDistance = r.distances[currentId]
             if (currentDistance >= maxDepth) {
@@ -44,7 +44,7 @@ internal class BFS(private val graph: AdjacencyList) {
                         r.distances[v] = newDistance
                         if (v == targetId) {
                             if(storeVisitationOrder)
-                                r.currentVisited.add(v)
+                                r.currentlyVisited.add(v)
                             r.visited[v] = true
                             r.foundTarget = true
                         }
@@ -56,7 +56,7 @@ internal class BFS(private val graph: AdjacencyList) {
             }
         }
         r.depth = depth
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 
@@ -67,7 +67,7 @@ internal class BFS(private val graph: AdjacencyList) {
         maxDepth: Double = Double.POSITIVE_INFINITY,
     ): GraphSearchResults {
         val r = previousSearchResult ?: GraphSearchResults(graph.size)
-        r.currentVisited.clear()
+        r.currentlyVisited.clear()
         var depth = r.depth ?: 0
         val queue = ArrayDeque<Int>()
         startIds.forEach {
@@ -78,7 +78,7 @@ internal class BFS(private val graph: AdjacencyList) {
             val currentId = queue.removeFirst()
             if (currentId in r.visitedSparse)
                 continue
-            r.currentVisited.add(currentId)
+            r.currentlyVisited.add(currentId)
             r.visitedSparse.add(currentId)
 
             val currentDistance = r.distancesSparse[currentId]!!
@@ -94,7 +94,7 @@ internal class BFS(private val graph: AdjacencyList) {
                     depth = newDistance.toInt().coerceAtLeast(depth)
                     r.distancesSparse[v] = newDistance
                     if (v == targetId) {
-                        r.currentVisited.add(v)
+                        r.currentlyVisited.add(v)
                         r.visitedSparse.add(v)
                         r.foundTarget = true
                     }
@@ -103,7 +103,7 @@ internal class BFS(private val graph: AdjacencyList) {
             }
         }
         r.depth = depth
-        r.processedOrder = r.currentVisited
+        r.processedOrder = r.currentlyVisited
         return r
     }
 }

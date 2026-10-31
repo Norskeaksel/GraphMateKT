@@ -67,7 +67,7 @@ private fun Grid.stateSearch(target: String): String {
         val (currentKnight1, currentKnight2, currentPoemIndex) = currentState
         if (currentPoemIndex == target.length) {
             /*visualizeSearch(
-     currentVisitedNodes = stateSearch,
+     currentlyVisitedNodes = stateSearch,
      nodeDistances = nodeDistances,
      screenTitle = "Writing: $target",
      startPaused = true,
@@ -96,7 +96,7 @@ private fun Grid.stateSearch(target: String): String {
             stateQueue.addAll(newStates)
     }
     /*visualizeSearch(
-        currentVisitedNodes = stateSearch,
+        currentlyVisitedNodes = stateSearch,
         nodeDistances = nodeDistances,
         screenTitle = "Writing: $target",
         startPaused = true,
