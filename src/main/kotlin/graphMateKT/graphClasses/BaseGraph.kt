@@ -175,8 +175,8 @@ abstract class BaseGraph<T : Any>(
 
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
-    fun currentVisitedNodes(): List<T> =
-        searchResults?.currentVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
+    fun currentlyVisitedNodes(): List<T> =
+        searchResults?.currentlyVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
@@ -319,7 +319,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -370,7 +370,7 @@ abstract class BaseGraph<T : Any>(
                     else
                         bfs(startNodeIds, targetId, searchResults, maxDistance, storeParents, storeVisitationOrder)
                 }
-                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
+                searchResults?.currentlyVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
                         if (finalNode == target)
                             finalPath = getPath(finalNode)
@@ -419,7 +419,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `distanceTo(node: T)` Note: returns the depth of the node in the DFS tree, not the shortest distance.
      * - `maxDistance()` (based on DFS tree depth)
@@ -455,7 +455,7 @@ abstract class BaseGraph<T : Any>(
     /** Performs Dijkstra's algorithm to find the shortest path from the starting node to all other nodes. It
      *  stores results that can be retrieved with the following functions:
      *
-     * - `currentVisitedNodes()`
+     * - `currentlyVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -713,7 +713,7 @@ abstract class BaseGraph<T : Any>(
      * (DFS, BFS, or shortestPathsFrom) is run, the following functions return:
      *
      * - `depth()`: throws IllegalStateException
-     * - `currentVisitedNodes()`: an empty list
+     * - `currentlyVisitedNodes()`: an empty list
      * - `visitedNodes()`: an empty list
      * - `foundTarget()`: false
      * - `distanceTo(node: T)`: Double.POSITIVE_INFINITY

@@ -27,7 +27,7 @@ fun GridComponents.visualizeGridComponents(animationTicTimeOverride: Double? = n
         component.map { it to i.toDouble() }
     }.unzip()
     grid.visualizeGrid(
-        currentVisitedNodes = nodeVisitationOrder,
+        currentlyVisitedNodes = nodeVisitationOrder,
         nodeDistances = nodeDistances,
         animationTicTimeOverride = animationTicTimeOverride
     )
