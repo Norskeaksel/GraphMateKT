@@ -19,7 +19,7 @@ has x and y coordinates, in addition to containing data of Any type. All the cla
 abstract [BaseGraph](https://norskeaksel.github.io/GraphMateKT/graphmatekt/graphMateKT.graphClasses/-base-graph/index.html)
 class, which defines the basic functionality of the graphs.
 
-For graph visualization, GraphMateKT bundles [Bruno Silva](https://github.com/brunomnsilva)'s
+For graph visualization, GraphMateKT uses [Bruno Silva](https://github.com/brunomnsilva)'s
 [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) library. Grid visualization is done with
 the library's own code, using [JavaFX](https://openjfx.io/). Additionally,
 [William Fiset](https://github.com/williamfiset)'s [FastJavaIO](https://github.com/williamfiset/FastJavaIO)  library is
@@ -36,7 +36,6 @@ Add the following dependency to your `pom.xml` file.
 It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/io.github.norskeaksel/graphmatekt).
 
 ```xml
-
 <dependency>
     <groupId>io.github.norskeaksel</groupId>
     <artifactId>graphmatekt</artifactId>
@@ -45,8 +44,7 @@ It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/
 ```
 
 :warning: Please note that for the `Graph().visualizeGraph()` function to work as intended,
-the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project,
-as described in
+the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project.
 
 ### Using the library in a single file.
 
