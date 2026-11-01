@@ -5,9 +5,9 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val distances by lazy { DoubleArray(graphSize) { Double.POSITIVE_INFINITY } }
     val parents by lazy { IntArray(graphSize) { -1 } }
     var depth: Int? = null
-    val visitedSparse = mutableSetOf<Int>()
-    val distancesSparse = mutableMapOf<Int, Double>()
-    val parentsSparse = mutableMapOf<Int, Int>()
+    val visitedSparse = HashSet<Int>()
+    val distancesSparse = HashMap<Int, Double>()
+    val parentsSparse = HashMap<Int, Int>()
     var currentVisited = IntArrayList()
     var processedOrder = IntArrayList()
     var foundTarget = false

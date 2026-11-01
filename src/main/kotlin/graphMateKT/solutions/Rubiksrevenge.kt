@@ -20,7 +20,7 @@ internal fun rubiksrevenge(inputStream: InputStream): Int {
     val startingState = "RRRR" + "GGGG" + "BBBB" + "YYYY"
     graph.addNode(startingState)
     graph.connectWithRule(::gridMoves)
-    return graph.bfsBidirectional(startingState, targetState, 6.0).toInt()
+    return graph.bfsBidirectional(startingState, targetState, 12.0).toInt()
 }
 
 private fun gridMoves(grid: Any): List<String> {

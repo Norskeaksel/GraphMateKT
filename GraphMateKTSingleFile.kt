@@ -1537,19 +1537,17 @@ internal class BFS(private val graph: AdjacencyList) {
         val maxDistance = ceil(maxDistanceBetweenStartAndTarget / 2)
         var currentMaxDistance = 1.0
         while (currentMaxDistance <= maxDistance) {
-            // @formatter:off
-            val (targetVisited, targetDistances) = bfsSparse(listOf(target), maxDistance = currentMaxDistance).run { visitedSparse to distancesSparse }
-            val (startVisited, startDistances) = bfsSparse(listOf(startNode), maxDistance = currentMaxDistance).run { visitedSparse to distancesSparse }
-            // @formatter:on
-            val intersection = startVisited.intersect(targetVisited)
-            if (intersection.isNotEmpty()) {
-                val targetDistance =
-                    intersection.minOf { startDistances[it]!! + targetDistances[it]!! }
-                return targetDistance
-            }
+            meetingDistance(startNode, target, currentMaxDistance)?.let { return it }
             currentMaxDistance++
         }
         return Double.POSITIVE_INFINITY
+    }
+
+    private fun meetingDistance(startNode: Int, target: Int, maxDistance: Double): Double? {
+        val targetDistances = bfsSparse(listOf(target), maxDistance = maxDistance).distancesSparse
+        val startDistances = bfsSparse(listOf(startNode), maxDistance = maxDistance).distancesSparse
+        return startDistances.minOfOrNull { (id, d) -> d + (targetDistances[id] ?: Double.POSITIVE_INFINITY) }
+            ?.takeIf { it.isFinite() }
     }
 }
 
@@ -1753,9 +1751,9 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val distances by lazy { DoubleArray(graphSize) { Double.POSITIVE_INFINITY } }
     val parents by lazy { IntArray(graphSize) { -1 } }
     var depth: Int? = null
-    val visitedSparse = mutableSetOf<Int>()
-    val distancesSparse = mutableMapOf<Int, Double>()
-    val parentsSparse = mutableMapOf<Int, Int>()
+    val visitedSparse = HashSet<Int>()
+    val distancesSparse = HashMap<Int, Double>()
+    val parentsSparse = HashMap<Int, Int>()
     var currentVisited = IntArrayList()
     var processedOrder = IntArrayList()
     var foundTarget = false

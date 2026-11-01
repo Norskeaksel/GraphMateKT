@@ -87,11 +87,11 @@ internal class BFS(private val graph: AdjacencyList) {
                 if (v == targetId ||
                     (v !in r.distancesSparse && newDistance < (r.distancesSparse[v] ?: Double.POSITIVE_INFINITY))
                 ) {
-                        r.parentsSparse[v] = currentId
+                    r.parentsSparse[v] = currentId
                     depth = newDistance.toInt().coerceAtLeast(depth)
                     r.distancesSparse[v] = newDistance
                     if (v == targetId) {
-                            r.currentVisited.add(v)
+                        r.currentVisited.add(v)
                         r.visitedSparse.add(v)
                         r.foundTarget = true
                     }
@@ -107,37 +107,17 @@ internal class BFS(private val graph: AdjacencyList) {
     fun bfsBidirectional(startNode: Int, target: Int, maxDistanceBetweenStartAndTarget: Double): Double {
         val maxDistance = ceil(maxDistanceBetweenStartAndTarget / 2)
         var currentMaxDistance = 1.0
-        var startNodeResults = GraphSearchResults(0)
-        var targetResults = GraphSearchResults(0)
         while (currentMaxDistance <= maxDistance) {
-            targetResults = bfsSparse(listOf(target), maxDistance = currentMaxDistance)
-            startNodeResults = bfsSparse(listOf(startNode), maxDistance = currentMaxDistance)
-            val intersection = startNodeResults.visitedSparse.intersect(targetResults.visitedSparse)
-            if (intersection.isNotEmpty()) {
-                val targetDistance =
-                    intersection.minOf { startNodeResults.distancesSparse[it]!! + targetResults.distancesSparse[it]!! }
-                return targetDistance
-            }
+            meetingDistance(startNode, target, currentMaxDistance)?.let { return it }
             currentMaxDistance++
         }
         return Double.POSITIVE_INFINITY
     }
-}
 
-/*    fun bfsBidirectional(startNode: Int, target: Int, maxDistanceBetweenStartAndTarget: Double): Double {
-        val maxDistance = ceil(maxDistanceBetweenStartAndTarget / 2)
-        var currentMaxDistance = 1.0
-        while (currentMaxDistance <= maxDistance) {
-            // @formatter:off
-            val (targetVisited, targetDistances) = bfsSparse(listOf(target), maxDistance = currentMaxDistance).run { visitedSparse to distancesSparse }
-            val (startVisited, startDistances) = bfsSparse(listOf(startNode), maxDistance = currentMaxDistance).run { visitedSparse to distancesSparse }
-            // @formatter:on
-            val intersection = startVisited.intersect(targetVisited)
-            if (intersection.isNotEmpty()) {
-                val targetDistance = intersection.minOf { startDistances[it]!! + targetDistances[it]!! }
-                return targetDistance
-            }
-            currentMaxDistance++
-        }
-        return Double.POSITIVE_INFINITY
-    */
+    private fun meetingDistance(startNode: Int, target: Int, maxDistance: Double): Double? {
+        val targetDistances = bfsSparse(listOf(target), maxDistance = maxDistance).distancesSparse
+        val startDistances = bfsSparse(listOf(startNode), maxDistance = maxDistance).distancesSparse
+        return startDistances.minOfOrNull { (id, d) -> d + (targetDistances[id] ?: Double.POSITIVE_INFINITY) }
+            ?.takeIf { it.isFinite() }
+    }
+}
