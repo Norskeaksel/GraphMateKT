@@ -16,7 +16,7 @@ internal fun day10aHoofIt2024(input: List<String>): Long {
         if (it.data != '0')
             return@forEach
         grid.dfs(it)
-        val visitedNines = grid.currentlyVisitedNodes().count { it.data == '9' }
+        val visitedNines = grid.currentVisitedNodes().count { it.data == '9' }
         ans += visitedNines
     }
     return ans

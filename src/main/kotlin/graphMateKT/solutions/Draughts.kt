@@ -45,9 +45,9 @@ private fun depthOfDFSOnCheckersBoard(board: List<String>, cp: XY, depth: Int = 
             else row
         }
         /* val grid = Grid(board)
-        val currentlyVisitedNodes = grid.nodes().filter { it.data == 'B' }
+        val currentVisitedNodes = grid.nodes().filter { it.data == 'B' }
         val finalPath = grid.nodes().filter { it.data == 'X' }
-        grid.visualizeGrid(currentlyVisitedNodes, finalPath = finalPath, animationTicTimeOverride = 1.0) */
+        grid.visualizeGrid(currentVisitedNodes, finalPath = finalPath, animationTicTimeOverride = 1.0) */
         depthOfDFSOnCheckersBoard(gridWithoutCapturedPiece, np, depth + 1)
     }
     maxDepth = depth.coerceAtLeast(maxDepth)

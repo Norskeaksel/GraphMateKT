@@ -31,4 +31,12 @@ class RubiksrevengeTest {
             rubiksrevenge(it)
         }
     }
+
+    @Test
+    fun rubiksrevenged() {
+        val expectedOutput = 7
+        File("src/test/SampleInput/Rubiksrevenge/input4").inputStream().use {
+            assertThat(rubiksrevenge(it)).isEqualTo(expectedOutput)
+        }
+    }
 }
