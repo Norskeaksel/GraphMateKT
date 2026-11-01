@@ -26,10 +26,9 @@ import kotlin.system.measureTimeMillis
  *
  * @param size The number of nodes in the graph. Nodes are represented as integers from 0 to size-1.
  * @param debugTimeUse optional flag that prints the time use of run algorithms to standard error
- * @param isSparse If `true`, search results are stored in maps instead of arrays. More performant when searches only reach a
  * small part of a large graph. Defaults to `false`.*/
-class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: Boolean = false) :
-    BaseGraph<Int>(size, debugTimeUse, isSparse) {
+class IntGraph(private val size: Int, debugTimeUse: Boolean = false) :
+    BaseGraph<Int>(size, debugTimeUse) {
 
     private val nodes by lazy { IntArray(size) { it } }
     private val nrOfEdgesFrom by lazy { IntArray(size) }
@@ -69,5 +68,10 @@ class IntGraph(private val size: Int, debugTimeUse: Boolean = false, isSparse: B
             debug("stronglyConnectedComponents took $time ms.")
         }
         return scc
+    }
+
+    override fun connectWithRule(getNeighbours: (node: Int) -> List<Int>) {
+        isSparse = true
+        super.connectWithRule(getNeighbours)
     }
 }

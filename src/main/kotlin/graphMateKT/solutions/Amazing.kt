@@ -20,7 +20,7 @@ private val visited = BooleanArray(DIM * DIM)
 internal fun amazing(): String {
     val g = Grid(DIM, DIM)
     val s = Tile(DIM / 2, DIM / 2)
-    val currentlyVisited = mutableListOf(s)
+    val currentVisited = mutableListOf(s)
     fun dfsMaze(c: Tile, p: Tile) {
         var b = ""
         if (c != p) {
@@ -30,11 +30,11 @@ internal fun amazing(): String {
             if (response == "wall" || response == "w") {
                 return
             }
-            currentlyVisited.add(c)
+            currentVisited.add(c)
             if (response == "solved") {
                 /*g.visualizeGrid(
-                    currentlyVisitedNodes = currentlyVisited,
-                    nodeDistances = currentlyVisited.indices.map { it.toDouble() })*/
+                    currentVisitedNodes = currentVisited,
+                    nodeDistances = currentVisited.indices.map { it.toDouble() })*/
                 exitProcess(0)
             }
             if (response == "wrong")
@@ -59,14 +59,14 @@ internal fun amazing(): String {
         if (b == "") return
         println(b)
         System.out.flush()
-        currentlyVisited.add(p)
+        currentVisited.add(p)
         val bResponse = readString()
         if (bResponse == "solved" || bResponse == "wrong" || (bResponse != "ok" && bResponse != "k")) {
             exitProcess(1)
         }
     }
     dfsMaze(s, s)
-    //g.visualizeGrid(currentlyVisitedNodes = currentlyVisited, nodeDistances = currentlyVisited.indices.map { it.toDouble() })
+    //g.visualizeGrid(currentVisitedNodes = currentVisited, nodeDistances = currentVisited.indices.map { it.toDouble() })
     return "no way out"
 }
 

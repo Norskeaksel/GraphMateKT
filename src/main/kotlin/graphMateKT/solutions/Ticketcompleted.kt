@@ -24,7 +24,7 @@ internal fun ticketcompleted(inputStream: InputStream): Double {
     val components = mutableListOf<List<Int>>()
     graph.nodes().forEach {
         graph.bfs(it, reset = false)
-        val visited = graph.currentlyVisitedNodes()
+        val visited = graph.currentVisitedNodes()
         if (visited.isNotEmpty()) {
             components.add(visited)
         }

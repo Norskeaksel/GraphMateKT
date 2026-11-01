@@ -74,7 +74,7 @@ internal fun  buggyrobot(): String {
     //grid.visualizeSearch()
     var ans = ""
     val ansTime = measureTimeMillis {
-        val goals = grid.currentlyVisitedNodes().filter { it.data == 'G' }
+        val goals = grid.currentVisitedNodes().filter { it.data == 'G' }
         val goal = goals.minBy { grid.distanceTo(it) - it.x / width }
         val fewestChanges = grid.distanceTo(goal) - goal.x / width
         ans = fewestChanges.toInt().toString()

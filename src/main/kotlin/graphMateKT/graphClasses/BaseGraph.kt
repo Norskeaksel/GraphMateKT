@@ -1,21 +1,22 @@
 package graphMateKT.graphClasses
 
+import graphMateKT.GraphSearchResults
 import graphMateKT.InvalidEdgeException
 import graphMateKT.UnboxedEdges
 import graphMateKT.debug
-import graphMateKT.graphAlgorithms.*
 import graphMateKT.graphAlgorithms.BFS
 import graphMateKT.graphAlgorithms.DFS
 import graphMateKT.graphAlgorithms.Dijkstra
 import graphMateKT.graphAlgorithms.FloydWarshall
-import graphMateKT.GraphSearchResults
+import graphMateKT.graphAlgorithms.nrOfPaths
+import graphMateKT.graphAlgorithms.nrOfPathsSparse
+import graphMateKT.graphAlgorithms.prims
 import kotlin.system.measureTimeMillis
 
 /** An abstract class that's used by the Graph, IntGraph and Grid classes for common functionality */
 abstract class BaseGraph<T : Any>(
     initialNrOfNodes: Int,
     protected val debugTimeUse: Boolean,
-    protected var isSparse: Boolean
 ) {
     // PROPERTIES AND INITIALIZATION
     internal var adjacencyList: AdjacencyList = AdjacencyListNested(0, UnboxedEdges())
@@ -23,6 +24,7 @@ abstract class BaseGraph<T : Any>(
     protected var adjacencyListIsFinalized = false
     protected var edgesCount = 0
     protected var nrOfNodes = initialNrOfNodes
+    protected var isSparse = false
 
     protected var finalPath: List<T>? = null
     private var searchResults: GraphSearchResults? = null
@@ -175,8 +177,8 @@ abstract class BaseGraph<T : Any>(
 
     /** @return A list of visited nodes, ordered by when they were visited,
      *  or an empty list if no search algorithm (DFS, BFS, shortestPathsFrom) has been run yet. */
-    fun currentlyVisitedNodes(): List<T> =
-        searchResults?.currentlyVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
+    fun currentVisitedNodes(): List<T> =
+        searchResults?.currentVisited?.asList()?.mapNotNull { id2NodeOrNull(it) }
             ?: emptyList()
 
 
@@ -319,7 +321,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentlyVisitedNodes()`
+     * - `currentVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -333,8 +335,6 @@ abstract class BaseGraph<T : Any>(
      * @param reset A boolean indicating whether to reset the previous search results. If set to false, previously
      * visited nodes will not be visited again.
      * @param maxDistance Nodes further away from the startNodes than maxDistance will not be traversed.
-     * @param storePaths Enables the finalPath() and getPath() after the search, for a small performance cost. Needed to be true for final path visualizations.
-     * @param storeCurrentlyVisited Enables the currentlyVisitedNodes() after the search, for a small performance cost. Needed to be true for visualizations of the search process.
      * @throws IllegalStateException If any of the starting nodes is not found in the graph, or if the graph is sparse,
      * and the target node is not defined beforehand. */
     fun bfs(
@@ -342,8 +342,6 @@ abstract class BaseGraph<T : Any>(
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
-        storePaths: Boolean = true,
-        storeCurrentlyVisited: Boolean = true,
     ) {
         finalizeAdjacencyListIfNeeded(false)
         val time = measureTimeMillis {
@@ -370,9 +368,9 @@ abstract class BaseGraph<T : Any>(
                     if (isSparse)
                         bfsSparse(startNodeIds, targetId, searchResults, maxDistance)
                     else
-                        bfs(startNodeIds, targetId, searchResults, maxDistance, storePaths, storeCurrentlyVisited)
+                        bfs(startNodeIds, targetId, searchResults, maxDistance)
                 }
-                searchResults?.currentlyVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
+                searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
                         if (finalNode == target)
                             finalPath = getPath(finalNode)
@@ -393,27 +391,19 @@ abstract class BaseGraph<T : Any>(
         target: T? = null,
         reset: Boolean = true,
         maxDistance: Double = Double.POSITIVE_INFINITY,
-        storePaths: Boolean = true,
-        storeCurrentlyVisited: Boolean = true
     ) =
-        bfs(listOf(startNode), target, reset, maxDistance, storePaths, storeCurrentlyVisited)
+        bfs(listOf(startNode), target, reset, maxDistance)
 
-    fun bfsBidirectional(startNodes: List<T>, target: T, maxDistance: Double, storePaths: Boolean = true, storeCurrentlyVisited: Boolean = true) {
+
+    internal fun bfsBidirectional(
+        startNode: T,
+        target: T,
+        maxDistanceBetweenStartAndTarget: Double,
+    ): Double {
         require(isSparse) { "Bidirectional BFS is only supported for sparse graphs." }
-        var currentMaxDistance = 1.0
-        while (currentMaxDistance <= maxDistance) {
-            bfs(startNodes, maxDistance = currentMaxDistance, storePaths = storePaths, storeCurrentlyVisited = storeCurrentlyVisited)
-            val a = searchResults!!
-            bfs(target, maxDistance = currentMaxDistance, storePaths = storePaths, storeCurrentlyVisited = storeCurrentlyVisited)
-            val b = searchResults!!
-            val intersection = a.visitedSparse.intersect(b.visitedSparse)
-            if (intersection.isNotEmpty()) {
-                val targetDistance = intersection.minOf { a.distancesSparse[it]!! + b.distancesSparse[it]!! }
-                searchResults!!.distancesSparse[node2Id(target)] = targetDistance
-                return
-            }
-            currentMaxDistance++
-        }
+        val startNodeId = node2IdOrNull(startNode) ?: error("startNode '$startNode' not found in graph")
+        val targetId = node2IdOrNull(target) ?: error("target '$target' not found in graph")
+        return BFS(adjacencyList).bfsBidirectional(startNodeId, targetId, maxDistanceBetweenStartAndTarget)
     }
 
 
@@ -421,7 +411,7 @@ abstract class BaseGraph<T : Any>(
      * It stores results that can be retrieved with the following functions:
      *
      * - `depth()`
-     * - `currentlyVisitedNodes()`
+     * - `currentVisitedNodes()`
      * - `visitedNodes()`
      * - `distanceTo(node: T)` Note: returns the depth of the node in the DFS tree, not the shortest distance.
      * - `maxDistance()` (based on DFS tree depth)
@@ -457,7 +447,7 @@ abstract class BaseGraph<T : Any>(
     /** Performs Dijkstra's algorithm to find the shortest path from the starting node to all other nodes. It
      *  stores results that can be retrieved with the following functions:
      *
-     * - `currentlyVisitedNodes()`
+     * - `currentVisitedNodes()`
      * - `visitedNodes()`
      * - `finalPath()`
      * - `foundTarget()`
@@ -715,7 +705,7 @@ abstract class BaseGraph<T : Any>(
      * (DFS, BFS, or shortestPathsFrom) is run, the following functions return:
      *
      * - `depth()`: throws IllegalStateException
-     * - `currentlyVisitedNodes()`: an empty list
+     * - `currentVisitedNodes()`: an empty list
      * - `visitedNodes()`: an empty list
      * - `foundTarget()`: false
      * - `distanceTo(node: T)`: Double.POSITIVE_INFINITY

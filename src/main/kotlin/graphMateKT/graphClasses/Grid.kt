@@ -2,9 +2,7 @@ package graphMateKT.graphClasses
 
 import graphMateKT.GridComponents
 import graphMateKT.Tile
-import graphMateKT.debug
 import graphMateKT.graphAlgorithms.DFS
-import kotlin.system.measureTimeMillis
 
 /** A general graph class that represents a 2D grid structure of nodes.
  *
@@ -51,16 +49,9 @@ import kotlin.system.measureTimeMillis
  * @param height The height of the grid (number of rows).
  * @param initWithDatalessTiles If `true`, initializes the grid with empty tiles.
  * @param debugTimeUse If `true`, prints the time use of algorithms to standard error. Defaults to `false`.
- * @param isSparse If `true`, search results are stored in maps instead of arrays. More performant when searches only reach a
  * small part of a large grid. Defaults to `false`. */
-class Grid(
-    val width: Int,
-    val height: Int,
-    initWithDatalessTiles: Boolean = true,
-    debugTimeUse: Boolean = false,
-    isSparse: Boolean = false
-) :
-    BaseGraph<Tile>(width * height, debugTimeUse, isSparse) {
+class Grid(val width: Int, val height: Int, initWithDatalessTiles: Boolean = true, debugTimeUse: Boolean = false) :
+    BaseGraph<Tile>(width * height, debugTimeUse) {
     private val gridSize = width * height
     private val nodes = MutableList<Tile?>(gridSize) { null }
     private var activeNodes = listOf<Tile>()
@@ -74,14 +65,12 @@ class Grid(
      *
      * @param stringGrid A list of strings representing the grid
      * @param debugTimeUse If `true`, the time taken by each graph algorithm is printed to the standard error stream. Defaults to `false`.
-     * @param isSparse If `true`, search results are stored in maps instead of arrays. Defaults to `false`.
      * */
-    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false, isSparse: Boolean = false) : this(
+    constructor(stringGrid: List<String>, debugTimeUse: Boolean = false) : this(
         stringGrid[0].length,
         stringGrid.size,
         false,
         debugTimeUse,
-        isSparse
     ) {
         require(stringGrid.all { it.length == width })
         { "All lines in the string grid must have the same length" }
@@ -155,7 +144,9 @@ class Grid(
         }
 
     override fun stronglyConnectedComponents(): GridComponents =
-        finalizeAdjacencyListIfNeeded(true).run { DFS(adjacencyList).stronglyConnectedComponents(deleted()) }
+        finalizeAdjacencyListIfNeeded(true).run {
+            DFS(adjacencyList).stronglyConnectedComponents(deleted())
+        }
             .map { component -> component.mapNotNull { id2NodeOrNull(it) } }
 
     private fun deleted() = BooleanArray(nodes.size) { nodes[it] == null }

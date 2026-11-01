@@ -45,14 +45,14 @@ internal fun knightsfen(inputStream: InputStream): String {
     graph.connectWithRule {
         getNeighbours(it as List<String>)
     }
-    graph.bfs(listOf(targetBoard), maxDistance = 10.0)
     repeat(n) {
         val startingBoard = mutableListOf<String>()
         while (startingBoard.size < 5) {
             val line = scanner.nextLine()!!.trimEnd('\r')
             if (line.isNotEmpty()) startingBoard.add(line.padEnd(5, ' '))
         }
-        val distance = graph.distanceTo(startingBoard).toInt()
+        graph.addNode(startingBoard)
+        val distance = graph.bfsBidirectional(startingBoard, targetBoard, 10.0).toInt()
         if (distance <= 10) {
             ans.appendLine("Solvable in $distance move(s).")
         } else {

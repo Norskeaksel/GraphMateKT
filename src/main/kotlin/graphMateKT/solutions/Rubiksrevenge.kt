@@ -11,7 +11,7 @@ internal fun main() {
     System.out.flush()
 }
 
-/** Solves https://open.kattis.com/problems/rubiksrevenge */
+/** Solves https://open.kattis.com/problems/rubiksrevenge. Barely exceeds memory use. */
 internal fun rubiksrevenge(inputStream: InputStream): Int {
     val scanner = InputReader(inputStream)
     val targetState = generateSequence { scanner.nextString() }.toList().joinToString("")
@@ -20,8 +20,7 @@ internal fun rubiksrevenge(inputStream: InputStream): Int {
     val startingState = "RRRR" + "GGGG" + "BBBB" + "YYYY"
     graph.addNode(startingState)
     graph.connectWithRule(::gridMoves)
-    graph.bfsBidirectional(listOf(startingState), targetState, maxDistance = 6.0, storePaths = false, storeCurrentlyVisited = false)
-    return graph.distanceTo(targetState).toInt()
+    return graph.bfsBidirectional(startingState, targetState, 6.0).toInt()
 }
 
 private fun gridMoves(grid: Any): List<String> {

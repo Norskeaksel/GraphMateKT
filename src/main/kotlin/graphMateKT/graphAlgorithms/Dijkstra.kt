@@ -18,7 +18,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (r.visited[u])
                 continue
             r.visited[u] = true
-            r.currentlyVisited.add(u)
+            r.currentVisited.add(u)
             if (u == target) {
                 break
             }
@@ -40,7 +40,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                 }
             }
         }
-        r.processedOrder = r.currentlyVisited
+        r.processedOrder = r.currentVisited
         return r
     }
 
@@ -54,7 +54,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
             if (u in r.visitedSparse)
                 continue
             r.visitedSparse.add(u)
-            r.currentlyVisited.add(u)
+            r.currentVisited.add(u)
             if (u == target) {
                 break
             }
@@ -67,7 +67,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                         if (v !in r.visitedSparse) {
                             pq.add(Edge(newDistance, v))
                         }
-                        if(v == target) {
+                        if (v == target) {
                             r.foundTarget = true
                         }
                     }
@@ -76,7 +76,7 @@ internal class Dijkstra(private val graph: AdjacencyList) {
                 }
             }
         }
-        r.processedOrder = r.currentlyVisited
+        r.processedOrder = r.currentVisited
         return r
     }
 }

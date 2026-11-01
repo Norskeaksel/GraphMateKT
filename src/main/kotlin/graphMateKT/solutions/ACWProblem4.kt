@@ -68,7 +68,7 @@ private fun solve(grid: Grid): Triple<Double, List<Int>, List<Int>> {
         nextStates.filter { it.person.y <= it.stone.y || it.person.y <= gridState.person.y }.map { it.encode() }
     }
     graph.bfs(initialState, targetState)
-    return Triple(graph.distanceTo(targetState), graph.currentlyVisitedNodes(), graph.getPath(targetState)!!)
+    return Triple(graph.distanceTo(targetState), graph.currentVisitedNodes(), graph.getPath(targetState)!!)
 }
 
 /** Solves https://open.kattis.com/problems/AWCProblem4 */

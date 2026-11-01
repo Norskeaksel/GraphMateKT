@@ -19,7 +19,7 @@ package graphMateKT.graphClasses
  *
  * @param debugTimeUse If true, the time taken by each graph algorithm is printed to the standard error stream. Defaults to false.
  */
-class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse, false) {
+class Graph(debugTimeUse: Boolean = false) : BaseGraph<Any>(0, debugTimeUse) {
     private val node2id = HashMap<Any, Int>()
     private val id2Node = mutableListOf<Any>()
 

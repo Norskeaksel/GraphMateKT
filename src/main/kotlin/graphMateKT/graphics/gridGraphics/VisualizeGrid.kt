@@ -14,7 +14,7 @@ import graphMateKT.graphics.FxLauncher
  * ```
 val grid = Grid(2, 2, true)
 grid.visualizeGrid(
-currentlyVisitedNodes = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1), Tile(0, 1)),
+currentVisitedNodes = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1), Tile(0, 1)),
 finalPath = listOf(Tile(0, 0), Tile(1, 0), Tile(1, 1)),
 nodeDistances = listOf(0.0, 1.0, 2.0, 3.0),
 screenTitle = "GraphMateKT visualizeGrid example usage",
@@ -25,7 +25,7 @@ screenWidthMultiplier = 0.5
 )
  * ```
  *
- * @param currentlyVisitedNodes A list of tiles representing the nodes visited in order during the traversal.
+ * @param currentVisitedNodes A list of tiles representing the nodes visited in order during the traversal.
  * @param finalPath A list of tiles representing the final path in the grid.
  * @param nodeDistances A list of distances to each visited node, which determines its color if visited.
  * @param screenTitle The title of the visualization window.
@@ -35,9 +35,9 @@ screenWidthMultiplier = 0.5
  * @param screenWidthMultiplier Changes the width and height of the GUI window by a factor.
  * @throws IllegalStateException If the grid is improperly configured for visualization. */
 fun Grid.visualizeGrid(
-    currentlyVisitedNodes: List<Tile> = currentlyVisitedNodes(),
+    currentVisitedNodes: List<Tile> = currentVisitedNodes(),
     finalPath: List<Tile> = finalPath() ?: emptyList(),
-    nodeDistances: List<Double> = currentlyVisitedNodes.map { tile ->
+    nodeDistances: List<Double> = currentVisitedNodes.map { tile ->
         runCatching { distanceTo(tile) }.getOrDefault(Double.MAX_VALUE)
     },
     screenTitle: String = "Grid visualizer (Click space to pause and resume)",
@@ -51,7 +51,7 @@ fun Grid.visualizeGrid(
     }
 
     GridGraphics.grid = this
-    GridGraphics.currentlyVisitedNodes = currentlyVisitedNodes
+    GridGraphics.currentVisitedNodes = currentVisitedNodes
     GridGraphics.finalPath = finalPath
     GridGraphics.nodeDistances = nodeDistances
     GridGraphics.screenTitle = screenTitle

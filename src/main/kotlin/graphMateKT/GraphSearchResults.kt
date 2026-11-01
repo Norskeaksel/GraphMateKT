@@ -8,7 +8,7 @@ internal data class GraphSearchResults(private val graphSize: Int) {
     val visitedSparse = mutableSetOf<Int>()
     val distancesSparse = mutableMapOf<Int, Double>()
     val parentsSparse = mutableMapOf<Int, Int>()
-    var currentlyVisited = IntArrayList()
+    var currentVisited = IntArrayList()
     var processedOrder = IntArrayList()
     var foundTarget = false
 }

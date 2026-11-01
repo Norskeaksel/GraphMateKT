@@ -32,7 +32,7 @@ internal class GraphGraphics : Application() {
     override fun start(stage: Stage) {
         val visitationOrder: List<Any>
         val graphVisualizer: DigraphEdgeList<Any, Any> = run {
-            visitationOrder = graph.currentlyVisitedNodes()
+            visitationOrder = graph.currentVisitedNodes()
             graph.convertToVisualizationGraph()
         }
         val animationKeyFrameTime =
