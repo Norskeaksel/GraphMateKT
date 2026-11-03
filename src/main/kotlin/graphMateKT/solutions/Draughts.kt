@@ -3,7 +3,7 @@ package graphMateKT.solutions
 import graphMateKT.readInt
 import graphMateKT.readLine
 
-var maxDepth = 0
+private var maxDepth = 0
 
 internal fun main() {
     val ans = draughts()

@@ -14,7 +14,7 @@ internal fun main() {
     System.out.flush()
 }
 
-var base = 150
+private var base = 150
 
 private data class GridState(val person: Tile, val stone: Tile) {
     fun encode() = ((person.x * base + person.y) * base + stone.x) * base + stone.y
