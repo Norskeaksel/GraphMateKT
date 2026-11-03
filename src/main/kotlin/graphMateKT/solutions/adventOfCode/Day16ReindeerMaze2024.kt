@@ -14,7 +14,7 @@ internal fun main() {
     System.out.flush()
 }
 
-var dim = 0
+private var dim = 0
 
 /** Solves https://adventofcode.com/2024/day/16 */
 internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {

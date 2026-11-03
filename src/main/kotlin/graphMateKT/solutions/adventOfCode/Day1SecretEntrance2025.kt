@@ -4,7 +4,7 @@ import fastInputReader.InputReader
 import graphMateKT.graphClasses.Graph
 import java.io.InputStream
 
-var inputLines = listOf<String>()
+private var inputLines = listOf<String>()
 internal fun main() {
     val ans = day1SecretEntrance2025(System.`in`)
     println(ans)

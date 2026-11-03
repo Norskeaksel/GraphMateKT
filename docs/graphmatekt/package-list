@@ -120,9 +120,6 @@ $dokka.location:graphMateKT.graphics.graphGraphics//visualizeIntComponents/kotli
 $dokka.location:graphMateKT.graphics.gridGraphics////PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/index.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGrid/graphMateKT.graphClasses.Grid#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[graphMateKT.Tile]#kotlin.collections.List[kotlin.Double]#kotlin.String#kotlin.Double?#kotlin.Boolean#kotlin.Boolean#kotlin.Double/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid.html
 $dokka.location:graphMateKT.graphics.gridGraphics//visualizeGridComponents/kotlin.collections.List[kotlin.collections.List[graphMateKT.Tile]]#kotlin.Double?/PointingToDeclaration/graphmatekt/graphMateKT.graphics.gridGraphics/visualize-grid-components.html
-$dokka.location:graphMateKT.solutions.adventOfCode////PointingToDeclaration/graphmatekt/graphMateKT.solutions.adventOfCode/index.html
-$dokka.location:graphMateKT.solutions.adventOfCode//dim/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions.adventOfCode/dim.html
-$dokka.location:graphMateKT.solutions.adventOfCode//inputLines/#/PointingToDeclaration/graphmatekt/graphMateKT.solutions.adventOfCode/input-lines.html
 $dokka.location:graphMateKT////PointingToDeclaration/graphmatekt/graphMateKT/index.html
 $dokka.location:graphMateKT/Components///PointingToDeclaration/graphmatekt/graphMateKT/-components/index.html
 $dokka.location:graphMateKT/GridComponents///PointingToDeclaration/graphmatekt/graphMateKT/-grid-components/index.html
@@ -140,4 +137,3 @@ graphMateKT.graphClasses
 graphMateKT.graphics.desktopGui
 graphMateKT.graphics.graphGraphics
 graphMateKT.graphics.gridGraphics
-graphMateKT.solutions.adventOfCode
