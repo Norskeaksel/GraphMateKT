@@ -11,16 +11,16 @@ import graphMateKT.graphics.FxLauncher
  * <i>Example usage:</i>
  *
  * ```
-    val graph = Graph(false)
-    graph.connect("A", "B")
-    graph.connect("A", "C")
-    graph.visualizeGraph(
-        isBidirectional = true,
-        finalPath = listOf("A", "B"),
-        screenTitle = "GraphMateKT visualizeGraph example usage",
-        animationTicTimeOverride = 2000.0,
-        closeOnEnd = true,
-        startPaused = true,
+val graph = Graph(false)
+graph.connect("A", "B")
+graph.connect("A", "C")
+graph.visualizeGraph(
+isBidirectional = true,
+finalPath = listOf("A", "B"),
+screenTitle = "GraphMateKT visualizeGraph example usage",
+animationTicTimeOverride = 2000.0,
+closeOnEnd = true,
+startPaused = true,
 )
  * ```
  * **NOTE:** to use this visualizeGraph() function, the files smartgraph.css and smartgraph.properties must be **added manually** to the root of your project,
@@ -35,12 +35,13 @@ import graphMateKT.graphics.FxLauncher
  * @throws IllegalStateException If the graph is improperly configured for visualization. */
 fun <T : Any> BaseGraph<T>.visualizeGraph(
     isBidirectional: Boolean = false,
-    finalPath:List<T> = finalPath() ?: emptyList(),
+    finalPath: List<T> = finalPath() ?: emptyList(),
     screenTitle: String = "Graph visualizer (Click space to pause and resume)",
     animationTicTimeOverride: Double? = null,
     closeOnEnd: Boolean = false,
     startPaused: Boolean = false,
 ) {
+    finalizeAdjacencyListIfNeeded(true)
     if (isBidirectional) {
         @Suppress("UNCHECKED_CAST")
         BidirectionalGraphGraphics.graph = this as BaseGraph<Any>

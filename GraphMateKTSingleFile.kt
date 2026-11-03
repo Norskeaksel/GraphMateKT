@@ -237,7 +237,7 @@ abstract class BaseGraph<T : Any>(
         }
     }
 
-    protected fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
+    internal fun finalizeAdjacencyListIfNeeded(fullGraphIsNeeded: Boolean) {
         if (adjacencyListIsFinalized && (!fullGraphIsNeeded || !adjacencyList.isDynamic))
             return
         if (adjacencyList.isDynamic) {
@@ -465,6 +465,7 @@ abstract class BaseGraph<T : Any>(
      * - `distanceTo(node: T)`
      * - `maxDistance()`
      * - `furthestNode()`
+     * - `parent(node: T)`
      *
      * @param startNodes A list of starting nodes for the BFS traversal.
      * @param target An optional node that, if specified, the bfs will stop once it's found. Finding the target will
@@ -553,6 +554,7 @@ abstract class BaseGraph<T : Any>(
      * - `distanceTo(node: T)` Note: returns the depth of the node in the DFS tree, not the shortest distance.
      * - `maxDistance()` (based on DFS tree depth)
      * - `furthestNode()` (based on DFS tree depth)
+     * - `parent(node: T)` (parent in the DFS tree)
      *
      * @param startNode The starting node for the DFS traversal.
      * @param reset A boolean indicating whether to reset the previous search results. If set to false,
@@ -591,6 +593,7 @@ abstract class BaseGraph<T : Any>(
      * - `distanceTo(node: T)`
      * - `maxDistance()`
      * - `furthestNode()`
+     * - `parent(node: T)`
      *
      * @param startNode The starting node to find the shortest paths from.
      * @param target An optional target node. If specified, the algorithm will store the shortest path to the
@@ -787,6 +790,20 @@ abstract class BaseGraph<T : Any>(
     }
 
 // PATH UTILITIES
+    /** Retrieves the parent of the specified node from the most recent search operation (BFS, DFS, shortestPathsFrom).
+     *
+     * @param node The node whose parent is to be retrieved.
+     * @return The parent node, or null if no parent was set. */
+    fun parent(node: T) = searchResults?.run {
+        node2IdOrNull(node)?.let { id ->
+            if (isSparse) {
+                parentsSparse[id]?.let { id2NodeOrNull(it) }
+            } else {
+                parents.getOrNull(id)?.let { id2NodeOrNull(it) }
+            }
+        }
+    }
+
     /** Retrieves the path from the starting node to the specified target node based on the most recent search results.
      *
      * @param target The target node for which the path is to be retrieved.
@@ -848,6 +865,7 @@ abstract class BaseGraph<T : Any>(
      * - `distanceTo(node: T)`: Double.POSITIVE_INFINITY
      * - `maxDistance()`: Double.POSITIVE_INFINITY
      * - `furthestNode()`: the first node of the graph (all distances are infinite)
+     * - `parent(node: T)`: null
      *
      * NOTE: `finalPath()` is not cleared by this function. It is cleared when the next search is run. */
     fun resetSearchResults() {
