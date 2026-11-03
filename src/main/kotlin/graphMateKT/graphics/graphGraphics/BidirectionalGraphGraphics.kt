@@ -113,12 +113,12 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): GraphEdgeList<Any, Any
     var edgeCounter = 0
     val addedEdges = mutableSetOf<Pair<Any, Any>>()
     nodes().forEach { u ->
+        ensureVertex(u)
         val edges = edges(u).ifEmpty { neighbours(u).map { 1.0 to it } }
         edges.forEach { (w, v) ->
             val uv = u to v
             val vu = v to u
             if (uv !in addedEdges && vu !in addedEdges) {
-                ensureVertex(u)
                 ensureVertex(v)
                 val uniqueWeightLabel = w.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
                 g.insertEdge(u, v, uniqueWeightLabel)

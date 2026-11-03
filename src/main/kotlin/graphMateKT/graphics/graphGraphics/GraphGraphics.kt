@@ -114,9 +114,9 @@ private fun BaseGraph<Any>.convertToVisualizationGraph(): DigraphEdgeList<Any, A
     val zeroWidthSpace = '\u200B'
     var edgeCounter = 0
     nodes().forEach { node ->
+        ensureVertex(node)
         val edges = edges(node).ifEmpty { neighbours(node).map { 1.0 to it } }
         edges.forEach { edge ->
-            ensureVertex(node)
             ensureVertex(edge.second)
             val uniqueWeightLabel = edge.first.toString() + zeroWidthSpace.toString().repeat(edgeCounter++)
             g.insertEdge(node, edge.second, uniqueWeightLabel)
