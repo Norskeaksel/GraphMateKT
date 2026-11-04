@@ -662,7 +662,7 @@ abstract class BaseGraph<T : Any>(
             if (isSparse) {
                 parentsSparse[id]?.let { id2NodeOrNull(it) }
             } else {
-                parents.getOrNull(id)?.let { id2NodeOrNull(it) }
+                parents[id].takeIf { it != -1 }?.let { id2Node(it) }
             }
         }
     }
