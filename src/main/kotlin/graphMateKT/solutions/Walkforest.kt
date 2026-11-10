@@ -28,13 +28,15 @@ internal fun walkforest(): String {
         val dag = makeDAG(g)
         //g.visualize(true)
         //dag.visualize()
-        ans.appendLine(nrOfPaths(dag))
+        ans.appendLine(dag.nrOfPaths(1, 2))
     }
     return ans.toString()
 }
 
 private fun makeDAG(g: IntGraph): Graph {
     val newG = Graph()
+    newG.addNode(1)
+    newG.addNode(2)
     val distances =  DoubleArray(g.size())
     g.nodes().forEach { distances[it] = g.distanceTo(it) }
     g.nodes().forEach { u ->
@@ -44,19 +46,4 @@ private fun makeDAG(g: IntGraph): Graph {
         }
     }
     return newG
-}
-
-private fun nrOfPaths(g: Graph): Int {
-    val nodesSorted = g.topologicalSort().reversed()
-    val dp = IntArray(1001)
-    dp[1] = 1
-    nodesSorted.forEach { u ->
-        u as Int
-        val neighbours = g.neighbours(u)
-        neighbours.forEach { v ->
-            v as Int
-            dp[v] += dp[u]
-        }
-    }
-    return dp[2]
 }
