@@ -20,8 +20,7 @@ impossible
     }
 
     @Test
-    fun fulltankCounterExample() {
-        // Two cities, one road of length 1, tank capacity 1. Buy 1 unit in city 0 (cost 1) and drive.
+    fun fulltankb() {
         val expectedOutput = """1
 """
         File("src/test/SampleInput/Fulltank/input2").inputStream().use {
@@ -30,7 +29,7 @@ impossible
     }
 
     @Test
-    fun fulltankCounterExample2() {
+    fun fulltankc() {
         val expectedOutput = """2
 impossible
 """
@@ -40,7 +39,7 @@ impossible
     }
 
     @Test
-    fun fulltankCounterExample3() {
+    fun fulltankd() {
         val expectedOutput = """impossible
 """
         File("src/test/SampleInput/Fulltank/input4").inputStream().use {
@@ -49,7 +48,7 @@ impossible
     }
 
     @Test
-    fun fulltankCounterExample4() {
+    fun fulltanke() {
         val expectedOutput = """100
 """
         File("src/test/SampleInput/Fulltank/input5").inputStream().use {
@@ -58,9 +57,16 @@ impossible
     }
 
     @Test
+    fun fulltankf() {
+        val expectedOutput = """0
+"""
+        File("src/test/SampleInput/Fulltank/input6").inputStream().use {
+            assertThat(fulltank(it)).isEqualTo(expectedOutput)
+        }
+    }
+
+    @Test
     fun fulltankSpeed() {
-        // Upper bounds: n = 1000, m = 10000, q = 100
-        // Fuel prices 1..100, road lengths 1..100, tank capacity 1..100
         val n = 1000
         val m = 10000
         val q = 100

@@ -1,6 +1,7 @@
 package graphMateKT.solutions
 
 import fastInputReader.InputReader
+import graphMateKT.debug
 import graphMateKT.graphClasses.IntGraph
 import java.io.InputStream
 
@@ -32,35 +33,37 @@ internal fun fulltank(inputStream: InputStream): String {
     val queriesOrdered = queries.sortedBy { it.first }
     var lastC = 0
 
-    val stateGraph = IntGraph(n * 1000)
+    val nrOfNodeStates = 101
+    val stateGraph = IntGraph(n * nrOfNodeStates)
     val answers = mutableMapOf<Triple<Int, Int, Int>, String>()
     queriesOrdered.forEach { q ->
         val (c, start, target) = q
         repeat(n) { u ->
             val edges = distanceGraph.edges(u)
             for (i in lastC until c) {
-                val currentState = u * 1000 + i
-                val nextFuelState = u * 1000 + i + 1
+                val currentState = u * nrOfNodeStates + i
+                val nextFuelState = u * nrOfNodeStates + i + 1
                 stateGraph.addEdge(currentState, nextFuelState, costs[u])
             }
             for (i in lastC..c) {
-                val currentState = u * 1000 + i
+                val currentState = u * nrOfNodeStates + i
                 edges.forEach { (d, v) ->
-                    val nextNeighbourState = v * 1000 -
+                    if (i < d) return@forEach
+                    val nextNeighbourState = v * nrOfNodeStates + i - d.toInt()
                     stateGraph.addEdge(currentState, nextNeighbourState, 0)
                 }
             }
         }
+        for (i in 100 downTo 1) {
+            stateGraph.addEdge(target * nrOfNodeStates + i, target * nrOfNodeStates + i - 1, 0)
+        }
+        stateGraph.shortestPathsFrom(start * nrOfNodeStates, target * nrOfNodeStates)
+        // debug("${stateGraph.finalPath()}")
+        answers[q] =
+            if (stateGraph.distanceTo(target * nrOfNodeStates).isInfinite()) "impossible"
+            else stateGraph.distanceTo(target * nrOfNodeStates).toInt().toString()
+        lastC = c
     }
-    for (i in 100 - 1 downTo 1) {
-        stateGraph.addEdge(target + i, target + i - 1, 0)
-    }
-    lastC = c
-    stateGraph.shortestPathsFrom(start, target)
-    // debug("visitedNodes: ${stateGraph.visitedNodes()}")
-    // stateGraph.finalPath()?.let { debug(it) }
-    answers[q] = if (!stateGraph.foundTarget()) "impossible" else stateGraph.distanceTo(target).toInt().toString()
-}
 // distanceGraph.visualizeGraph(true)
-return queries.map { answers[it] }.joinToString("\n") + "\n"
+    return queries.joinToString("\n") { answers[it]!! } + "\n"
 }

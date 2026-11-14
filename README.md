@@ -78,8 +78,8 @@ or bidirectionally with `.connect(node1, node2)`.
 Once the graph is built, you may use the following graph algorithms:
 
 - **Breadth-First Search (BFS)**:
-    - `bfs(startNode: T, target: T? = null, reset: Boolean = true)`
-    - `bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true)`
+    - `bfs(startNode: T, target: T? = null, reset: Boolean = true, maxDistance: Double = Double.POSITIVE_INFINITY)`
+    - `bfs(startNodes: List<T>, target: T? = null, reset: Boolean = true, maxDistance: Double = Double.POSITIVE_INFINITY)`
 
 - **Depth-First Search (DFS)**:
     - `dfs(startNode: T, reset: Boolean = true)`
@@ -131,17 +131,17 @@ internal fun main() {
     println("Shortest paths from source node $startNode:")
     nodes.forEach { node ->
         val distValue = graph.distanceTo(node)
-        val path = graph.getPath(node)
+        val path = graph.pathTo(node)
         println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
     }
     /* Output:
         Shortest paths from source node 0:
-        Distance to node 0: 0.0 Path: [0]
-        Distance to node 1: 7.0 Path: [0, 2, 1]
-        Distance to node 2: 3.0 Path: [0, 2]
-        Distance to node 3: 9.0 Path: [0, 2, 1, 3]
-        Distance to node 4: 5.0 Path: [0, 2, 4]
-        Distance to node 5: Infinity Path: null
+        To node 0: Distance 0.0 Path: [0]
+        To node 1: Distance 7.0 Path: [0, 2, 1]
+        To node 2: Distance 3.0 Path: [0, 2]
+        To node 3: Distance 9.0 Path: [0, 2, 1, 3]
+        To node 4: Distance 5.0 Path: [0, 2, 4]
+        To node 5: Distance Infinity Path: null
     */
     // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
     graph.visualizeGraph(
@@ -172,7 +172,7 @@ internal fun main() {
     println("Shortest paths from source node $startNode:")
     intNodes.forEach { node ->
         val distValue = intGraph.distanceTo(node)
-        val path = intGraph.finalPath() // Use final path instead of `getPath(node)`
+        val path = intGraph.finalPath() // Use final path instead of `pathTo(node)`
         println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
     }
     // Outputs the same as the code above
@@ -197,22 +197,22 @@ fixed number of nodes (`size`).
 ## The Grid class
 
 The Grid class is a specialized graph class. It uses the data class:
-```Tile(val x: Int, val y: Int, var data: Any? = null)```
+```Tile(val x: Int, val y: Int, val data: Any? = null)```
 to represent nodes of any datatype, where each node also has x and y coordinates.
 The grid can be created with a width and height, or by passing a list of strings.
 The grid can be traversed using the same algorithms as the graph class,
 but it also has some additional methods for connecting the grid without explicitly adding
 edges. `.connectGridDefault()` connects each node to nodes up, down, left and right of it, if they exist.
-If some customization is needed, `.connectGrid(::yourCustomFunction)` (also written like `.connectGrid{ yourLambda}`)
+If some customization is needed, `.connectWithRule(::yourCustomFunction)` (also written like `.connectWithRule { yourLambda }`)
 can be used, where yourCustomFunction takes a `Tile` and returns a `List<Tile>` to connect
 to. [Example usage:](src/main/kotlin/graphMateKT/examples/GridExample.kt)
 
 ```kotlin
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.gridGraphics.visualizeGrid
+import graphMateKT.graphics.gridGraphics.visualizeGrid
 
-fun main() {
+internal fun main() {
     // Example Grid Definition. We could also have initialized it with a list of strings
     val width = 99
     val height = 99
@@ -232,7 +232,7 @@ fun main() {
 
     // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
     fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
-    grid.connectGrid(bidirectional = true, ::connectDownOrRight)
+    grid.connectWithRule(::connectDownOrRight)
 
     // Nodes in a grid consist of Tile objects with x, y coordinates and data
     val startNode = Tile(width / 2, height / 2)

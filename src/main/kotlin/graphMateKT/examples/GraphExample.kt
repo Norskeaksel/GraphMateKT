@@ -25,17 +25,17 @@ internal fun main() {
     println("Shortest paths from source node $startNode:")
     nodes.forEach { node ->
         val distValue = graph.distanceTo(node)
-        val path = graph.getPath(node)
+        val path = graph.pathTo(node)
         println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
     }
     /* Output:
         Shortest paths from source node 0:
-        Distance to node 0: 0.0 Path: [0]
-        Distance to node 1: 7.0 Path: [0, 2, 1]
-        Distance to node 2: 3.0 Path: [0, 2]
-        Distance to node 3: 9.0 Path: [0, 2, 1, 3]
-        Distance to node 4: 5.0 Path: [0, 2, 4]
-        Distance to node 5: Infinity Path: null
+        To node 0: Distance 0.0 Path: [0]
+        To node 1: Distance 7.0 Path: [0, 2, 1]
+        To node 2: Distance 3.0 Path: [0, 2]
+        To node 3: Distance 9.0 Path: [0, 2, 1, 3]
+        To node 4: Distance 5.0 Path: [0, 2, 4]
+        To node 5: Distance Infinity Path: null
     */
     // Visualize the graph using brunomnsilva's JavaFXSmartGraph: https://github.com/brunomnsilva/JavaFXSmartGraph
     graph.visualizeGraph(
@@ -46,7 +46,7 @@ internal fun main() {
 
 
     /* --- Example IntGraph Definition ---
-         * An IntGraph needs to be initialized with a fixed size and nrOfEdges. It will consist of nodes from 0 to size-1.
+         * An IntGraph needs to be initialized with a fixed size. It will consist of nodes from 0 to size-1.
     */
     val n = graph.size()
     val intGraph = IntGraph(n)
@@ -63,7 +63,7 @@ internal fun main() {
     println("Shortest paths from source node $startNode:")
     intNodes.forEach { node ->
         val distValue = intGraph.distanceTo(node)
-        val path = intGraph.finalPath() // Use final path instead of `getPath(node)`
+        val path = intGraph.finalPath() // Use final path instead of `pathTo(node)`
         println("To node $node: Distance $distValue Path: ${if (distValue < Int.MAX_VALUE) path else null}")
     }
     // Outputs the same as the code above

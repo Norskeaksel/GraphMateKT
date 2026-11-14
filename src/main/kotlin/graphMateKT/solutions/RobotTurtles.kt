@@ -36,7 +36,7 @@ internal fun robotTurtles(inputStream: InputStream): String {
     val start = Tile(0, 7, 'T')
     grid.shortestPathsFrom(start)
     val goal = grid.nodes().filter { it.data as Char == 'D' }.minBy { grid.distanceTo(it) }
-    val finalPath = grid.getPath(goal) ?: return "no solution"
+    val finalPath = grid.pathTo(goal) ?: return "no solution"
     // grid.visualizeGrid(finalPath = finalPath, screenWidthMultiplier = 2.0)
     val ans = StringBuilder()
     finalPath.let {
