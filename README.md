@@ -8,7 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE-AkselsGraphLibrary)
 
 GraphMateKT is a thoroughly tested graph library that contains classes and algorithms for making, traversing and
-visualizing grids and graphs. This can for example be used to create and debug competitive programming solutions.
+visualizing grids and graphs. This can, for example, be used to create and debug competitive programming solutions.
 The [solutions](src/main/kotlin/graphMateKT/solutions) folder contains code using the library to solve various problems.
 These solutions are then used as unit tests for the library, to ensure robustness throughout further development.
 
@@ -22,7 +22,7 @@ class, which defines the basic functionality of the graphs.
 For graph visualization, GraphMateKT uses [Bruno Silva](https://github.com/brunomnsilva)'s
 [JavaFXSmartGraph](https://github.com/brunomnsilva/JavaFXSmartGraph) library. Grid visualization is done with
 the library's own code, using [JavaFX](https://openjfx.io/). Additionally,
-[William Fiset](https://github.com/williamfiset)'s [FastJavaIO](https://github.com/williamfiset/FastJavaIO)  library is
+[William Fiset](https://github.com/williamfiset)'s [FastJavaIO](https://github.com/williamfiset/FastJavaIO) library is
 also bundled, because that's what I use for input parsing for competitive programming and smooth unit test setup.
 
 ## Documentation
@@ -46,12 +46,12 @@ It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/
 :warning: Please note that for the `Graph().visualizeGraph()` function to work as intended,
 the files `smartgraph.css` and `smartgraph.properties` **must be added manually** to the root of your project.
 
-### Using the library in a single file.
+### Using the library in a single file
 
 In some competitive programming platforms like Kattis or Codeforces, users are required to upload a single file without
 external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
-the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note, this file does not
-have the graph visualization functions, because they themselves require external dependencies.
+the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note that this file does not
+have the graph visualization functions, because they require external dependencies.
 
 ## Library GUI
 
@@ -98,6 +98,7 @@ Once the graph is built, you may use the following graph algorithms:
 
 - **Minimum Spanning Tree (Prim's)**:
     - `minimumSpanningTree()`
+
 - **NrOfPaths**:
     - `nrOfPaths(startNode: T, targetNode: T, mod: Long = Long.MAX_VALUE)`
 
@@ -167,7 +168,7 @@ internal fun main() {
     intGraph.shortestPathsFrom(
         startNode,
         targetNode
-    ) // Specifying a targetNode enables visualizeGraph() to show the finalPath() 
+    ) // Specifying a targetNode enables visualizeGraph() to show the finalPath()
     val intNodes: List<Int> = intGraph.nodes()
     println("Shortest paths from source node $startNode:")
     intNodes.forEach { node ->
@@ -184,13 +185,13 @@ internal fun main() {
 }
 ```
 
-![GraphVizualization.gif](gifs/GraphVizualization.gif)
+![Graph visualization](gifs/GraphVizualization.gif)
 
 ## The IntGraph class
 
 The IntGraph class behaves a lot like the Graph class when used with integers like the example above. However,
 it's more performant, because it does not need to maintain an internal mapping between the nodes and their indexes in
-the adjacency list. The obvious drawback being it only supports integer nodes, and that it must be initialized with a
+the adjacency list. The obvious drawbacks are that it only supports integer nodes, and that it must be initialized with a
 fixed number of nodes (`size`).
 [Example usage.](src/main/kotlin/graphMateKT/examples/GraphExample.kt)
 
@@ -276,7 +277,7 @@ private fun Grid.deleteDiamondAtOffset(centerOffset: Int) {
 }
 ```
 
-<img src="gifs/GridVizualization.gif" width="200%" alt="">
+<img src="gifs/GridVizualization.gif" width="200%" alt="Grid visualization">
 
 ## License
 
