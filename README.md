@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml/badge.svg)](https://github.com/Norskeaksel/GraphMateKT/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.norskeaksel/graphmatekt)](https://central.sonatype.com/artifact/io.github.norskeaksel/graphmatekt)
-[![kdoc](https://img.shields.io/badge/kdoc-3.0.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT)
+[![kdoc](https://img.shields.io/badge/kdoc-3.1.0-brightgreen)](https://norskeaksel.github.io/GraphMateKT)
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.4.21-7F52FF?logo=kotlin)
 ![Java](https://img.shields.io/badge/Java-26%2B-orange?logo=openjdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE-AkselsGraphLibrary)
@@ -39,7 +39,7 @@ It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/
 <dependency>
     <groupId>io.github.norskeaksel</groupId>
     <artifactId>graphmatekt</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 
