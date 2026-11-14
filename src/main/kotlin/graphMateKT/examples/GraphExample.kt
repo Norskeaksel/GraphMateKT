@@ -5,7 +5,11 @@ import graphMateKT.graphClasses.IntGraph
 import graphMateKT.graphics.graphGraphics.visualizeGraph
 
 
-internal fun main() {
+/** Example showing how to build a weighted, directed graph, find shortest paths with Dijkstra and visualize the result.
+ *
+ * NOTE: The function requires the files `smartgraph.css` and `smartgraph.properties` to be present in the root of
+ * the project. They can be found here: https://github.com/Norskeaksel/GraphMateKT */
+fun graphVisualizationExample0() {
     // --- Example Graph Definition ---
     val graph = Graph()
     graph.addEdge(0, 1, 10.0)
@@ -58,7 +62,10 @@ internal fun main() {
             intGraph.addEdge(fromNode as Int, toNode, weight)
         }
     }
-    intGraph.shortestPathsFrom(startNode, targetNode) // Specifying a targetNode enables visualizeGraph() to show the finalPath()
+    intGraph.shortestPathsFrom(
+        startNode,
+        targetNode
+    ) // Specifying a targetNode enables visualizeGraph() to show the finalPath()
     val intNodes: List<Int> = intGraph.nodes()
     println("Shortest paths from source node $startNode:")
     intNodes.forEach { node ->

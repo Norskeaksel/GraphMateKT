@@ -4,7 +4,8 @@ import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
 import graphMateKT.graphics.gridGraphics.visualizeGrid
 
-internal fun main() {
+/** Example showing how to create a [Grid], delete tiles, connect it with a custom rule, run a BFS and visualize it. */
+fun gridVisualizationExample1() {
     // Example Grid Definition. We can also initialize it with a list of strings
     val width = 99
     val height = 99
