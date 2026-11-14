@@ -1,7 +1,5 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
-$dokka.location:////PointingToDeclaration/graphmatekt/[root]/index.html
-$dokka.location://main/#/PointingToDeclaration/graphmatekt/[root]/main.html
 $dokka.location:fastInputReader////PointingToDeclaration/graphmatekt/fastInputReader/index.html
 $dokka.location:fastInputReader/InputReader.Companion///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/-companion/index.html
 $dokka.location:fastInputReader/InputReader///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/index.html
