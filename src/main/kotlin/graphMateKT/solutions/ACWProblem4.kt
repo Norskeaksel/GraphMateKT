@@ -4,7 +4,6 @@ import fastInputReader.InputReader
 import graphMateKT.Tile
 import graphMateKT.graphClasses.Grid
 import graphMateKT.graphClasses.IntGraph
-import graphMateKT.graphics.gridGraphics.visualizeGrid
 import java.io.InputStream
 import kotlin.math.pow
 
@@ -68,7 +67,7 @@ private fun solve(grid: Grid): Triple<Double, List<Int>, List<Int>> {
         nextStates.filter { it.person.y <= it.stone.y || it.person.y <= gridState.person.y }.map { it.encode() }
     }
     graph.bfs(initialState, targetState)
-    return Triple(graph.distanceTo(targetState), graph.currentVisitedNodes(), graph.getPath(targetState)!!)
+    return Triple(graph.distanceTo(targetState), graph.currentVisitedNodes(), graph.pathTo(targetState)!!)
 }
 
 /** Solves https://open.kattis.com/problems/AWCProblem4 */

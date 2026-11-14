@@ -1,5 +1,7 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/graphmatekt/[root]/index.html
+$dokka.location://main/#/PointingToDeclaration/graphmatekt/[root]/main.html
 $dokka.location:fastInputReader////PointingToDeclaration/graphmatekt/fastInputReader/index.html
 $dokka.location:fastInputReader/InputReader.Companion///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/-companion/index.html
 $dokka.location:fastInputReader/InputReader///PointingToDeclaration/graphmatekt/fastInputReader/-input-reader/index.html
@@ -62,7 +64,6 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/finalPath/#/PointingToDeclara
 $dokka.location:graphMateKT.graphClasses/BaseGraph/forEachNeighbour/#TypeParam(bounds=[kotlin.Any])#kotlin.Function1[TypeParam(bounds=[kotlin.Any]),kotlin.Unit]/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/for-each-neighbour.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/foundTarget/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/found-target.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/furthestNode/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/furthest-node.html
-$dokka.location:graphMateKT.graphClasses/BaseGraph/getPath/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/get-path.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/maxDistance/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/max-distance.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/minimumSpanningTree/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/minimum-spanning-tree.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/neighbours/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/neighbours.html
@@ -70,6 +71,7 @@ $dokka.location:graphMateKT.graphClasses/BaseGraph/nodes/#/PointingToDeclaration
 $dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfEdges/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nr-of-edges.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/nrOfPaths/#TypeParam(bounds=[kotlin.Any])#TypeParam(bounds=[kotlin.Any])#kotlin.Long/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/nr-of-paths.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/parent/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/parent.html
+$dokka.location:graphMateKT.graphClasses/BaseGraph/pathTo/#TypeParam(bounds=[kotlin.Any])/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/path-to.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/print/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/printConnections/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/print-connections.html
 $dokka.location:graphMateKT.graphClasses/BaseGraph/resetSearchResults/#/PointingToDeclaration/graphmatekt/graphMateKT.graphClasses/-base-graph/reset-search-results.html

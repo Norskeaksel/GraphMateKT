@@ -198,11 +198,15 @@ abstract class BaseGraph<T : Any>(
     /** Retrieves the shortest path from the start to target node (if a target was specified) during the most recent
      *  search operation (BFS, shortestPathsFrom). After topologicalSort(), it holds the topological ordering.
      *
+     *  Note: Starting at a node, does not count as a path to that node.
+     *
      * @return A list of nodes representing the final path or null if no path was found. Running dfs() clears it.
-     * Note: Starting at a node, does not count as a path to that node */
+     *  */
     fun finalPath(): List<T>? = finalPath
 
-    /** Checks if the target node was found during the most recent search operation (BFS, shortestPathsFrom).
+    /** Checks that a path to the target node was found during the most recent search operation (BFS, shortestPathsFrom).
+     *
+     * Note: Starting at the target node, does not count as finding it, unless there is a path to the target.
      *
      * @return `true` if the target node was found, `false` otherwise. */
     fun foundTarget() = searchResults?.foundTarget ?: false
@@ -374,7 +378,7 @@ abstract class BaseGraph<T : Any>(
                 searchResults?.currentVisited?.asList()?.lastOrNull()?.let { id2NodeOrNull(it) }
                     ?.also { finalNode ->
                         if (finalNode == target)
-                            finalPath = getPath(finalNode)
+                            finalPath = pathTo(finalNode)
                     }
             } catch (e: InvalidEdgeException) {
                 invalidEdgeError(e, "bfs")
@@ -493,7 +497,7 @@ abstract class BaseGraph<T : Any>(
                 invalidEdgeError(e, "shortestPathsFrom")
             }
             target?.let {
-                finalPath = getPath(it)
+                finalPath = pathTo(it)
             }
         }
         if (debugTimeUse) {
@@ -669,10 +673,12 @@ abstract class BaseGraph<T : Any>(
 
     /** Retrieves the path from the starting node to the specified target node based on the most recent search results.
      *
+     * Note: Starting at a node, does not count as a path to the node.
      * @param target The target node for which the path is to be retrieved.
      * @return A list of nodes representing the path from the start to the target node, or null if no path was found.
-     * @throws IllegalStateException If no search algorithm (DFS, BFS, shortestPathsFrom) has been executed yet. */
-    fun getPath(target: T): List<T>? {
+     * @throws IllegalStateException If no search algorithm (DFS, BFS, shortestPathsFrom) has been executed yet.
+     **/
+    fun pathTo(target: T): List<T>? {
         val path: List<T>
         val time = measureTimeMillis {
             val targetId = node2IdOrNull(target)
@@ -695,7 +701,7 @@ abstract class BaseGraph<T : Any>(
         return path
     }
 
-    private inline fun getPath(destination: Int?, parentOf: (Int) -> Int): List<Int> {
+    private inline fun pathTo(destination: Int?, parentOf: (Int) -> Int): List<Int> {
         val path = mutableListOf<Int>()
         destination?.let { dest ->
             var current = dest
@@ -710,9 +716,9 @@ abstract class BaseGraph<T : Any>(
         return if (path.size > 1) path.reversed() else emptyList()
     }
 
-    private fun getPathFromArray(destination: Int?, parents: IntArray) = getPath(destination) { parents[it] }
+    private fun getPathFromArray(destination: Int?, parents: IntArray) = pathTo(destination) { parents[it] }
     private fun getPathFromMap(destination: Int?, parents: Map<Int, Int>) =
-        getPath(destination) { parents[it] ?: -1 }
+        pathTo(destination) { parents[it] ?: -1 }
 
 
 // HELPER FUNCTIONS

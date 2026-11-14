@@ -40,7 +40,7 @@ internal fun Day16ReindeerMaze2024(inputStream: InputStream): Pair<Grid, Int> {
     val start = grid.nodes().first { it.data == 'S' }
     grid.shortestPathsFrom(start)
     val goal = grid.nodes().filter { it.data as Char == 'E' }.minBy { grid.distanceTo(it) }
-    val finalPath = grid.getPath(goal)!!
+    val finalPath = grid.pathTo(goal)!!
     // grid.visualizeGrid(finalPath = finalPath, screenWidthMultiplier = 2.0, startPaused = true)
     return grid to grid.distanceTo(goal).toInt()
 }
