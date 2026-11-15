@@ -4,7 +4,7 @@ import graphMateKT.graphClasses.Grid
 import graphMateKT.graphics.gridGraphics.visualizeGrid
 
 /** Example showing how to create a [Grid] from a list of strings, where each character becomes a tile's data. */
-fun gridVisualizationExample2() {
+fun exampleGrid2(): Grid {
     val stringList = listOf(
         "S#X",
         "1##",
@@ -16,5 +16,5 @@ fun gridVisualizationExample2() {
     val startNode = stringGrid.firstNodeWithData('S')
     val target = stringGrid.firstNodeWithData('E')
     stringGrid.bfs(startNode, target)
-    stringGrid.visualizeGrid()
+    return stringGrid
 }
