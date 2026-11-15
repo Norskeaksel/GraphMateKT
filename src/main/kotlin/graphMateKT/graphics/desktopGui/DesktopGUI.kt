@@ -79,6 +79,7 @@ internal class DesktopGUI : Application() {
         stage.run {
             title = "GraphMateKT GUI"
             scene = gui
+            isMaximized = true
             show()
         }
 

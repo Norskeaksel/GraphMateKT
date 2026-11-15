@@ -58,18 +58,18 @@ internal class GridGraphics : Application() {
         stage.scene = scene
         stage.width = sceneWidth + 13
         stage.height = sceneHeight + 35 // Account for window title bar
-        stage.minWidth = sceneWidth
-        stage.minHeight = sceneHeight
 
-        // Scale the canvas (and everything drawn on it) when the window is resized.
         val scale = Scale(1.0, 1.0, 0.0, 0.0)
         canvas.transforms.add(scale)
-        scene.widthProperty().addListener { _, _, newWidth ->
-            scale.x = newWidth.toDouble() / sceneWidth
+        fun rescale() {
+            val s = min(scene.width / sceneWidth, scene.height / sceneHeight)
+            scale.x = s
+            scale.y = s
+            canvas.translateX = (scene.width - sceneWidth * s) / 2
+            canvas.translateY = (scene.height - sceneHeight * s) / 2
         }
-        scene.heightProperty().addListener { _, _, newHeight ->
-            scale.y = newHeight.toDouble() / sceneHeight
-        }
+        scene.widthProperty().addListener { _, _, _ -> rescale() }
+        scene.heightProperty().addListener { _, _, _ -> rescale() }
         stage.centerOnScreen()
         stage.show()
         animateVisitedNodes(stage)

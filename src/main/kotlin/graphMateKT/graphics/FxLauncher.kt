@@ -2,7 +2,6 @@ package graphMateKT.graphics
 
 import javafx.application.Application
 import javafx.application.Platform
-import javafx.stage.Modality
 import javafx.stage.Stage
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors.newSingleThreadScheduledExecutor
@@ -27,7 +26,6 @@ internal object FxLauncher {
 
     private fun launchStage(app: Application, closed: CountDownLatch) {
         val stage = Stage()
-        stage.initModality(Modality.APPLICATION_MODAL)
         stage.setOnHidden { closed.countDown() }
         app.start(stage)
     }

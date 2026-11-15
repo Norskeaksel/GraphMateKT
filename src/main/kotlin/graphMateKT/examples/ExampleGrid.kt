@@ -2,10 +2,9 @@ package graphMateKT.examples
 
 import graphMateKT.graphClasses.Grid
 import graphMateKT.Tile
-import graphMateKT.graphics.gridGraphics.visualizeGrid
 
 /** Example showing how to create a [Grid], delete tiles, connect it with a custom rule, run a BFS and visualize it. */
-fun gridVisualizationExample1() {
+fun exampleGrid(): Grid {
     // Example Grid Definition. We can also initialize it with a list of strings
     val width = 99
     val height = 99
@@ -24,8 +23,8 @@ fun gridVisualizationExample1() {
     grid.deleteSquareAtOffset(46)
 
     // We could use `grid.connectGridDefault()` to connect all nodes, but let's define a custom connection instead.
-    fun connectDownOrRight(t: Tile): List<Tile> = grid.getStraightNeighbours(t).filter { it.x >= t.x || it.y > t.y }
-    grid.connectWithRule(::connectDownOrRight)
+    fun getNeighbours(t: Tile): List<Tile> = grid.getStraightNeighbours(t)
+    grid.connectWithRule(::getNeighbours)
 
     // Nodes in a grid consists of Tile objects with x, y coordinates and data
     val startNode = Tile(width / 2, height / 2)
@@ -34,12 +33,13 @@ fun gridVisualizationExample1() {
     val target = Tile(width - 1, height - 1) // Define a target to find a path to it
     grid.bfs(startNode, target)
 
-    // Visualizing the grid, the BFS and the final fastest path to the target
+    /* To visualize the grid, the BFS and the final fastest path to the target, run:
     grid.visualizeGrid(
         screenTitle = "Breadth-First Search from the center to the bottom right corner, using GraphMateKT",
-        screenWidthMultiplier = 0.88,
+        // screenWidthMultiplier = 0.88,
         startPaused = true,
-    )
+    )*/
+    return grid
 }
 
 private fun Grid.deleteSquareAtOffset(centerOffset: Int) {
