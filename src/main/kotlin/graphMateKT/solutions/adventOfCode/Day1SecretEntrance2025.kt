@@ -43,7 +43,7 @@ private fun nextNode2(node: Node2): List<Node2> {
     return listOf(Node2(node.index, nextValue, node.targetValue))
 }
 
-/** Solves https://open.kattis.com/problems/Day1SecretEntrance2025 */
+/** Solves https://adventofcode.com/2024/day/1 */
 internal fun day1SecretEntrance2025(inputStream: InputStream): Int {
     val scanner = InputReader(inputStream)
     inputLines = generateSequence { scanner.nextString() }.toList()

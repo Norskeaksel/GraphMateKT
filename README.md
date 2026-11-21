@@ -30,7 +30,13 @@ also bundled, because that's what I use for input parsing for competitive progra
 The full API documentation (KDoc) is available
 at [norskeaksel.github.io/GraphMateKT](https://norskeaksel.github.io/GraphMateKT).
 
-## Using the library
+### YouTube tutorials
+
+I have an introductory tutorial [here](https://www.youtube.com/watch?v=k3mn01oO-5U&t=1s) on how to use GraphMateKT,
+as well as multiple videos on my [YouTube channel](https://www.youtube.com/@Norskeaksel) where I use it to solve
+Advent of Code puzzles.
+
+## Installing the library
 
 Add the following dependency to your `pom.xml` file.
 It can be downloaded from [Maven Central](https://central.sonatype.com/artifact/io.github.norskeaksel/graphmatekt).
@@ -51,7 +57,7 @@ the files `smartgraph.css` and `smartgraph.properties` **must be added manually*
 In some competitive programming platforms like Kattis or Codeforces, users are required to upload a single file without
 external dependencies. If that's your use case, or you don't want to download the dependency, you can copy some of
 the library in a single file format from [GraphMateKTSingleFile.kt](GraphMateKTSingleFile.kt). Note that this file does not
-have the graph visualization functions, because they require external dependencies.
+have the graph visualization functions, because they themselves require external dependencies.
 
 ## Library GUI
 

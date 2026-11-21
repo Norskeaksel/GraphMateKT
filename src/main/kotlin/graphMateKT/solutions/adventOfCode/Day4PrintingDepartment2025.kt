@@ -10,7 +10,7 @@ internal fun main() {
     System.out.flush()
 }
 
-/** Solves https://open.kattis.com/problems/Day4PrintingDepartment */
+/** Solves https://adventofcode.com/2025/day/4 */
 internal fun Day4PrintingDepartment2025(): Int {
     val input = generateSequence { readString() }
     val grid = Grid(input.toList())

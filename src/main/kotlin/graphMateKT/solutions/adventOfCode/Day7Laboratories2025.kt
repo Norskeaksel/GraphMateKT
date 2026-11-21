@@ -10,7 +10,7 @@ internal fun main() {
     System.out.flush()
 }
 
-/** Solves https://open.kattis.com/problems/Day7Laboratories2025 */
+/** Solves https://adventofcode.com/2025/day/7 */
 internal fun Day7Laboratories2025(input: List<String>): Long {
     val g = Grid(input)
     val sink = Tile(0,0, '^')
